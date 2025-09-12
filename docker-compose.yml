@@ -2,13 +2,13 @@ version: '3.8'
 
 services:
   app:
-    image: bansheetech/robypet:latest
+    image: bansheetech/robipet:latest
     # build:
     #   context: .
     #   dockerfile: Dockerfile
-    container_name: robypet
+    container_name: robipet
     ports:
-      - "8081:80"
+      - "29724:5000"
     volumes:
       # Persistir la base de datos SQLite
       - sqlite_data:/var/www/html/api
