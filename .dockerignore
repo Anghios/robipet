@@ -9,3 +9,5 @@ coverage
 .vscode
 .astro
 .claude
+api/database.sqlite
+api/uploads
