@@ -14,7 +14,7 @@ export function useConfirmationActions(
 
     try {
       const petId = getCurrentPetId();
-      const response = await fetch(`http://localhost:8081/api/pets/${petId}/vaccines/${vaccineToDelete.id}`, {
+      const response = await fetch(`/api/pets/${petId}/vaccines/${vaccineToDelete.id}`, {
         method: 'DELETE',
       });
 
@@ -40,7 +40,7 @@ export function useConfirmationActions(
     try {
       const petId = getCurrentPetId();
       
-      const response = await fetch(`http://localhost:8081/api/pets/${petId}/vaccines/${vaccineToComplete.id}`, {
+      const response = await fetch(`/api/pets/${petId}/vaccines/${vaccineToComplete.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -77,7 +77,7 @@ export function useConfirmationActions(
     try {
       const petId = getCurrentPetId();
       
-      const response = await fetch(`http://localhost:8081/api/pets/${petId}/medical-reviews/${medicalReviewToDelete.id}`, {
+      const response = await fetch(`/api/pets/${petId}/medical-reviews/${medicalReviewToDelete.id}`, {
         method: 'DELETE'
       });
 
@@ -103,7 +103,7 @@ export function useConfirmationActions(
     try {
       const petId = getCurrentPetId();
       
-      const response = await fetch(`http://localhost:8081/api/pets/${petId}/dewormings/${dewormingToDelete.id}`, {
+      const response = await fetch(`/api/pets/${petId}/dewormings/${dewormingToDelete.id}`, {
         method: 'DELETE'
       });
 
@@ -131,7 +131,7 @@ export function useConfirmationActions(
     try {
       const petId = getCurrentPetId();
       
-      const response = await fetch(`http://localhost:8081/api/pets/${petId}/dewormings/${dewormingToComplete.id}`, {
+      const response = await fetch(`/api/pets/${petId}/dewormings/${dewormingToComplete.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'completed' })
@@ -169,7 +169,7 @@ export function useConfirmationActions(
 
     try {
       const petId = getCurrentPetId();
-      const response = await fetch(`http://localhost:8081/api/pets/${petId}/weight/${weightToDelete.id}`, {
+      const response = await fetch(`/api/pets/${petId}/weight/${weightToDelete.id}`, {
         method: 'DELETE',
       });
 
@@ -195,7 +195,7 @@ export function useConfirmationActions(
     try {
       const petId = getCurrentPetId();
       
-      const response = await fetch(`http://localhost:8081/api/pets/${petId}/medications/${medicationToDelete.id}`, {
+      const response = await fetch(`/api/pets/${petId}/medications/${medicationToDelete.id}`, {
         method: 'DELETE'
       });
 
@@ -223,7 +223,7 @@ export function useConfirmationActions(
     try {
       const petId = getCurrentPetId();
       
-      const response = await fetch(`http://localhost:8081/api/pets/${petId}/medications/${medicationToComplete.id}`, {
+      const response = await fetch(`/api/pets/${petId}/medications/${medicationToComplete.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status: 'completed' })
@@ -251,7 +251,7 @@ export function useConfirmationActions(
 
     try {
       const petId = getCurrentPetId();
-      const response = await fetch(`http://localhost:8081/api/pets/${petId}/documents/${documentToDelete.id}`, {
+      const response = await fetch(`/api/pets/${petId}/documents/${documentToDelete.id}`, {
         method: 'DELETE',
       });
 

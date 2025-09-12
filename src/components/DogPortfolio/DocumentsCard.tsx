@@ -145,7 +145,7 @@ export default function DocumentsCard({
                   </div>
                   <button
                     onClick={() => {
-                      const fileUrl = `http://localhost:8081/api/${file.file_path}`;
+                      const fileUrl = `/api/${file.file_path}`;
                       window.open(fileUrl, '_blank');
                     }}
                     className="ml-2 p-2 text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 rounded-lg transition-all duration-200 hover:scale-105 flex-shrink-0"

@@ -3,7 +3,7 @@ import type { Pet, NewPet } from '../types/Pet';
 import { INITIAL_PET_STATE } from '../types/Pet';
 import { validatePetData, validateImageFile } from '../components/PetList/helpers.ts';
 
-const API_BASE_URL = 'http://localhost:8081';
+const API_BASE_URL = '';
 
 export function usePetListData(showToast: (message: string, type: 'success' | 'error' | 'warning') => void) {
   // Estados principales

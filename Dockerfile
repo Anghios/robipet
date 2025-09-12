@@ -11,6 +11,8 @@ RUN apt-get update && apt-get install -y \
 # Configurar Apache
 RUN a2enmod rewrite
 COPY docker/apache.conf /etc/apache2/sites-available/000-default.conf
+COPY docker/ports.conf /etc/apache2/ports.conf
+RUN echo "ServerName localhost" >> /etc/apache2/apache2.conf
 
 # Crear directorio para la aplicación
 WORKDIR /var/www/html
@@ -26,7 +28,7 @@ RUN mkdir -p /var/www/html/api && \
     chown -R www-data:www-data /var/www/html && \
     chmod -R 755 /var/www/html
 
-# Exponer puerto 80
-EXPOSE 80
+# Exponer puerto 8081
+EXPOSE 8081
 
 CMD ["apache2-foreground"]

@@ -118,7 +118,7 @@ export const addWeightRecord = async (petId: string, weight: number, date: strin
   try {
     const currentUser = getCurrentUser();
 
-    const weightResponse = await fetch(`http://localhost:8081/api/pets/${petId}/weight`, {
+    const weightResponse = await fetch(`/api/pets/${petId}/weight`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

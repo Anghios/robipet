@@ -20,7 +20,7 @@ export default function usePets() {
   const fetchPets = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:8081/api/pets');
+      const response = await fetch('/api/pets');
       if (!response.ok) throw new Error('Error al cargar mascotas');
       const data = await response.json();
       setPets(data);
@@ -45,7 +45,7 @@ export default function usePets() {
         weight_kg: parseFloat(newPet.weight_kg) || 0
       };
       
-      const response = await fetch('http://localhost:8081/api/pets', {
+      const response = await fetch('/api/pets', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -85,7 +85,7 @@ export default function usePets() {
         weight_kg: parseFloat(pet.weight_kg.toString()) || 0
       };
       
-      const response = await fetch(`http://localhost:8081/api/pets/${pet.id}`, {
+      const response = await fetch(`/api/pets/${pet.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -113,7 +113,7 @@ export default function usePets() {
 
   const deletePet = useCallback(async (pet: Pet) => {
     try {
-      const response = await fetch(`http://localhost:8081/api/pets/${pet.id}`, {
+      const response = await fetch(`/api/pets/${pet.id}`, {
         method: 'DELETE',
       });
       
@@ -156,7 +156,7 @@ export default function usePets() {
       const formData = new FormData();
       formData.append('image', file);
       
-      const response = await fetch('http://localhost:8081/api/upload/image', {
+      const response = await fetch('/api/upload/image', {
         method: 'POST',
         body: formData,
       });

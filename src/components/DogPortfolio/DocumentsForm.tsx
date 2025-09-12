@@ -414,7 +414,7 @@ export default function DocumentsForm({
                       type="button"
                       onClick={() => {
                         // Abrir archivo para ver/descargar
-                        const fileUrl = `http://localhost:8081/api/${fileData.file_path}`;
+                        const fileUrl = `/api/${fileData.file_path}`;
                         window.open(fileUrl, '_blank');
                       }}
                       className="p-2 text-blue-400 hover:text-blue-300 hover:bg-blue-500/10 rounded-lg transition-colors opacity-70 group-hover:opacity-100"

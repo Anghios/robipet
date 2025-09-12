@@ -8,7 +8,7 @@ export interface ApiResponse<T = any> {
 }
 
 class PetApiService {
-  private baseUrl = 'http://localhost:8081';
+  private baseUrl = '';
 
   private async fetchWithErrorHandler<T>(url: string, options?: RequestInit): Promise<ApiResponse<T>> {
     try {

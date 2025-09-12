@@ -68,8 +68,8 @@ export function useUsersData() {
     console.log('🔍 UsersList: Iniciando fetchUsers...');
     try {
       setLoading(true);
-      console.log('🔍 UsersList: Haciendo fetch a http://localhost:8081/users');
-      const response = await fetch('http://localhost:8081/api/users');
+      console.log('🔍 UsersList: Haciendo fetch a /api/users');
+      const response = await fetch('/api/users');
       console.log('🔍 UsersList: Response status:', response.status);
       if (!response.ok) throw new Error('Error al cargar usuarios');
       const data = await response.json();
@@ -92,7 +92,7 @@ export function useUsersData() {
     
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:8081/api/users/search?q=${encodeURIComponent(searchQuery)}`);
+      const response = await fetch(`/api/users/search?q=${encodeURIComponent(searchQuery)}`);
       if (!response.ok) throw new Error('Error en la búsqueda');
       const data = await response.json();
       setUsers(data);
@@ -112,7 +112,7 @@ export function useUsersData() {
     }
 
     try {
-      const response = await fetch('http://localhost:8081/api/users', {
+      const response = await fetch('/api/users', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -171,7 +171,7 @@ export function useUsersData() {
         ...(editForm.password.trim() && { password: editForm.password })
       };
 
-      const response = await fetch(`http://localhost:8081/api/users/${editingUser.id}`, {
+      const response = await fetch(`/api/users/${editingUser.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -210,7 +210,7 @@ export function useUsersData() {
     const deletedUsername = deleteConfirm.username;
 
     try {
-      const response = await fetch(`http://localhost:8081/api/users/${deleteConfirm.userId}`, {
+      const response = await fetch(`/api/users/${deleteConfirm.userId}`, {
         method: 'DELETE',
       });
       
