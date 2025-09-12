@@ -1,0 +1,23 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom Dark Theme Colors - Used in the app */
+.bg-dark-primary { background-color: #0f0f23; }
+.bg-dark-secondary { background-color: #16213e; }
+.bg-dark-card { background-color: #1a1d3a; }
+.bg-dark-card-hover { background-color: #242857; }
+.text-dark-primary { color: #e5e7eb; }
+.text-dark-secondary { color: #9ca3af; }
+.text-dark-accent { color: #60a5fa; }
+.border-dark { border-color: #374151; }
+.border-dark-hover { border-color: #4b5563; }
+
+/* Custom Gradient Backgrounds - Used in the app */
+.bg-gradient-dark { background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 25%, #1d4ed8 50%, #1e3a8a 100%); }
+.bg-gradient-card { background: linear-gradient(145deg, #1a1d3a 0%, #16213e 100%); }
+.bg-gradient-form { background: linear-gradient(145deg, #16213e 0%, #0f0f23 100%); }
+
+/* Custom Gradient Variables - Used in the app */
+.from-gradient-start { --tw-gradient-from: #667eea; --tw-gradient-stops: var(--tw-gradient-from), var(--tw-gradient-to, rgba(102, 126, 234, 0)); }
+.to-gradient-end { --tw-gradient-to: #764ba2; }

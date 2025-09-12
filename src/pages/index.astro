@@ -1,0 +1,33 @@
+---
+import ProtectedLayout from '../layouts/ProtectedLayout.astro';
+import DogPortfolio from '../components/DogPortfolio';
+---
+
+<ProtectedLayout title="Inicio - Información">
+	<main class="max-w-6xl mx-auto px-4 py-6 min-h-screen">
+	
+		<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
+			<DogPortfolio client:load />
+		</div>
+	</main>
+
+	<script>
+		// Cargar traducciones para el título y subtítulo
+		document.addEventListener('DOMContentLoaded', async () => {
+			const locale = localStorage.getItem('locale') || 'en';
+			
+			try {
+				const response = await fetch(`/locales/${locale}.json`);
+				const translations = await response.json();
+				
+				const titleEl = document.getElementById('page-title');
+				const subtitleEl = document.getElementById('page-subtitle');
+				
+				if (titleEl) titleEl.textContent = translations.home.title;
+				if (subtitleEl) subtitleEl.textContent = translations.home.subtitle;
+			} catch (error) {
+				console.log('Error loading page translations:', error);
+			}
+		});
+	</script>
+</ProtectedLayout>

@@ -1,0 +1,191 @@
+{
+  "navigation": {
+    "home": "Inicio",
+    "pets": "Mis Mascotas",
+    "users": "Usuarios",
+    "config": "Configuración",
+    "login": "Iniciar Sesión",
+    "logout": "Salir"
+  },
+  "no_pets": {
+    "title": "No existen animales añadidos",
+    "subtitle": "Añade tu primera mascota para comenzar a gestionar su información médica y seguimiento.",
+    "add_button": "Añadir ahora"
+  },
+  "home": {
+    "title": "Información de tu mascota",
+    "subtitle": "Consulta toda la información médica y datos de tu compañero",
+    "tabs": {
+      "info": "Información",
+      "vaccines": "Vacunas",
+      "weight": "Peso"
+    },
+    "basicInfo": {
+      "title": "Resumen",
+      "birthDate": "Nació el",
+      "age": "Edad",
+      "dogAge": "Edad canina",
+      "breed": "Raza",
+      "color": "Color"
+    },
+    "physicalData": {
+      "title": "Información",
+      "currentWeight": "Peso actual",
+      "microchip": "Microchip"
+    },
+    "vaccines": {
+      "title": "Historial de Vacunas",
+      "date": "Fecha",
+      "nextDue": "Próxima",
+      "veterinarian": "Veterinario",
+      "expired": "Vencida",
+      "dueSoon": "Próxima"
+    },
+    "weight": {
+      "title": "Historial de Peso",
+      "addWeight": "Nuevo",
+      "currentWeight": "Peso actual",
+      "measurements": "Historial de mediciones",
+      "newRecord": "Nuevo Registro de Peso",
+      "editRecord": "Editar Registro de Peso",
+      "weightKg": "Peso (kg)",
+      "date": "Fecha",
+      "notes": "Observaciones (opcional)",
+      "save": "Guardar",
+      "update": "Actualizar",
+      "cancel": "Cancelar",
+      "saving": "Guardando...",
+      "updating": "Actualizando...",
+      "deleteConfirm": "¿Estás seguro de que quieres eliminar este registro de peso?",
+      "noObservations": "Sin observaciones",
+      "addedBy": "Añadido por",
+      "notesPlaceholder": "Ej: Después de la consulta veterinaria, se nota más activo..."
+    }
+  },
+  "config": {
+    "title": "Configuración",
+    "subtitle": "Gestiona los ajustes y configuración del sistema",
+    "general": "General",
+    "users": "Usuarios",
+    "language": {
+      "title": "Idioma",
+      "description": "Selecciona el idioma de la interfaz",
+      "reloadMessage": "La página se recargará automáticamente para aplicar el nuevo idioma."
+    },
+    "appearance": {
+      "title": "Apariencia",
+      "description": "Personaliza la apariencia de la aplicación",
+      "darkMode": "Modo oscuro automático",
+      "reducedAnimations": "Animaciones reducidas"
+    },
+    "notifications": {
+      "title": "Notificaciones",
+      "description": "Configura las notificaciones del sistema",
+      "medicalReminders": "Recordatorios médicos",
+      "systemUpdates": "Actualizaciones del sistema"
+    }
+  },
+  "common": {
+    "years": "años",
+    "months": "meses",
+    "loading": "Cargando...",
+    "error": "Error",
+    "success": "Éxito",
+    "user": "Usuario",
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "search": "Buscar",
+    "create": "Crear",
+    "update": "Actualizar"
+  },
+  "auth": {
+    "welcome": "Bienvenido a Robipet",
+    "loginMessage": "Accede a tu cuenta para continuar",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "userPlaceholder": "Ingresa tu usuario",
+    "passwordPlaceholder": "Ingresa tu contraseña",
+    "loginButton": "Iniciar Sesión",
+    "loggingIn": "Iniciando sesión...",
+    "invalidCredentials": "Credenciales inválidas. Verifica tu username y contraseña.",
+    "logout": "Salir"
+  },
+  "users": {
+    "title": "Gestión de Usuarios",
+    "subtitle": "Administra y busca usuarios del sistema",
+    "listTitle": "Lista de Usuarios",
+    "newUser": "Nuevo Usuario",
+    "createUser": "Crear Nuevo Usuario",
+    "createUserDescription": "Añade un nuevo usuario al sistema",
+    "editUser": "Editar Usuario",
+    "noUsers": "No se encontraron usuarios",
+    "noUsersDescription": "Haz clic en \"Nuevo Usuario\" para crear el primer usuario",
+    "name": "Nombre",
+    "email": "Correo",
+    "username": "Usuario",
+    "password": "Contraseña",
+    "role": "Rol",
+    "admin": "Administrador",
+    "user": "Usuario",
+    "userCreated": "Usuario creado correctamente",
+    "userUpdated": "Usuario actualizado correctamente",
+    "userDeleted": "Usuario eliminado correctamente",
+    "confirmDelete": "¿Estás seguro de que quieres eliminar este usuario?"
+  },
+  "pets": {
+    "title": "Mis Mascotas",
+    "subtitle": "Gestiona la información de tus mascotas",
+    "addPet": "Añadir Mascota",
+    "editPet": "Editar Mascota",
+    "deletePet": "Eliminar Mascota",
+    "confirmDelete": "¿Estás seguro de que quieres eliminar esta mascota?",
+    "noPets": "No hay mascotas añadidas aún",
+    "noPetsDescription": "Haz clic en \"Añadir Mascota\" para añadir tu primera mascota",
+    "name": "Nombre",
+    "species": "Especie",
+    "breed": "Raza",
+    "birthDate": "Fecha de Nacimiento",
+    "weight": "Peso",
+    "color": "Color",
+    "microchip": "Microchip",
+    "gender": "Género",
+    "male": "Macho",
+    "female": "Hembra",
+    "size": "Tamaño",
+    "small": "Pequeño",
+    "medium": "Mediano",
+    "large": "Grande",
+    "neutered": "Castrado/Esterilizado",
+    "dog": "Perro",
+    "cat": "Gato",
+    "other": "Otro"
+  },
+  "medical": {
+    "vaccines": "Vacunas",
+    "dewormings": "Desparasitaciones",
+    "medications": "Medicamentos",
+    "medicalReviews": "Revisiones Médicas",
+    "documents": "Documentos",
+    "addVaccine": "Añadir Vacuna",
+    "addDeworming": "Añadir Desparasitación",
+    "addMedication": "Añadir Medicamento",
+    "addReview": "Añadir Revisión",
+    "addDocument": "Añadir Documento",
+    "status": "Estado",
+    "pending": "Pendiente",
+    "completed": "Completado",
+    "expired": "Vencido",
+    "veterinarian": "Veterinario",
+    "clinic": "Clínica",
+    "nextDate": "Próxima Fecha",
+    "treatmentDate": "Fecha de Tratamiento",
+    "dosage": "Dosis",
+    "frequency": "Frecuencia",
+    "diagnosis": "Diagnóstico",
+    "treatment": "Tratamiento",
+    "cost": "Costo",
+    "notes": "Notas"
+  }
+}

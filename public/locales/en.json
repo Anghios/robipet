@@ -1,0 +1,191 @@
+{
+  "navigation": {
+    "home": "Home",
+    "pets": "My Pets",
+    "users": "Users",
+    "config": "Settings",
+    "login": "Login",
+    "logout": "Logout"
+  },
+  "no_pets": {
+    "title": "No pets added",
+    "subtitle": "Add your first pet to start managing their medical information and tracking.",
+    "add_button": "Add now"
+  },
+  "home": {
+    "title": "Your pet's information",
+    "subtitle": "Check all medical information and data about your companion",
+    "tabs": {
+      "info": "Information",
+      "vaccines": "Vaccines",
+      "weight": "Weight"
+    },
+    "basicInfo": {
+      "title": "Basic Information",
+      "birthDate": "Birth date",
+      "age": "Age",
+      "dogAge": "Dog age",
+      "breed": "Breed",
+      "color": "Color"
+    },
+    "physicalData": {
+      "title": "Physical Data",
+      "currentWeight": "Current weight",
+      "microchip": "Microchip"
+    },
+    "vaccines": {
+      "title": "Vaccine History",
+      "date": "Date",
+      "nextDue": "Next due",
+      "veterinarian": "Veterinarian",
+      "expired": "Expired",
+      "dueSoon": "Due soon"
+    },
+    "weight": {
+      "title": "Weight History",
+      "addWeight": "Add Weight",
+      "currentWeight": "Current weight",
+      "measurements": "Measurement history",
+      "newRecord": "New Weight Record",
+      "editRecord": "Edit Weight Record",
+      "weightKg": "Weight (kg)",
+      "date": "Date",
+      "notes": "Notes (optional)",
+      "save": "Save",
+      "update": "Update",
+      "cancel": "Cancel",
+      "saving": "Saving...",
+      "updating": "Updating...",
+      "deleteConfirm": "Are you sure you want to delete this weight record?",
+      "noObservations": "No observations",
+      "addedBy": "Added by",
+      "notesPlaceholder": "e.g.: After veterinary consultation, seems more active..."
+    }
+  },
+  "config": {
+    "title": "Settings",
+    "subtitle": "Manage system settings and configuration",
+    "general": "General",
+    "users": "Users",
+    "language": {
+      "title": "Language",
+      "description": "Select interface language",
+      "reloadMessage": "The page will reload automatically to apply the new language."
+    },
+    "appearance": {
+      "title": "Appearance",
+      "description": "Customize the application appearance",
+      "darkMode": "Automatic dark mode",
+      "reducedAnimations": "Reduced animations"
+    },
+    "notifications": {
+      "title": "Notifications",
+      "description": "Configure system notifications",
+      "medicalReminders": "Medical reminders",
+      "systemUpdates": "System updates"
+    }
+  },
+  "common": {
+    "years": "years",
+    "months": "months",
+    "loading": "Loading...",
+    "error": "Error",
+    "success": "Success",
+    "user": "User",
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "delete": "Delete",
+    "search": "Search",
+    "create": "Create",
+    "update": "Update"
+  },
+  "auth": {
+    "welcome": "Welcome to Robipet",
+    "loginMessage": "Access your account to continue",
+    "username": "Username",
+    "password": "Password",
+    "userPlaceholder": "Enter your username",
+    "passwordPlaceholder": "Enter your password",
+    "loginButton": "Sign In",
+    "loggingIn": "Signing in...",
+    "invalidCredentials": "Invalid credentials. Please check your username and password.",
+    "logout": "Logout"
+  },
+  "users": {
+    "title": "User Management",
+    "subtitle": "Manage and search system users",
+    "listTitle": "User List",
+    "newUser": "New User",
+    "createUser": "Create New User",
+    "createUserDescription": "Add a new user to the system",
+    "editUser": "Edit User",
+    "noUsers": "No users found",
+    "noUsersDescription": "Click on \"New User\" to create the first user",
+    "name": "Name",
+    "email": "Email",
+    "username": "Username",
+    "password": "Password",
+    "role": "Role",
+    "admin": "Administrator",
+    "user": "User",
+    "userCreated": "User created successfully",
+    "userUpdated": "User updated successfully",
+    "userDeleted": "User deleted successfully",
+    "confirmDelete": "Are you sure you want to delete this user?"
+  },
+  "pets": {
+    "title": "My Pets",
+    "subtitle": "Manage your pets' information",
+    "addPet": "Add Pet",
+    "editPet": "Edit Pet",
+    "deletePet": "Delete Pet",
+    "confirmDelete": "Are you sure you want to delete this pet?",
+    "noPets": "No pets added yet",
+    "noPetsDescription": "Click on \"Add Pet\" to add your first pet",
+    "name": "Name",
+    "species": "Species",
+    "breed": "Breed",
+    "birthDate": "Birth Date",
+    "weight": "Weight",
+    "color": "Color",
+    "microchip": "Microchip",
+    "gender": "Gender",
+    "male": "Male",
+    "female": "Female",
+    "size": "Size",
+    "small": "Small",
+    "medium": "Medium",
+    "large": "Large",
+    "neutered": "Neutered/Spayed",
+    "dog": "Dog",
+    "cat": "Cat",
+    "other": "Other"
+  },
+  "medical": {
+    "vaccines": "Vaccines",
+    "dewormings": "Dewormings",
+    "medications": "Medications",
+    "medicalReviews": "Medical Reviews",
+    "documents": "Documents",
+    "addVaccine": "Add Vaccine",
+    "addDeworming": "Add Deworming",
+    "addMedication": "Add Medication",
+    "addReview": "Add Review",
+    "addDocument": "Add Document",
+    "status": "Status",
+    "pending": "Pending",
+    "completed": "Completed",
+    "expired": "Expired",
+    "veterinarian": "Veterinarian",
+    "clinic": "Clinic",
+    "nextDate": "Next Date",
+    "treatmentDate": "Treatment Date",
+    "dosage": "Dosage",
+    "frequency": "Frequency",
+    "diagnosis": "Diagnosis",
+    "treatment": "Treatment",
+    "cost": "Cost",
+    "notes": "Notes"
+  }
+}

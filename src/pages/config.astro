@@ -1,0 +1,33 @@
+---
+import ProtectedLayout from '../layouts/ProtectedLayout.astro';
+import ConfigContent from '../components/ConfigContent';
+
+const currentPath = Astro.url.pathname;
+const configSection = Astro.url.searchParams.get('section') || 'general';
+---
+
+<ProtectedLayout title="Configuración - Ajustes del Sistema">
+  <main class="max-w-7xl mx-auto px-4 lg:px-6 py-4 lg:py-6 min-h-screen bg-dark-primary">
+    <ConfigContent client:load />
+  </main>
+
+  <script>
+    // Cargar traducciones para el título y subtítulo de configuración
+    document.addEventListener('DOMContentLoaded', async () => {
+      const locale = localStorage.getItem('locale') || 'en';
+      
+      try {
+        const response = await fetch(`/locales/${locale}.json`);
+        const translations = await response.json();
+        
+        const titleEl = document.getElementById('config-title');
+        const subtitleEl = document.getElementById('config-subtitle');
+        
+        if (titleEl) titleEl.textContent = translations.config.title;
+        if (subtitleEl) subtitleEl.textContent = translations.config.subtitle;
+      } catch (error) {
+        console.log('Error loading config page translations:', error);
+      }
+    });
+  </script>
+</ProtectedLayout>
