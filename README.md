@@ -12,7 +12,7 @@
 
 **The all-in-one digital health portfolio for your beloved pets** 🏥
 
-[Demo](https://robipet.anghios.es/) • [Documentation](https://robipet.anghios.es/docs • [Report Bug](https://github.com/anghios/robipet/issues) • [Request Feature](https://github.com/anghios/robipet/issues)
+[Demo](https://robipet.anghios.es/) • [Documentation](https://robipet.anghios.es/docs) • [Report Bug](https://github.com/anghios/robipet/issues) • [Request Feature](https://github.com/anghios/robipet/issues)
 
 </div>
 
