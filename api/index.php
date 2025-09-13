@@ -717,7 +717,7 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
                     }
                     
                     // Generar URL pública para la imagen
-                    $imageUrl = 'http://localhost:8081/api/uploads/' . $fileName;
+                    $imageUrl = '/api/uploads/' . $fileName;
                     
                     echo json_encode([
                         'success' => true,
