@@ -1,4 +1,4 @@
-import{u as E,j as e,I as l}from"./useTranslation.Bj4lSKMn.js";import{r as p}from"./index.CaZlGE7t.js";import{T as ht}from"./Toast.C4bjx4XO.js";import{u as xt}from"./useToast.BMUEhQbi.js";/* empty css                       */function Q({isOpen:t,onClose:r,onConfirm:s,title:c,message:n,confirmText:m,confirmColor:a,icon:d}){const{t:o}=E();return p.useEffect(()=>{if(!document.getElementById("shake-animation")){const h=document.createElement("style");h.id="shake-animation",h.textContent=`
+import{u as E,j as e,I as l}from"./useTranslation.ZJdy1VP1.js";import{r as p}from"./index.CaZlGE7t.js";import{T as ht}from"./Toast.DNZ0dMbv.js";import{u as xt}from"./useToast.BMUEhQbi.js";/* empty css                       */function Q({isOpen:t,onClose:r,onConfirm:s,title:c,message:n,confirmText:m,confirmColor:a,icon:d}){const{t:o}=E();return p.useEffect(()=>{if(!document.getElementById("shake-animation")){const h=document.createElement("style");h.id="shake-animation",h.textContent=`
         @keyframes shake {
           0%, 100% { transform: translateX(0) rotate(0deg); }
           10%, 30%, 50%, 70%, 90% { transform: translateX(-2px) rotate(-1deg); }

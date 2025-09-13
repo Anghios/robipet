@@ -11,3 +11,4 @@ coverage
 .claude
 api/database.sqlite
 api/uploads
+.build_docker

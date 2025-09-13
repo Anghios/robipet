@@ -18,3 +18,5 @@ ejemplos
 api/uploads/*
 api/uploads/documents/*
 api/uploads/images/*
+
+.build_docker

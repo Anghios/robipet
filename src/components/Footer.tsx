@@ -26,8 +26,11 @@ export default function Footer() {
             <a href="https://robipet.anghios.es/" target="_blank" className="text-white/50 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-full" title={t('footer.website')}>
               <Icon icon="mdi:web" className="w-6 h-6" />
             </a>
-            <a href="https://github.com/Anghios/robi" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-full" title={t('footer.viewCode')}>
+            <a href="https://github.com/Anghios/robipet" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-full" title={t('footer.viewCode')}>
               <Icon icon="mdi:github" className="w-6 h-6" />
+            </a>
+            <a href="https://discord.com/invite/mrBTb9pNqm" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-full" title={t('footer.joinDiscord')}>
+              <Icon icon="mdi:discord" className="w-6 h-6" />
             </a>
             <a href="https://robipet.anghios.es/donate" target="_blank" rel="noopener noreferrer" className="text-white/50 hover:text-white transition-colors p-2 hover:bg-white/10 rounded-full" title={t('footer.supportProject')}>
               <Icon icon="mdi:heart-outline" className="w-6 h-6" />
