@@ -716,10 +716,9 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
                         throw new Exception('Error al guardar la imagen');
                     }
                     
-                    // Generar URL pública para la imagen usando el host actual
-                    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-                    $host = $_SERVER['HTTP_HOST'];
-                    $imageUrl = $protocol . '://' . $host . '/api/uploads/' . $fileName;
+                    // Generar URL relativa para la imagen
+                    // Esto permitirá que funcione con cualquier dominio/puerto
+                    $imageUrl = '/api/uploads/' . $fileName;
                     
                     echo json_encode([
                         'success' => true,

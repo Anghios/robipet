@@ -188,7 +188,12 @@ export function usePetListData(showToast: (message: string, type: 'success' | 'e
       const result = await response.json();
       
       if (result.success) {
-        const imageUrl = result.url || result.imageUrl;
+        let imageUrl = result.url || result.imageUrl;
+        
+        // Si la URL es relativa, construir la URL completa
+        if (imageUrl && imageUrl.startsWith('/')) {
+          imageUrl = window.location.origin + imageUrl;
+        }
         
         if (isEditing && editingPet) {
           setEditingPet({...editingPet, photo_url: imageUrl});
