@@ -23,8 +23,10 @@ COPY api/ ./api/
 # Copiar archivos compilados de Astro (ya existentes en /dist)
 COPY dist/ ./
 
-# Crear directorio para SQLite y dar permisos
+# Crear directorios para SQLite y uploads, dar permisos
 RUN mkdir -p /var/www/html/api && \
+    mkdir -p /var/www/html/db && \
+    mkdir -p /var/www/html/api/uploads && \
     chown -R www-data:www-data /var/www/html && \
     chmod -R 755 /var/www/html
 

@@ -6,6 +6,7 @@ ejemplos
 
 # Astro build output
 .astro
+.claude
 
 # SQLite database files
 *.db
