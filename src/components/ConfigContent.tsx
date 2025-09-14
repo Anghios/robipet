@@ -16,6 +16,109 @@ export default function ConfigContent() {
         <div className="p-4 lg:p-8 space-y-6 lg:space-y-8">
           <SectionHeader icon="mdi:cog" title={t('config.general')} />
 
+          {/* Database Management */}
+          <div className="bg-gradient-card rounded-2xl shadow-xl border border-dark-hover p-4 lg:p-8">
+            <div className="flex items-center gap-3 mb-4 lg:mb-6">
+              <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl">
+                <Icon icon="mdi:database" className="w-7 h-7 text-white" />
+              </div>
+              <div>
+                <h3 className="text-xl font-bold text-dark-primary">Base de Datos</h3>
+                <p className="text-dark-secondary text-sm">
+                  Gestiona y respalda tu base de datos
+                </p>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <button
+                onClick={async () => {
+                  try {
+                    const response = await fetch('/api/export_database', {
+                      method: 'GET',
+                      headers: {
+                        'Accept': 'application/octet-stream'
+                      }
+                    });
+                    
+                    if (!response.ok) {
+                      const contentType = response.headers.get('content-type');
+                      if (contentType && contentType.includes('application/json')) {
+                        const errorData = await response.json();
+                        throw new Error(errorData.error || 'Error al exportar');
+                      }
+                      throw new Error(`Error HTTP: ${response.status}`);
+                    }
+                    
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `database_backup_${new Date().toISOString().split('T')[0]}.sqlite`;
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                    document.body.removeChild(a);
+                  } catch (error) {
+                    console.error('Error exportando base de datos:', error);
+                    alert(`Error al exportar la base de datos: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+                  }
+                }}
+                className="group flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+              >
+                <Icon icon="mdi:download" className="w-6 h-6" />
+                <span className="font-semibold">Export Database</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  const input = document.createElement('input');
+                  input.type = 'file';
+                  input.accept = '.sqlite';
+                  input.onchange = async (e) => {
+                    const file = (e.target as HTMLInputElement).files?.[0];
+                    if (!file) return;
+
+                    const formData = new FormData();
+                    formData.append('database', file);
+
+                    try {
+                      const response = await fetch('/api/import_database', {
+                        method: 'POST',
+                        body: formData
+                      });
+
+                      if (!response.ok) throw new Error('Error al importar');
+                      
+                      await response.json();
+                      alert('Base de datos importada exitosamente. La aplicación se recargará.');
+                      window.location.reload();
+                    } catch (error) {
+                      console.error('Error importando base de datos:', error);
+                      alert('Error al importar la base de datos');
+                    }
+                  };
+                  input.click();
+                }}
+                className="group flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+              >
+                <Icon icon="mdi:upload" className="w-6 h-6" />
+                <span className="font-semibold">Import Database</span>
+              </button>
+            </div>
+
+            <div className="bg-amber-900/20 border border-amber-600/30 rounded-xl p-4 mt-4">
+              <div className="flex items-start gap-3">
+                <Icon icon="mdi:alert" className="w-5 h-5 text-amber-400 mt-0.5" />
+                <div>
+                  <p className="font-medium text-amber-300 text-sm">
+                    Importante: Al importar una base de datos, todos los datos actuales serán reemplazados.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           {/* Idioma */}
           <div className="bg-gradient-card rounded-2xl shadow-xl border border-dark-hover p-4 lg:p-8">
             <div className="flex items-center gap-3 mb-4 lg:mb-6">

@@ -769,6 +769,114 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
             }
             break;
             
+        case 'export_database':
+            if ($method === 'GET') {
+                $databasePath = __DIR__ . '/database.sqlite';
+                
+                if (!file_exists($databasePath)) {
+                    http_response_code(404);
+                    echo json_encode(['error' => 'Database file not found']);
+                    exit();
+                }
+                
+                if (!is_readable($databasePath)) {
+                    http_response_code(403);
+                    echo json_encode(['error' => 'Database file is not readable']);
+                    exit();
+                }
+                
+                // Cambiar headers para descarga de archivo
+                header('Content-Type: application/octet-stream');
+                header('Content-Disposition: attachment; filename="database_backup_' . date('Y-m-d_H-i-s') . '.sqlite"');
+                header('Content-Length: ' . filesize($databasePath));
+                header('Cache-Control: no-cache, must-revalidate');
+                header('Pragma: no-cache');
+                
+                // Limpiar cualquier salida previa
+                ob_clean();
+                flush();
+                
+                // Enviar el archivo
+                readfile($databasePath);
+                exit();
+            }
+            break;
+            
+        case 'import_database':
+            if ($method === 'POST') {
+                // Verificar que se haya subido un archivo
+                if (!isset($_FILES['database']) || $_FILES['database']['error'] !== UPLOAD_ERR_OK) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'No file uploaded or upload error']);
+                    exit();
+                }
+                
+                $uploadedFile = $_FILES['database'];
+                $databasePath = __DIR__ . '/database.sqlite';
+                $backupPath = __DIR__ . '/database_backup_' . date('Y-m-d_H-i-s') . '.sqlite';
+                
+                // Verificar que el archivo subido sea SQLite
+                $mimeType = mime_content_type($uploadedFile['tmp_name']);
+                if (!in_array($mimeType, ['application/x-sqlite3', 'application/vnd.sqlite3', 'application/octet-stream'])) {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Invalid file type. Please upload a SQLite database file.']);
+                    exit();
+                }
+                
+                // Crear backup del archivo actual si existe
+                if (file_exists($databasePath)) {
+                    if (!copy($databasePath, $backupPath)) {
+                        http_response_code(500);
+                        echo json_encode(['error' => 'Failed to create backup of current database']);
+                        exit();
+                    }
+                }
+                
+                // Mover el archivo subido a la ubicación de la base de datos
+                if (!move_uploaded_file($uploadedFile['tmp_name'], $databasePath)) {
+                    // Si falla, restaurar el backup si existe
+                    if (file_exists($backupPath) && file_exists($databasePath)) {
+                        copy($backupPath, $databasePath);
+                    }
+                    http_response_code(500);
+                    echo json_encode(['error' => 'Failed to import database']);
+                    exit();
+                }
+                
+                // Verificar que la nueva base de datos sea válida
+                try {
+                    $testDb = new SQLite3($databasePath);
+                    $testDb->query('SELECT 1');
+                    $testDb->close();
+                } catch (Exception $e) {
+                    // Si la base de datos no es válida, restaurar el backup
+                    if (file_exists($backupPath)) {
+                        copy($backupPath, $databasePath);
+                    }
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Invalid database file']);
+                    exit();
+                }
+                
+                // Establecer permisos correctos
+                chmod($databasePath, 0664);
+                
+                // Limpiar backups antiguos (mantener solo los últimos 5)
+                $backupFiles = glob(__DIR__ . '/database_backup_*.sqlite');
+                if (count($backupFiles) > 5) {
+                    usort($backupFiles, function($a, $b) {
+                        return filemtime($a) - filemtime($b);
+                    });
+                    $filesToDelete = array_slice($backupFiles, 0, count($backupFiles) - 5);
+                    foreach ($filesToDelete as $file) {
+                        unlink($file);
+                    }
+                }
+                
+                echo json_encode(['success' => true, 'message' => 'Database imported successfully']);
+            }
+            break;
+            
         default:
             http_response_code(404);
             echo json_encode(['error' => 'Endpoint not found']);
