@@ -524,7 +524,7 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
         // Endpoints de base de datos - Alta prioridad
         case 'export_database':
             if ($method === 'GET') {
-                $databasePath = __DIR__ . '/database.sqlite';
+                $databasePath = dirname(__DIR__) . '/db/database.sqlite';
 
                 if (!file_exists($databasePath)) {
                     http_response_code(404);
@@ -563,7 +563,7 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
                 }
 
                 $uploadedFile = $_FILES['database'];
-                $databasePath = __DIR__ . '/database.sqlite';
+                $databasePath = dirname(__DIR__) . '/db/database.sqlite';
                 $backupPath = __DIR__ . '/database_backup_' . date('Y-m-d_H-i-s') . '.sqlite';
 
                 // Verificar que el archivo subido sea SQLite

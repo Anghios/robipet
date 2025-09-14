@@ -6,5 +6,5 @@ define('DB_USER', 'root');
 define('DB_PASS', '');
 
 // Para SQLite (alternativa más simple)
-define('DB_SQLITE_PATH', __DIR__ . '/database.sqlite');
+define('DB_SQLITE_PATH', dirname(__DIR__) . '/db/database.sqlite');
 ?>

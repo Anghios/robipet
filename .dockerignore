@@ -9,7 +9,8 @@ coverage
 .vscode
 .astro
 .claude
-api/database.sqlite
+db/database.sqlite
 api/uploads
 .build_docker
 .todo_next
+db

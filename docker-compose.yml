@@ -11,7 +11,7 @@ services:
       - "29724:8081"
     volumes:
       # Persistir la base de datos SQLite
-      - sqlite_data:/var/www/html/api
+      - sqlite_data:/var/www/html/db
       # En desarrollo, montar código para hot reload (comentar en producción)
       # - ./api:/var/www/html/api
       # - ./dist:/var/www/html

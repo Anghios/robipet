@@ -66,6 +66,14 @@ if (strpos($uri, '/api/uploads/') === 0) {
 // Manejar rutas de API
 if (strpos($uri, '/api/') === 0) {
     header('Access-Control-Allow-Origin: *');
+
+    // Para endpoints específicos como export_database, pasar la ruta completa
+    if (strpos($uri, '/api/export_database') !== false) {
+        $_SERVER['REQUEST_URI'] = '/api/export_database';
+    } elseif (strpos($uri, '/api/import_database') !== false) {
+        $_SERVER['REQUEST_URI'] = '/api/import_database';
+    }
+
     require_once __DIR__ . '/index.php';
     exit();
 }

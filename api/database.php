@@ -4,9 +4,17 @@ class Database {
     
     public function __construct() {
         try {
+            // Crear la carpeta db si no existe
+            $dbDir = dirname(DB_SQLITE_PATH);
+            if (!is_dir($dbDir)) {
+                mkdir($dbDir, 0755, true);
+            }
+
             // Usando SQLite para simplicidad
             $this->connection = new PDO('sqlite:' . DB_SQLITE_PATH);
             $this->connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            // Habilitar claves foráneas en SQLite
+            $this->connection->exec('PRAGMA foreign_keys = ON');
             $this->initDatabase();
         } catch (PDOException $e) {
             die('Connection failed: ' . $e->getMessage());
