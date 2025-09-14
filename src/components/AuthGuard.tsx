@@ -22,13 +22,44 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 
   useEffect(() => {
     // Hacer la verificación de auth inmediatamente sin delay
-    const checkAuth = () => {
+    const checkAuth = async () => {
       try {
         const userData = localStorage.getItem('user');
         if (userData) {
           const parsedUser = JSON.parse(userData);
-          setUser(parsedUser);
-          setIsAuthenticated(true);
+
+          // Verificar que el usuario aún existe en la base de datos
+          try {
+            const response = await fetch('/api/verify-session', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({ userId: parsedUser.id })
+            });
+
+            if (response.ok) {
+              const result = await response.json();
+              if (result.valid) {
+                setUser(parsedUser);
+                setIsAuthenticated(true);
+              } else {
+                // Usuario no existe en la DB, limpiar sesión
+                localStorage.removeItem('user');
+                setIsAuthenticated(false);
+                setUser(null);
+              }
+            } else {
+              // Error de servidor, limpiar sesión por seguridad
+              localStorage.removeItem('user');
+              setIsAuthenticated(false);
+              setUser(null);
+            }
+          } catch (verifyError) {
+            // Error de red, mantener sesión local pero marcar para re-verificación
+            setUser(parsedUser);
+            setIsAuthenticated(true);
+          }
         } else {
           setIsAuthenticated(false);
         }
@@ -41,7 +72,39 @@ export default function AuthGuard({ children }: AuthGuardProps) {
     };
 
     checkAuth();
-  }, []);
+
+    // Verificar sesión periódicamente cada 30 segundos
+    const intervalId = setInterval(async () => {
+      const userData = localStorage.getItem('user');
+      if (userData && isAuthenticated) {
+        try {
+          const parsedUser = JSON.parse(userData);
+          const response = await fetch('/api/verify-session', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ userId: parsedUser.id })
+          });
+
+          if (response.ok) {
+            const result = await response.json();
+            if (!result.valid) {
+              // Usuario no existe en la DB, cerrar sesión
+              localStorage.removeItem('user');
+              setIsAuthenticated(false);
+              setUser(null);
+            }
+          }
+        } catch (error) {
+          // Error de red, no cerrar sesión automáticamente
+          console.warn('Error verificando sesión:', error);
+        }
+      }
+    }, 30000); // 30 segundos
+
+    return () => clearInterval(intervalId);
+  }, [isAuthenticated]);
 
   const handleLogin = async (username: string, password: string): Promise<boolean> => {
     try {

@@ -13,4 +13,4 @@ db/database.sqlite
 api/uploads
 .build_docker
 .todo_next
-db
+db/database.sqlite

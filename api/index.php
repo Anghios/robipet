@@ -30,6 +30,40 @@ if (empty($path) && isset($_GET['action'])) {
 
 $database = new Database();
 
+// Función helper para verificar autenticación mediante headers o parámetros
+function verifyAuthenticatedUser($database) {
+    // Buscar el userId en headers o en el cuerpo de la petición
+    $userId = null;
+
+    // Verificar header X-User-ID
+    if (isset($_SERVER['HTTP_X_USER_ID'])) {
+        $userId = $_SERVER['HTTP_X_USER_ID'];
+    }
+    // Verificar parámetro GET
+    else if (isset($_GET['userId'])) {
+        $userId = $_GET['userId'];
+    }
+    // Verificar en FormData POST
+    else if (isset($_POST['userId'])) {
+        $userId = $_POST['userId'];
+    }
+    // Verificar en el cuerpo de la petición POST (JSON)
+    else {
+        $input = json_decode(file_get_contents('php://input'), true);
+        if (isset($input['userId'])) {
+            $userId = $input['userId'];
+        }
+    }
+
+    if (!$userId) {
+        return false;
+    }
+
+    // Verificar que el usuario existe
+    $user = $database->getUserById($userId);
+    return $user !== false;
+}
+
 // Manejar rutas con expresiones regulares primero
 if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
     $petId = $matches[1];
@@ -524,6 +558,13 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
         // Endpoints de base de datos - Alta prioridad
         case 'export_database':
             if ($method === 'GET') {
+                // Verificar autenticación
+                if (!verifyAuthenticatedUser($database)) {
+                    http_response_code(401);
+                    echo json_encode(['error' => 'Unauthorized. Please login first.']);
+                    exit();
+                }
+
                 $databasePath = dirname(__DIR__) . '/db/database.sqlite';
 
                 if (!file_exists($databasePath)) {
@@ -544,6 +585,13 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
 
         case 'import_database':
             if ($method === 'POST') {
+                // Verificar autenticación
+                if (!verifyAuthenticatedUser($database)) {
+                    http_response_code(401);
+                    echo json_encode(['error' => 'Unauthorized. Please login first.']);
+                    exit();
+                }
+
                 // Primero limpiar archivos SQLite antiguos (excepto database.sqlite)
                 $oldFiles = glob(__DIR__ . DIRECTORY_SEPARATOR . '*.sqlite');
                 if ($oldFiles !== false && is_array($oldFiles)) {
@@ -797,7 +845,24 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
                 }
             }
             break;
-            
+
+        case 'verify-session':
+            if ($method === 'POST') {
+                $input = json_decode(file_get_contents('php://input'), true);
+                if (isset($input['userId'])) {
+                    $user = $database->getUserById($input['userId']);
+                    if ($user) {
+                        echo json_encode(['valid' => true, 'user' => $user]);
+                    } else {
+                        echo json_encode(['valid' => false, 'message' => 'Usuario no existe']);
+                    }
+                } else {
+                    http_response_code(400);
+                    echo json_encode(['valid' => false, 'message' => 'ID de usuario requerido']);
+                }
+            }
+            break;
+
         case 'upload/image':
             if ($method === 'POST') {
                 try {

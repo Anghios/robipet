@@ -37,7 +37,15 @@ export default function ConfigContent() {
               <button
                 onClick={async () => {
                   try {
-                    const response = await fetch('/api/export_database', {
+                    // Obtener usuario autenticado
+                    const userData = localStorage.getItem('user');
+                    if (!userData) {
+                      showToast(t('config.database.exportError') + ': No authenticated user', 'error');
+                      return;
+                    }
+                    const user = JSON.parse(userData);
+
+                    const response = await fetch(`/api/export_database?userId=${user.id}`, {
                       method: 'GET',
                       headers: {
                         'Accept': 'application/octet-stream'
@@ -89,8 +97,17 @@ export default function ConfigContent() {
                     const file = (e.target as HTMLInputElement).files?.[0];
                     if (!file) return;
 
+                    // Obtener usuario autenticado
+                    const userData = localStorage.getItem('user');
+                    if (!userData) {
+                      showToast(t('config.database.importError') + ': No authenticated user', 'error');
+                      return;
+                    }
+                    const user = JSON.parse(userData);
+
                     const formData = new FormData();
                     formData.append('database', file);
+                    formData.append('userId', user.id.toString());
 
                     try {
                       const response = await fetch('/api/import_database', {
