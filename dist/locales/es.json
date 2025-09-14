@@ -73,6 +73,17 @@
     "subtitle": "Gestiona los ajustes y configuración del sistema",
     "general": "General",
     "users": "Usuarios",
+    "database": {
+      "title": "Base de Datos",
+      "description": "Gestiona y respalda tu base de datos",
+      "exportButton": "Exportar Base de Datos",
+      "importButton": "Importar Base de Datos",
+      "importWarning": "Importante: Al importar una base de datos, todos los datos actuales serán reemplazados.",
+      "exportSuccess": "Base de datos exportada exitosamente",
+      "exportError": "Error al exportar la base de datos",
+      "importSuccess": "Base de datos importada exitosamente. La aplicación se recargará.",
+      "importError": "Error al importar la base de datos"
+    },
     "language": {
       "title": "Idioma",
       "description": "Selecciona el idioma de la interfaz",
