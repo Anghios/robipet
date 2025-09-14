@@ -12,3 +12,4 @@ coverage
 api/database.sqlite
 api/uploads
 .build_docker
+.todo_next

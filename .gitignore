@@ -20,3 +20,4 @@ api/uploads/documents/*
 api/uploads/images/*
 
 .build_docker
+.todo_next

@@ -73,6 +73,13 @@
     "subtitle": "Manage system settings and configuration",
     "general": "General",
     "users": "Users",
+    "database": {
+      "title": "Database",
+      "description": "Manage and backup your database",
+      "exportButton": "Export Database",
+      "importButton": "Import Database",
+      "importWarning": "Important: When importing a database, all current data will be replaced."
+    },
     "language": {
       "title": "Language",
       "description": "Select interface language",

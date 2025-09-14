@@ -23,9 +23,9 @@ export default function ConfigContent() {
                 <Icon icon="mdi:database" className="w-7 h-7 text-white" />
               </div>
               <div>
-                <h3 className="text-xl font-bold text-dark-primary">Base de Datos</h3>
+                <h3 className="text-xl font-bold text-dark-primary">{t('config.database.title')}</h3>
                 <p className="text-dark-secondary text-sm">
-                  Gestiona y respalda tu base de datos
+                  {t('config.database.description')}
                 </p>
               </div>
             </div>
@@ -64,10 +64,10 @@ export default function ConfigContent() {
                     alert(`Error al exportar la base de datos: ${error instanceof Error ? error.message : 'Error desconocido'}`);
                   }
                 }}
-                className="group flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="group flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:scale-105 active:scale-100"
               >
-                <Icon icon="mdi:download" className="w-6 h-6" />
-                <span className="font-semibold">Export Database</span>
+                <Icon icon="mdi:download" className="w-6 h-6 group-hover:animate-pulse" />
+                <span className="font-semibold">{t('config.database.exportButton')}</span>
               </button>
 
               <button
@@ -100,10 +100,10 @@ export default function ConfigContent() {
                   };
                   input.click();
                 }}
-                className="group flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl"
+                className="group flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:scale-105 active:scale-100"
               >
-                <Icon icon="mdi:upload" className="w-6 h-6" />
-                <span className="font-semibold">Import Database</span>
+                <Icon icon="mdi:upload" className="w-6 h-6 group-hover:animate-pulse" />
+                <span className="font-semibold">{t('config.database.importButton')}</span>
               </button>
             </div>
 
@@ -112,7 +112,7 @@ export default function ConfigContent() {
                 <Icon icon="mdi:alert" className="w-5 h-5 text-amber-400 mt-0.5" />
                 <div>
                   <p className="font-medium text-amber-300 text-sm">
-                    Importante: Al importar una base de datos, todos los datos actuales serán reemplazados.
+                    {t('config.database.importWarning')}
                   </p>
                 </div>
               </div>

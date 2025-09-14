@@ -73,6 +73,13 @@
     "subtitle": "Gestiona los ajustes y configuración del sistema",
     "general": "General",
     "users": "Usuarios",
+    "database": {
+      "title": "Base de Datos",
+      "description": "Gestiona y respalda tu base de datos",
+      "exportButton": "Exportar Base de Datos",
+      "importButton": "Importar Base de Datos",
+      "importWarning": "Importante: Al importar una base de datos, todos los datos actuales serán reemplazados."
+    },
     "language": {
       "title": "Idioma",
       "description": "Selecciona el idioma de la interfaz",
