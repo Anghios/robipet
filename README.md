@@ -44,9 +44,17 @@ Get RobiPet running in seconds!
 ### 🐳 Using Docker (Recommended)
 
 ```bash
-docker pull bansheetech/robipet:latest
-docker run -p 3000:3000 bansheetech/robipet:latest
+docker run -d \
+  --name robipet \
+  -p 29724:8081 \
+  -v robipet_sqlite_data:/var/www/html/api \
+  -e APACHE_RUN_USER=www-data \
+  -e APACHE_RUN_GROUP=www-data \
+  --restart unless-stopped \
+  bansheetech/robipet:latest
 ```
+
+Or download the latest [docker-compose.yml](https://github.com/Anghios/robipet/blob/main/docker-compose.yml)
 
 That's it! 🎉 Visit `http://localhost:3000` to see your pet portfolio.
 
