@@ -804,13 +804,24 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
             
         case 'import_database':
             if ($method === 'POST') {
+                // Primero limpiar archivos SQLite antiguos (excepto database.sqlite)
+                $oldFiles = glob(__DIR__ . DIRECTORY_SEPARATOR . '*.sqlite');
+                if ($oldFiles !== false && is_array($oldFiles)) {
+                    foreach ($oldFiles as $file) {
+                        $filename = basename($file);
+                        if ($filename !== 'database.sqlite' && strpos($filename, 'database_backup_') === 0) {
+                            @unlink($file);
+                        }
+                    }
+                }
+
                 // Verificar que se haya subido un archivo
                 if (!isset($_FILES['database']) || $_FILES['database']['error'] !== UPLOAD_ERR_OK) {
                     http_response_code(400);
                     echo json_encode(['error' => 'No file uploaded or upload error']);
                     exit();
                 }
-                
+
                 $uploadedFile = $_FILES['database'];
                 $databasePath = __DIR__ . '/database.sqlite';
                 $backupPath = __DIR__ . '/database_backup_' . date('Y-m-d_H-i-s') . '.sqlite';
@@ -843,11 +854,12 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
                     exit();
                 }
                 
-                // Verificar que la nueva base de datos sea válida
+                // Verificar que la nueva base de datos sea válida usando PDO
                 try {
-                    $testDb = new SQLite3($databasePath);
+                    $testDb = new PDO('sqlite:' . $databasePath);
+                    $testDb->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
                     $testDb->query('SELECT 1');
-                    $testDb->close();
+                    $testDb = null; // Cerrar conexión
                 } catch (Exception $e) {
                     // Si la base de datos no es válida, restaurar el backup
                     if (file_exists($backupPath)) {
@@ -860,19 +872,42 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
                 
                 // Establecer permisos correctos
                 chmod($databasePath, 0664);
-                
-                // Limpiar backups antiguos (mantener solo los últimos 5)
-                $backupFiles = glob(__DIR__ . '/database_backup_*.sqlite');
-                if (count($backupFiles) > 5) {
-                    usort($backupFiles, function($a, $b) {
-                        return filemtime($a) - filemtime($b);
-                    });
-                    $filesToDelete = array_slice($backupFiles, 0, count($backupFiles) - 5);
-                    foreach ($filesToDelete as $file) {
-                        unlink($file);
+
+                // Eliminar el archivo de backup después de confirmar que la importación fue exitosa
+                if (file_exists($backupPath)) {
+                    unlink($backupPath);
+                    error_log("Backup eliminado: " . $backupPath);
+                }
+
+                // Limpiar TODOS los archivos .sqlite que no sean database.sqlite
+                $pattern = __DIR__ . DIRECTORY_SEPARATOR . '*.sqlite';
+                $sqliteFiles = glob($pattern);
+                error_log("Archivos SQLite encontrados: " . count($sqliteFiles));
+
+                if ($sqliteFiles !== false && is_array($sqliteFiles)) {
+                    foreach ($sqliteFiles as $file) {
+                        $filename = basename($file);
+                        if ($filename !== 'database.sqlite') {
+                            if (unlink($file)) {
+                                error_log("Archivo eliminado: " . $filename);
+                            } else {
+                                error_log("No se pudo eliminar: " . $filename);
+                            }
+                        }
                     }
                 }
-                
+
+                // También buscar y eliminar archivos de backup específicamente
+                $backupPattern = __DIR__ . DIRECTORY_SEPARATOR . 'database_backup_*.sqlite';
+                $backupFiles = glob($backupPattern);
+                if ($backupFiles !== false && is_array($backupFiles)) {
+                    foreach ($backupFiles as $file) {
+                        if (unlink($file)) {
+                            error_log("Backup eliminado: " . basename($file));
+                        }
+                    }
+                }
+
                 echo json_encode(['success' => true, 'message' => 'Database imported successfully']);
             }
             break;

@@ -3,12 +3,15 @@ import UsersList from './UsersList';
 import ConfigSidebar from './ConfigContent/ConfigSidebar.tsx';
 import ConfigSkeleton from './ConfigContent/ConfigSkeleton.tsx';
 import SectionHeader from './ConfigContent/SectionHeader.tsx';
+import Toast from './Visuals/Toast';
 import { useTranslation } from '../hooks/useTranslation';
 import { useConfigNavigation } from '../hooks/useConfigNavigation.ts';
+import { useToast } from '../hooks/useToast';
 
 export default function ConfigContent() {
   const { t, locale, changeLanguage, loading } = useTranslation();
   const { currentSection, handleSectionChange } = useConfigNavigation();
+  const { toast, showToast, hideToast } = useToast();
 
   const renderContent = () => {
     if (currentSection === 'general') {
@@ -59,9 +62,16 @@ export default function ConfigContent() {
                     a.click();
                     window.URL.revokeObjectURL(url);
                     document.body.removeChild(a);
+
+                    // Mostrar toast de éxito
+                    showToast(t('config.database.exportSuccess'), 'success');
                   } catch (error) {
                     console.error('Error exportando base de datos:', error);
-                    alert(`Error al exportar la base de datos: ${error instanceof Error ? error.message : 'Error desconocido'}`);
+                    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+                    showToast(
+                      `${t('config.database.exportError')}: ${errorMessage}`,
+                      'error'
+                    );
                   }
                 }}
                 className="group flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:scale-105 active:scale-100"
@@ -88,14 +98,37 @@ export default function ConfigContent() {
                         body: formData
                       });
 
-                      if (!response.ok) throw new Error('Error al importar');
-                      
-                      await response.json();
-                      alert('Base de datos importada exitosamente. La aplicación se recargará.');
-                      window.location.reload();
+                      // Si la respuesta es exitosa (2xx), consideramos que la importación fue exitosa
+                      // independientemente del contenido de la respuesta
+                      if (response.ok) {
+                        showToast(t('config.database.importSuccess'), 'success');
+                        setTimeout(() => {
+                          window.location.reload();
+                        }, 2000);
+                        return;
+                      }
+
+                      // Solo si hay un error, intentamos obtener más detalles
+                      const contentType = response.headers.get('content-type');
+                      let errorMessage = `Error HTTP: ${response.status}`;
+
+                      if (contentType && contentType.includes('application/json')) {
+                        try {
+                          const errorData = await response.json();
+                          errorMessage = errorData.error || errorMessage;
+                        } catch (e) {
+                          // Si no se puede parsear el JSON, usar el mensaje por defecto
+                        }
+                      }
+
+                      throw new Error(errorMessage);
                     } catch (error) {
                       console.error('Error importando base de datos:', error);
-                      alert('Error al importar la base de datos');
+                      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+                      showToast(
+                        `${t('config.database.importError')}: ${errorMessage}`,
+                        'error'
+                      );
                     }
                   };
                   input.click();
@@ -298,16 +331,27 @@ export default function ConfigContent() {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6">
-      <ConfigSidebar 
-        currentSection={currentSection}
-        onSectionChange={handleSectionChange}
-      />
-      
-      {/* Content Area */}
-      <div className="flex-1 bg-dark-card rounded-2xl shadow-xl border border-dark overflow-hidden">
-        {renderContent()}
+    <>
+      <div className="flex flex-col lg:flex-row gap-6">
+        <ConfigSidebar
+          currentSection={currentSection}
+          onSectionChange={handleSectionChange}
+        />
+
+        {/* Content Area */}
+        <div className="flex-1 bg-dark-card rounded-2xl shadow-xl border border-dark overflow-hidden">
+          {renderContent()}
+        </div>
       </div>
-    </div>
+
+      {/* Toast notifications */}
+      {toast && (
+        <Toast
+          toast={toast}
+          onClose={hideToast}
+          duration={5000}
+        />
+      )}
+    </>
   );
 }

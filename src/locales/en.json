@@ -78,7 +78,11 @@
       "description": "Manage and backup your database",
       "exportButton": "Export Database",
       "importButton": "Import Database",
-      "importWarning": "Important: When importing a database, all current data will be replaced."
+      "importWarning": "Important: When importing a database, all current data will be replaced.",
+      "exportSuccess": "Database exported successfully",
+      "exportError": "Error exporting database",
+      "importSuccess": "Database imported successfully. The application will reload.",
+      "importError": "Error importing database"
     },
     "language": {
       "title": "Language",
