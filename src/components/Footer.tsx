@@ -14,7 +14,7 @@ export default function Footer() {
             <div className="flex items-center justify-center w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full overflow-hidden">
               <img src="/logo.png" alt="Robipet Logo" className="w-6 h-6 object-contain" />
             </div>
-            <span className="text-lg font-bold text-white">Robipet v1.0.1</span>
+            <span className="text-lg font-bold text-white">Robipet v1.0.2</span>
           </div>
           <p className="text-white/70 text-sm mb-4 max-w-md mx-auto">
             {t('footer.description')}
