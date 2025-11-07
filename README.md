@@ -41,6 +41,15 @@ Managing your pet's health shouldn't be complicated. **RobiPet** transforms the 
 
 Get RobiPet running in seconds!
 
+### 🔑 Default Credentials
+
+**For first-time installation, use these credentials to log in:**
+
+- **Username:** `admin`
+- **Password:** `admin123`
+
+⚠️ **Important:** After your first login, go to Settings and change your username, role, and password immediately for security.
+
 ### 🐳 Using Docker (Recommended)
 
 ```bash
