@@ -24,18 +24,20 @@ export default function AuthGuard({ children }: AuthGuardProps) {
     // Hacer la verificación de auth inmediatamente sin delay
     const checkAuth = async () => {
       try {
+        const token = localStorage.getItem('authToken');
         const userData = localStorage.getItem('user');
-        if (userData) {
+
+        if (token && userData) {
           const parsedUser = JSON.parse(userData);
 
-          // Verificar que el usuario aún existe en la base de datos
+          // Verificar que el token sigue siendo válido
           try {
             const response = await fetch('/api/verify-session', {
               method: 'POST',
               headers: {
+                'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
-              },
-              body: JSON.stringify({ userId: parsedUser.id })
+              }
             });
 
             if (response.ok) {
@@ -44,14 +46,16 @@ export default function AuthGuard({ children }: AuthGuardProps) {
                 setUser(parsedUser);
                 setIsAuthenticated(true);
               } else {
-                // Usuario no existe en la DB, limpiar sesión
+                // Token inválido, limpiar sesión
                 localStorage.removeItem('user');
+                localStorage.removeItem('authToken');
                 setIsAuthenticated(false);
                 setUser(null);
               }
             } else {
-              // Error de servidor, limpiar sesión por seguridad
+              // Error de servidor o token inválido, limpiar sesión
               localStorage.removeItem('user');
+              localStorage.removeItem('authToken');
               setIsAuthenticated(false);
               setUser(null);
             }
@@ -75,26 +79,34 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 
     // Verificar sesión periódicamente cada 30 segundos
     const intervalId = setInterval(async () => {
+      const token = localStorage.getItem('authToken');
       const userData = localStorage.getItem('user');
-      if (userData && isAuthenticated) {
+
+      if (token && userData && isAuthenticated) {
         try {
-          const parsedUser = JSON.parse(userData);
           const response = await fetch('/api/verify-session', {
             method: 'POST',
             headers: {
+              'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ userId: parsedUser.id })
+            }
           });
 
           if (response.ok) {
             const result = await response.json();
             if (!result.valid) {
-              // Usuario no existe en la DB, cerrar sesión
+              // Token expirado o inválido, cerrar sesión
               localStorage.removeItem('user');
+              localStorage.removeItem('authToken');
               setIsAuthenticated(false);
               setUser(null);
             }
+          } else {
+            // Token inválido, cerrar sesión
+            localStorage.removeItem('user');
+            localStorage.removeItem('authToken');
+            setIsAuthenticated(false);
+            setUser(null);
           }
         } catch (error) {
           // Error de red, no cerrar sesión automáticamente
@@ -116,7 +128,9 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 
       const result = await response.json();
 
-      if (result.success) {
+      if (result.success && result.token) {
+        // Guardar token JWT y datos del usuario
+        localStorage.setItem('authToken', result.token);
         localStorage.setItem('user', JSON.stringify(result.user));
         setUser(result.user);
         setIsAuthenticated(true);
@@ -130,6 +144,7 @@ export default function AuthGuard({ children }: AuthGuardProps) {
 
   const handleLogout = () => {
     localStorage.removeItem('user');
+    localStorage.removeItem('authToken');
     setUser(null);
     setIsAuthenticated(false);
   };

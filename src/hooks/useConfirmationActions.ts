@@ -1,6 +1,18 @@
 import { useCallback } from 'react';
 import { addWeightRecord } from '../utils/petUtils';
 
+// Helper para obtener headers de autenticación con JWT
+const getAuthHeaders = (): HeadersInit => {
+  const token = localStorage.getItem('authToken');
+  const headers: HeadersInit = {};
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  return headers;
+};
+
 export function useConfirmationActions(
   getCurrentPetId: () => string,
   fetchDogPortfolio: () => void,
@@ -16,6 +28,7 @@ export function useConfirmationActions(
       const petId = getCurrentPetId();
       const response = await fetch(`/api/pets/${petId}/vaccines/${vaccineToDelete.id}`, {
         method: 'DELETE',
+        headers: getAuthHeaders()
       });
 
       const result = await response.json();
@@ -43,6 +56,7 @@ export function useConfirmationActions(
       const response = await fetch(`/api/pets/${petId}/vaccines/${vaccineToComplete.id}`, {
         method: 'PUT',
         headers: {
+          ...getAuthHeaders(),
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
@@ -78,7 +92,8 @@ export function useConfirmationActions(
       const petId = getCurrentPetId();
       
       const response = await fetch(`/api/pets/${petId}/medical-reviews/${medicalReviewToDelete.id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: getAuthHeaders()
       });
 
       const result = await response.json();
@@ -104,7 +119,8 @@ export function useConfirmationActions(
       const petId = getCurrentPetId();
       
       const response = await fetch(`/api/pets/${petId}/dewormings/${dewormingToDelete.id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: getAuthHeaders()
       });
 
       const result = await response.json();
@@ -133,7 +149,10 @@ export function useConfirmationActions(
       
       const response = await fetch(`/api/pets/${petId}/dewormings/${dewormingToComplete.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          ...getAuthHeaders(),
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ status: 'completed' })
       });
 
@@ -171,6 +190,7 @@ export function useConfirmationActions(
       const petId = getCurrentPetId();
       const response = await fetch(`/api/pets/${petId}/weight/${weightToDelete.id}`, {
         method: 'DELETE',
+        headers: getAuthHeaders()
       });
 
       const result = await response.json();
@@ -196,7 +216,8 @@ export function useConfirmationActions(
       const petId = getCurrentPetId();
       
       const response = await fetch(`/api/pets/${petId}/medications/${medicationToDelete.id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: getAuthHeaders()
       });
 
       const result = await response.json();
@@ -225,7 +246,10 @@ export function useConfirmationActions(
       
       const response = await fetch(`/api/pets/${petId}/medications/${medicationToComplete.id}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          ...getAuthHeaders(),
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify({ status: 'completed' })
       });
 
@@ -253,6 +277,7 @@ export function useConfirmationActions(
       const petId = getCurrentPetId();
       const response = await fetch(`/api/pets/${petId}/documents/${documentToDelete.id}`, {
         method: 'DELETE',
+        headers: getAuthHeaders()
       });
 
       const result = await response.json();

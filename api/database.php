@@ -1,7 +1,19 @@
 <?php
 class Database {
     private $connection;
-    
+
+    /**
+     * Helper para manejar errores de BD de forma segura
+     * Loguea el error real y devuelve mensaje genérico
+     */
+    private function handleDbError(PDOException $e, $context = 'operación') {
+        // Loguear el error real en el servidor
+        error_log("Database Error [$context]: " . $e->getMessage());
+
+        // Devolver mensaje genérico al usuario
+        return ['success' => false, 'message' => 'Error al procesar la solicitud'];
+    }
+
     public function __construct() {
         try {
             // Crear la carpeta db si no existe
@@ -311,7 +323,7 @@ class Database {
             
             return ['success' => true, 'message' => 'Información actualizada'];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -328,7 +340,7 @@ class Database {
             
             return ['success' => true, 'message' => 'Vacuna agregada', 'id' => $this->connection->lastInsertId()];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -363,7 +375,7 @@ class Database {
             
             return ['success' => true, 'message' => 'Mascota creada', 'id' => $this->connection->lastInsertId()];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -389,7 +401,7 @@ class Database {
             
             return ['success' => true, 'message' => 'Mascota actualizada'];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -423,7 +435,7 @@ class Database {
             
             return ['success' => true, 'message' => 'Mascota eliminada'];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -479,7 +491,7 @@ class Database {
             if ($e->errorInfo[1] == 19) { // UNIQUE constraint failed
                 return ['success' => false, 'message' => 'El username ya está en uso'];
             }
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -502,7 +514,7 @@ class Database {
             if ($e->errorInfo[1] == 19) { // UNIQUE constraint failed
                 return ['success' => false, 'message' => 'El username ya está en uso'];
             }
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -513,7 +525,7 @@ class Database {
             
             return ['success' => true, 'message' => 'Usuario eliminado'];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -557,7 +569,7 @@ class Database {
             
             return ['success' => true, 'message' => 'Registro de peso añadido', 'id' => $this->connection->lastInsertId()];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -579,7 +591,7 @@ class Database {
             
             return ['success' => true, 'message' => 'Registro de peso actualizado'];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -594,7 +606,7 @@ class Database {
             
             return ['success' => true, 'message' => 'Registro de peso eliminado'];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -639,7 +651,7 @@ class Database {
             
             return ['success' => true, 'message' => 'Vacuna agregada', 'id' => $this->connection->lastInsertId()];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -696,7 +708,7 @@ class Database {
             
             return ['success' => true, 'message' => 'Vacuna actualizada'];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -712,7 +724,7 @@ class Database {
             
             return ['success' => true, 'message' => 'Vacuna eliminada'];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -748,7 +760,7 @@ class Database {
             $reviewId = $this->connection->lastInsertId();
             return ['success' => true, 'message' => 'Revisión médica agregada', 'id' => $reviewId];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -817,7 +829,7 @@ class Database {
             
             return ['success' => true, 'message' => 'Revisión médica actualizada'];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -828,7 +840,7 @@ class Database {
             
             return ['success' => true, 'message' => 'Revisión médica eliminada'];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -862,7 +874,7 @@ class Database {
             $medicationId = $this->connection->lastInsertId();
             return ['success' => true, 'message' => 'Medicamento agregado', 'id' => $medicationId];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -923,7 +935,7 @@ class Database {
             
             return ['success' => true, 'message' => 'Medicamento actualizado'];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -934,7 +946,7 @@ class Database {
             
             return ['success' => true, 'message' => 'Medicamento eliminado'];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -967,7 +979,7 @@ class Database {
             $dewormingId = $this->connection->lastInsertId();
             return ['success' => true, 'message' => 'Desparasitación agregada', 'id' => $dewormingId];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -1030,7 +1042,7 @@ class Database {
             
             return ['success' => true, 'message' => 'Desparasitación actualizada'];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -1041,7 +1053,7 @@ class Database {
             
             return ['success' => true, 'message' => 'Desparasitación eliminada'];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -1109,7 +1121,7 @@ class Database {
         } catch (PDOException $e) {
             // Revertir transacción en caso de error
             $this->connection->rollBack();
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -1163,7 +1175,7 @@ class Database {
             
             return ['success' => true, 'message' => 'Documento actualizado'];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
 
@@ -1179,7 +1191,7 @@ class Database {
                 return ['success' => false, 'message' => 'Archivo no encontrado'];
             }
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
 
@@ -1207,7 +1219,7 @@ class Database {
                 return ['success' => false, 'message' => 'Archivo no encontrado'];
             }
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
 
@@ -1236,7 +1248,7 @@ class Database {
             
             return ['success' => true, 'message' => 'Archivos añadidos', 'files' => $addedFiles];
         } catch (PDOException $e) {
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
     
@@ -1287,7 +1299,7 @@ class Database {
             return ['success' => true, 'message' => $message];
         } catch (Exception $e) {
             error_log("Exception in deletePetDocument: " . $e->getMessage());
-            return ['success' => false, 'message' => 'Error: ' . $e->getMessage()];
+            return $this->handleDbError($e, 'database operation');
         }
     }
 

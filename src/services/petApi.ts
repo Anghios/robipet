@@ -10,15 +10,48 @@ export interface ApiResponse<T = any> {
 class PetApiService {
   private baseUrl = '';
 
+  // Obtener headers de autenticación con JWT
+  private getAuthHeaders(): HeadersInit {
+    const token = localStorage.getItem('authToken');
+    const headers: HeadersInit = {};
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    return headers;
+  }
+
   private async fetchWithErrorHandler<T>(url: string, options?: RequestInit): Promise<ApiResponse<T>> {
+    // Agregar headers de autenticación a todas las peticiones
+    const authHeaders = this.getAuthHeaders();
+    const mergedOptions = {
+      ...options,
+      headers: {
+        ...authHeaders,
+        ...options?.headers,
+      }
+    };
     try {
-      const response = await fetch(url, options);
+      const response = await fetch(url, mergedOptions);
+
+      // Si es 401, limpiar sesión y redirigir al login
+      if (response.status === 401) {
+        localStorage.removeItem('authToken');
+        localStorage.removeItem('user');
+        window.location.href = '/';
+        return {
+          success: false,
+          message: 'Sesión expirada. Por favor, inicia sesión nuevamente.'
+        };
+      }
+
       const data = await response.json();
-      
+
       if (!response.ok) {
         return {
           success: false,
-          message: data.message || `Error: ${response.status}`
+          message: data.message || data.error || `Error: ${response.status}`
         };
       }
 

@@ -31,12 +31,24 @@ interface DeleteConfirm {
   username: string;
 }
 
+// Helper para obtener headers de autenticación con JWT (fuera del hook)
+const getAuthHeaders = (): HeadersInit => {
+  const token = localStorage.getItem('authToken');
+  const headers: HeadersInit = {};
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  return headers;
+};
+
 export function useUsersData() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   const [newUser, setNewUser] = useState<NewUser>({
     name: '',
     email: '',
@@ -57,7 +69,7 @@ export function useUsersData() {
   const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirm | null>(null);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [isUpdating, setIsUpdating] = useState(false);
-  
+
   const { toast, showToast, hideToast } = useToast();
 
   useEffect(() => {
@@ -69,7 +81,9 @@ export function useUsersData() {
     try {
       setLoading(true);
       console.log('🔍 UsersList: Haciendo fetch a /api/users');
-      const response = await fetch('/api/users');
+      const response = await fetch('/api/users', {
+        headers: getAuthHeaders()
+      });
       console.log('🔍 UsersList: Response status:', response.status);
       if (!response.ok) throw new Error('Error al cargar usuarios');
       const data = await response.json();
@@ -89,10 +103,12 @@ export function useUsersData() {
       fetchUsers();
       return;
     }
-    
+
     try {
       setLoading(true);
-      const response = await fetch(`/api/users/search?q=${encodeURIComponent(searchQuery)}`);
+      const response = await fetch(`/api/users/search?q=${encodeURIComponent(searchQuery)}`, {
+        headers: getAuthHeaders()
+      });
       if (!response.ok) throw new Error('Error en la búsqueda');
       const data = await response.json();
       setUsers(data);
@@ -115,6 +131,7 @@ export function useUsersData() {
       const response = await fetch('/api/users', {
         method: 'POST',
         headers: {
+          ...getAuthHeaders(),
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(newUser),
@@ -174,6 +191,7 @@ export function useUsersData() {
       const response = await fetch(`/api/users/${editingUser.id}`, {
         method: 'PUT',
         headers: {
+          ...getAuthHeaders(),
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(updateData),
@@ -212,6 +230,7 @@ export function useUsersData() {
     try {
       const response = await fetch(`/api/users/${deleteConfirm.userId}`, {
         method: 'DELETE',
+        headers: getAuthHeaders()
       });
       
       const result = await response.json();

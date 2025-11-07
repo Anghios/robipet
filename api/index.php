@@ -1,8 +1,14 @@
 <?php
+// Headers de seguridad
 header('Content-Type: application/json');
+header('X-Content-Type-Options: nosniff');
+header('X-Frame-Options: DENY');
+header('X-XSS-Protection: 1; mode=block');
+
+// Headers CORS
 header('Access-Control-Allow-Origin: *');
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
-header('Access-Control-Allow-Headers: Content-Type');
+header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
 if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
     exit(0);
@@ -10,6 +16,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 
 require_once 'config.php';
 require_once 'database.php';
+require_once 'jwt.php';
+
+// Helper: Validar extensiones de documentos
+function validateDocumentExtension($filename) {
+    $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+    $allowedExtensions = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png', 'gif', 'webp', 'txt'];
+
+    if (!in_array($extension, $allowedExtensions)) {
+        throw new Exception('Extensión no permitida. Solo se permiten: PDF, DOC, DOCX, JPG, JPEG, PNG, GIF, WebP, TXT');
+    }
+
+    return $extension;
+}
 
 $method = $_SERVER['REQUEST_METHOD'];
 $path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
@@ -30,38 +49,18 @@ if (empty($path) && isset($_GET['action'])) {
 
 $database = new Database();
 
-// Función helper para verificar autenticación mediante headers o parámetros
-function verifyAuthenticatedUser($database) {
-    // Buscar el userId en headers o en el cuerpo de la petición
-    $userId = null;
+// Proteger todos los endpoints excepto login
+if ($path !== 'login') {
+    $authenticatedUser = JWT::verifyAuth($database);
 
-    // Verificar header X-User-ID
-    if (isset($_SERVER['HTTP_X_USER_ID'])) {
-        $userId = $_SERVER['HTTP_X_USER_ID'];
-    }
-    // Verificar parámetro GET
-    else if (isset($_GET['userId'])) {
-        $userId = $_GET['userId'];
-    }
-    // Verificar en FormData POST
-    else if (isset($_POST['userId'])) {
-        $userId = $_POST['userId'];
-    }
-    // Verificar en el cuerpo de la petición POST (JSON)
-    else {
-        $input = json_decode(file_get_contents('php://input'), true);
-        if (isset($input['userId'])) {
-            $userId = $input['userId'];
-        }
+    if (!$authenticatedUser) {
+        http_response_code(401);
+        echo json_encode(['error' => 'Unauthorized. Token inválido, expirado o no proporcionado. Por favor, inicia sesión.']);
+        exit();
     }
 
-    if (!$userId) {
-        return false;
-    }
-
-    // Verificar que el usuario existe
-    $user = $database->getUserById($userId);
-    return $user !== false;
+    // Hacer disponible los datos del usuario autenticado para todos los endpoints
+    $GLOBALS['authenticatedUser'] = $authenticatedUser;
 }
 
 // Manejar rutas con expresiones regulares primero
@@ -260,14 +259,30 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
                 if ($_FILES['files']['error'][$i] === UPLOAD_ERR_OK) {
                     $originalName = $_FILES['files']['name'][$i];
                     $tmpName = $_FILES['files']['tmp_name'][$i];
-                    
+
+                    // Validar tamaño (máximo 10MB)
+                    if ($_FILES['files']['size'][$i] > 10 * 1024 * 1024) {
+                        http_response_code(400);
+                        echo json_encode(['success' => false, 'message' => 'Uno de los archivos es demasiado grande. Máximo 10MB']);
+                        exit;
+                    }
+
+                    // Validar extensión del archivo
+                    try {
+                        $extension = validateDocumentExtension($originalName);
+                    } catch (Exception $e) {
+                        http_response_code(400);
+                        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+                        exit;
+                    }
+
                     // Obtener nombre personalizado si existe
-                    $customName = isset($_POST['fileNames']) && isset($_POST['fileNames'][$i]) 
-                        ? $_POST['fileNames'][$i] 
-                        : $originalName;
-                    
-                    // Generar nombre único para el archivo
-                    $fileName = time() . '_' . uniqid() . '_' . $originalName;
+                    $customName = isset($_POST['fileNames']) && isset($_POST['fileNames'][$i])
+                        ? $_POST['fileNames'][$i]
+                        : pathinfo($originalName, PATHINFO_FILENAME);
+
+                    // Generar nombre único para el archivo (con extensión validada)
+                    $fileName = time() . '_' . uniqid() . '_' . $i . '.' . $extension;
                     $uploadPath = 'uploads/documents/' . $fileName;
                     $fullUploadPath = __DIR__ . '/' . $uploadPath;
                     
@@ -312,25 +327,27 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
         if (isset($_FILES['file']) && $_FILES['file']['error'] === UPLOAD_ERR_OK) {
             try {
                 $uploadedFile = $_FILES['file'];
-                
+
                 // Validar tamaño (máximo 10MB para documentos)
                 if ($uploadedFile['size'] > 10 * 1024 * 1024) {
                     http_response_code(400);
                     echo json_encode(['success' => false, 'message' => 'El archivo es demasiado grande. Máximo 10MB']);
                     exit;
                 }
-                
+
+                // Validar extensión del archivo
+                $extension = validateDocumentExtension($uploadedFile['name']);
+
                 // Crear directorio uploads/documents si no existe
                 $uploadDir = __DIR__ . '/uploads/documents/';
                 if (!file_exists($uploadDir)) {
                     mkdir($uploadDir, 0755, true);
                 }
-                
+
                 // Obtener el archivo anterior para eliminarlo (necesitamos crear un método en Database para esto)
                 $oldDocument = null; // Por ahora, no eliminamos el archivo anterior - TODO: mejorar esto
-                
-                // Generar nombre único para el archivo nuevo
-                $extension = pathinfo($uploadedFile['name'], PATHINFO_EXTENSION);
+
+                // Generar nombre único para el archivo nuevo (con extensión validada)
                 $fileName = 'document_' . $petId . '_' . uniqid() . '_' . time() . '.' . $extension;
                 $filePath = $uploadDir . $fileName;
                 
@@ -416,9 +433,17 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
                         echo json_encode(['success' => false, 'message' => 'Uno de los archivos es demasiado grande. Máximo 10MB']);
                         exit;
                     }
-                    
-                    // Generar nombre único para el archivo
-                    $extension = pathinfo($_FILES['files']['name'][$i], PATHINFO_EXTENSION);
+
+                    // Validar extensión del archivo
+                    try {
+                        $extension = validateDocumentExtension($_FILES['files']['name'][$i]);
+                    } catch (Exception $e) {
+                        http_response_code(400);
+                        echo json_encode(['success' => false, 'message' => $e->getMessage()]);
+                        exit;
+                    }
+
+                    // Generar nombre único para el archivo (usar extensión validada)
                     $fileName = 'document_' . $petId . '_' . uniqid() . '_' . time() . '_' . $i . '.' . $extension;
                     $filePath = $uploadDir . $fileName;
                     
@@ -462,15 +487,17 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
                     echo json_encode(['success' => false, 'message' => 'El archivo es demasiado grande. Máximo 10MB']);
                     exit;
                 }
-                
+
+                // Validar extensión del archivo
+                $extension = validateDocumentExtension($uploadedFile['name']);
+
                 // Crear directorio uploads/documents si no existe
                 $uploadDir = __DIR__ . '/uploads/documents/';
                 if (!file_exists($uploadDir)) {
                     mkdir($uploadDir, 0755, true);
                 }
-                
-                // Generar nombre único para el archivo
-                $extension = pathinfo($uploadedFile['name'], PATHINFO_EXTENSION);
+
+                // Generar nombre único para el archivo (usar extensión validada)
                 $fileName = 'document_' . $petId . '_' . uniqid() . '_' . time() . '.' . $extension;
                 $filePath = $uploadDir . $fileName;
                 
@@ -558,13 +585,6 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
         // Endpoints de base de datos - Alta prioridad
         case 'export_database':
             if ($method === 'GET') {
-                // Verificar autenticación
-                if (!verifyAuthenticatedUser($database)) {
-                    http_response_code(401);
-                    echo json_encode(['error' => 'Unauthorized. Please login first.']);
-                    exit();
-                }
-
                 $databasePath = dirname(__DIR__) . '/db/database.sqlite';
 
                 if (!file_exists($databasePath)) {
@@ -585,13 +605,6 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
 
         case 'import_database':
             if ($method === 'POST') {
-                // Verificar autenticación
-                if (!verifyAuthenticatedUser($database)) {
-                    http_response_code(401);
-                    echo json_encode(['error' => 'Unauthorized. Please login first.']);
-                    exit();
-                }
-
                 // Primero limpiar archivos SQLite antiguos (excepto database.sqlite)
                 $oldFiles = glob(__DIR__ . DIRECTORY_SEPARATOR . '*.sqlite');
                 if ($oldFiles !== false && is_array($oldFiles)) {
@@ -834,7 +847,19 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
                 if (isset($input['username']) && isset($input['password'])) {
                     $user = $database->authenticateUser($input['username'], $input['password']);
                     if ($user) {
-                        echo json_encode(['success' => true, 'user' => $user]);
+                        // Generar JWT
+                        $token = JWT::generate([
+                            'userId' => $user['id'],
+                            'username' => $user['username'],
+                            'role' => $user['role'],
+                            'name' => $user['name']
+                        ], 24); // Token válido por 24 horas
+
+                        echo json_encode([
+                            'success' => true,
+                            'token' => $token,
+                            'user' => $user
+                        ]);
                     } else {
                         http_response_code(401);
                         echo json_encode(['success' => false, 'message' => 'Credenciales inválidas']);
@@ -847,19 +872,13 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
             break;
 
         case 'verify-session':
-            if ($method === 'POST') {
-                $input = json_decode(file_get_contents('php://input'), true);
-                if (isset($input['userId'])) {
-                    $user = $database->getUserById($input['userId']);
-                    if ($user) {
-                        echo json_encode(['valid' => true, 'user' => $user]);
-                    } else {
-                        echo json_encode(['valid' => false, 'message' => 'Usuario no existe']);
-                    }
-                } else {
-                    http_response_code(400);
-                    echo json_encode(['valid' => false, 'message' => 'ID de usuario requerido']);
-                }
+            if ($method === 'POST' || $method === 'GET') {
+                // Este endpoint ya está protegido por JWT en el middleware global
+                // Si llegamos aquí, el token es válido
+                echo json_encode([
+                    'valid' => true,
+                    'user' => $GLOBALS['authenticatedUser']
+                ]);
             }
             break;
 
@@ -872,26 +891,43 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
                     }
                     
                     $uploadedFile = $_FILES['image'];
-                    
-                    // Validar que es una imagen
-                    $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
-                    if (!in_array($uploadedFile['type'], $allowedTypes)) {
-                        throw new Exception('Tipo de archivo no permitido. Solo se permiten JPG, PNG, GIF y WebP');
-                    }
-                    
+
                     // Validar tamaño (máximo 5MB)
                     if ($uploadedFile['size'] > 5 * 1024 * 1024) {
                         throw new Exception('El archivo es demasiado grande. Máximo 5MB');
                     }
-                    
+
+                    // Validar extensión del archivo
+                    $extension = strtolower(pathinfo($uploadedFile['name'], PATHINFO_EXTENSION));
+                    $allowedExtensions = ['jpg', 'jpeg', 'png', 'gif', 'webp'];
+                    if (!in_array($extension, $allowedExtensions)) {
+                        throw new Exception('Extensión no permitida. Solo se permiten: JPG, JPEG, PNG, GIF, WebP');
+                    }
+
+                    // Validar MIME type
+                    $allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
+                    if (!in_array($uploadedFile['type'], $allowedTypes)) {
+                        throw new Exception('Tipo de archivo no permitido. Solo se permiten imágenes');
+                    }
+
+                    // Verificar que el archivo es realmente una imagen (valida el contenido)
+                    $imageInfo = getimagesize($uploadedFile['tmp_name']);
+                    if ($imageInfo === false) {
+                        throw new Exception('El archivo no es una imagen válida');
+                    }
+
+                    // Validar dimensiones mínimas (opcional, pero recomendado)
+                    if ($imageInfo[0] < 10 || $imageInfo[1] < 10) {
+                        throw new Exception('La imagen es demasiado pequeña');
+                    }
+
                     // Crear directorio uploads si no existe
                     $uploadDir = __DIR__ . '/uploads/';
                     if (!file_exists($uploadDir)) {
                         mkdir($uploadDir, 0755, true);
                     }
-                    
-                    // Generar nombre único para el archivo
-                    $extension = pathinfo($uploadedFile['name'], PATHINFO_EXTENSION);
+
+                    // Generar nombre único para el archivo (usar extensión validada, no la original)
                     $fileName = 'pet_' . uniqid() . '_' . time() . '.' . $extension;
                     $filePath = $uploadDir . $fileName;
                     
@@ -920,39 +956,7 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
                 }
             }
             break;
-            
-        case 'debug':
-            if ($method === 'GET') {
-                try {
-                    $pets = $database->getAllPets();
-                    $dogInfo = $database->getDogInfo();
-                    
-                    $debug = [
-                        'pets_count' => count($pets),
-                        'pets' => $pets,
-                        'dog_info' => $dogInfo,
-                        'weight_history' => [],
-                        'vaccines' => [],
-                        'pet_complete_test' => null
-                    ];
-                    
-                    if (count($pets) > 0) {
-                        $firstPet = $pets[0];
-                        $debug['weight_history'] = $database->getPetWeightHistory($firstPet['id']);
-                        $debug['vaccines'] = $database->getPetVaccines($firstPet['id']);
-                        $debug['pet_complete_test'] = $database->getPetComplete($firstPet['id']);
-                    }
-                    
-                    echo json_encode($debug, JSON_PRETTY_PRINT);
-                } catch (Exception $e) {
-                    echo json_encode([
-                        'error' => $e->getMessage(),
-                        'trace' => $e->getTraceAsString()
-                    ], JSON_PRETTY_PRINT);
-                }
-            }
-            break;
-            
+
         default:
             http_response_code(404);
             echo json_encode(['error' => 'Endpoint not found']);

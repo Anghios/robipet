@@ -50,13 +50,54 @@ docker run -d \
   -v robipet_sqlite_data:/db \
   -e APACHE_RUN_USER=www-data \
   -e APACHE_RUN_GROUP=www-data \
+  -e JWT_SECRET=your_secure_random_key_here \
   --restart unless-stopped \
   bansheetech/robipet:latest
 ```
 
 Or download the latest [docker-compose.yml](https://github.com/Anghios/robipet/blob/main/docker-compose.yml)
 
-That's it! 🎉 Visit `http://localhost:3000` to see your pet portfolio.
+That's it! 🎉 Visit `http://localhost:29724` to see your pet portfolio.
+
+### 🔒 Security Configuration (Important!)
+
+**⚠️ For production deployments, you MUST configure a secure JWT secret key!**
+
+The JWT secret is used to sign authentication tokens. Using the default key in production is a **critical security risk**.
+
+**Create a secure key:**
+
+You can use any long, complex, and unique string (minimum 32 characters):
+```yaml
+JWT_SECRET=MiClaveSecretaRobiPet2024_ProductionKey_NuncaLaCompartas!
+```
+
+Or generate a random one:
+```bash
+openssl rand -base64 32
+# Output: xK8vN2mP9qR4sT6wY1zA3bC5dE7fG0hJ2kL4mN6pQ==
+```
+
+**Set it in your docker-compose.yml:**
+```yaml
+environment:
+  - JWT_SECRET=your_generated_secure_key_here
+```
+
+Or via Docker run command:
+```bash
+docker run -d \
+  --name robipet \
+  -p 29724:8081 \
+  -v robipet_sqlite_data:/db \
+  -e JWT_SECRET=your_generated_secure_key_here \
+  bansheetech/robipet:latest
+```
+
+**Security notes:**
+- Never share or commit your JWT_SECRET to version control
+- Use a different key for each environment
+- If the key is compromised, change it immediately (this will invalidate all existing sessions)
 
 ### Manual Installation
 

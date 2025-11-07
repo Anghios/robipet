@@ -97,21 +97,22 @@ export default function ConfigContent() {
                     const file = (e.target as HTMLInputElement).files?.[0];
                     if (!file) return;
 
-                    // Obtener usuario autenticado
-                    const userData = localStorage.getItem('user');
-                    if (!userData) {
-                      showToast(t('config.database.importError') + ': No authenticated user', 'error');
+                    // Obtener token de autenticación
+                    const token = localStorage.getItem('authToken');
+                    if (!token) {
+                      showToast(t('config.database.importError') + ': No authenticated', 'error');
                       return;
                     }
-                    const user = JSON.parse(userData);
 
                     const formData = new FormData();
                     formData.append('database', file);
-                    formData.append('userId', user.id.toString());
 
                     try {
                       const response = await fetch('/api/import_database', {
                         method: 'POST',
+                        headers: {
+                          'Authorization': `Bearer ${token}`
+                        },
                         body: formData
                       });
 

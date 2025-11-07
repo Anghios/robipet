@@ -4,6 +4,9 @@ node_modules
 # Example files directory (removed but kept in gitignore)
 ejemplos
 
+# Environment variables (keep .env.example)
+.env
+
 # Astro build output
 .astro
 .claude
