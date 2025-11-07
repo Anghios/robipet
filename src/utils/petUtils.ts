@@ -117,10 +117,19 @@ export const getCurrentUser = (): string => {
 export const addWeightRecord = async (petId: string, weight: number, date: string, notes: string) => {
   try {
     const currentUser = getCurrentUser();
+    const token = localStorage.getItem('authToken');
+
+    const headers: HeadersInit = {
+      'Content-Type': 'application/json'
+    };
+
+    if (token) {
+      headers['Authorization'] = `Bearer ${token}`;
+    }
 
     const weightResponse = await fetch(`/api/pets/${petId}/weight`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: headers,
       body: JSON.stringify({
         weight_kg: weight,
         measurement_date: date,

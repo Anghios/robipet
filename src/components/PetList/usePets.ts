@@ -2,6 +2,18 @@ import { useState, useCallback } from 'react';
 import type { Pet, NewPet } from '../../types/Pet';
 import type { ToastData } from '../../hooks/useToast';
 
+// Helper para obtener headers de autenticación con JWT (fuera del hook)
+const getAuthHeaders = (): HeadersInit => {
+  const token = localStorage.getItem('authToken');
+  const headers: HeadersInit = {};
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  return headers;
+};
+
 export default function usePets() {
   const [pets, setPets] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(true);
@@ -20,7 +32,9 @@ export default function usePets() {
   const fetchPets = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch('/api/pets');
+      const response = await fetch('/api/pets', {
+        headers: getAuthHeaders()
+      });
       if (!response.ok) throw new Error('Error al cargar mascotas');
       const data = await response.json();
       setPets(data);
@@ -48,6 +62,7 @@ export default function usePets() {
       const response = await fetch('/api/pets', {
         method: 'POST',
         headers: {
+          ...getAuthHeaders(),
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(petData),
@@ -88,6 +103,7 @@ export default function usePets() {
       const response = await fetch(`/api/pets/${pet.id}`, {
         method: 'PUT',
         headers: {
+          ...getAuthHeaders(),
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(petData),
@@ -115,6 +131,7 @@ export default function usePets() {
     try {
       const response = await fetch(`/api/pets/${pet.id}`, {
         method: 'DELETE',
+        headers: getAuthHeaders()
       });
       
       const result = await response.json();
@@ -155,9 +172,10 @@ export default function usePets() {
       
       const formData = new FormData();
       formData.append('image', file);
-      
+
       const response = await fetch('/api/upload/image', {
         method: 'POST',
+        headers: getAuthHeaders(),
         body: formData,
       });
       

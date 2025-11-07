@@ -5,6 +5,18 @@ import { validatePetData, validateImageFile } from '../components/PetList/helper
 
 const API_BASE_URL = '';
 
+// Helper para obtener headers de autenticación con JWT
+const getAuthHeaders = (): HeadersInit => {
+  const token = localStorage.getItem('authToken');
+  const headers: HeadersInit = {};
+
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  return headers;
+};
+
 export function usePetListData(showToast: (message: string, type: 'success' | 'error' | 'warning') => void) {
   // Estados principales
   const [pets, setPets] = useState<Pet[]>([]);
@@ -27,7 +39,9 @@ export function usePetListData(showToast: (message: string, type: 'success' | 'e
   const fetchPets = useCallback(async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/api/pets`);
+      const response = await fetch(`${API_BASE_URL}/api/pets`, {
+        headers: getAuthHeaders()
+      });
       if (!response.ok) throw new Error('Error al cargar mascotas');
       const data = await response.json();
       setPets(data);
@@ -59,6 +73,7 @@ export function usePetListData(showToast: (message: string, type: 'success' | 'e
       const response = await fetch(`${API_BASE_URL}/api/pets`, {
         method: 'POST',
         headers: {
+          ...getAuthHeaders(),
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(petData),
@@ -104,6 +119,7 @@ export function usePetListData(showToast: (message: string, type: 'success' | 'e
       const response = await fetch(`${API_BASE_URL}/api/pets/${editingPet.id}`, {
         method: 'PUT',
         headers: {
+          ...getAuthHeaders(),
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(petData),
@@ -133,6 +149,7 @@ export function usePetListData(showToast: (message: string, type: 'success' | 'e
       setDeleting(true);
       const response = await fetch(`${API_BASE_URL}/api/pets/${petToDelete.id}`, {
         method: 'DELETE',
+        headers: getAuthHeaders()
       });
       
       const result = await response.json();
@@ -175,9 +192,10 @@ export function usePetListData(showToast: (message: string, type: 'success' | 'e
       
       const formData = new FormData();
       formData.append('image', file);
-      
+
       const response = await fetch(`${API_BASE_URL}/api/upload/image`, {
         method: 'POST',
+        headers: getAuthHeaders(),
         body: formData,
       });
       

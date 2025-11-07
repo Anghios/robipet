@@ -18,6 +18,11 @@ services:
     environment:
       - APACHE_RUN_USER=www-data
       - APACHE_RUN_GROUP=www-data
+      # IMPORTANTE: Cambia este valor por una clave segura única en producción
+      # Debe ser una string larga (mínimo 32 caracteres), compleja e impredecible
+      # Ejemplo: MiClaveSecretaRobiPet2024_NuncaLaCompartas!
+      # O genera una aleatoria: openssl rand -base64 32
+      - JWT_SECRET=CHANGE_THIS_IN_PRODUCTION_USE_A_SECURE_RANDOM_STRING
     restart: unless-stopped
 
 volumes:
