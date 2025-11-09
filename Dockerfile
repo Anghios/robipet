@@ -32,7 +32,11 @@ RUN mkdir -p /var/www/html/api && \
     chown -R www-data:www-data /var/www/html && \
     chmod -R 755 /var/www/html
 
+# Copiar y dar permisos al entrypoint script
+COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
 # Exponer puerto 8081
 EXPOSE 8081
 
-CMD ["apache2-foreground"]
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
