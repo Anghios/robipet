@@ -15,6 +15,7 @@
   "home": {
     "title": "Información de tu mascota",
     "subtitle": "Consulta toda la información médica y datos de tu compañero",
+    "pageTitle": "RobiPet - Inicio",
     "tabs": {
       "info": "Información",
       "medicalReviews": "Revisiones Médicas",
@@ -71,6 +72,7 @@
   "config": {
     "title": "Configuración",
     "subtitle": "Gestiona los ajustes y configuración del sistema",
+    "pageTitle": "RobiPet - Configuración",
     "general": "General",
     "users": "Usuarios",
     "database": {
@@ -285,6 +287,7 @@
   "users": {
     "title": "Gestión de Usuarios",
     "subtitle": "Administra y busca usuarios del sistema",
+    "pageTitle": "RobiPet - Usuarios",
     "listTitle": "Lista de Usuarios",
     "newUser": "Nuevo Usuario",
     "createUser": "Crear Nuevo Usuario",
@@ -829,7 +832,7 @@
       "cancelButton": "Cancelar"
     },
     "page": {
-      "title": "Mis Mascotas - Gestión de Mascotas"
+      "title": "RobiPet - Mascotas"
     },
     "helpers": {
       "age": {
