@@ -5,11 +5,12 @@
   "scripts": {
     "dev": "astro dev",
     "start": "astro dev",
-    "build": "astro build",
+    "build": "node scripts/update-version.js && astro build",
     "preview": "astro preview",
     "astro": "astro",
     "phpprod": "php -S localhost:8081 -t . api/router.php",
-    "phpdev": "php -S localhost:8081 api/router.php"
+    "phpdev": "php -S localhost:8081 api/router.php",
+    "update-version": "node scripts/update-version.js"
   },
   "dependencies": {
     "@iconify/react": "^6.0.0",

@@ -23,17 +23,30 @@ export const useTranslation = () => {
   const loadTranslations = async (lang: Locale) => {
     try {
       setLoading(true);
-      // Importar dinámicamente el archivo JSON del idioma
-      const module = await import(`../locales/${lang}.json`);
-      setTranslations(module.default || module);
+
+      // Get version to bust cache
+      let version = Date.now();
+      try {
+        const versionResponse = await fetch('/version.json');
+        const versionData = await versionResponse.json();
+        version = versionData.timestamp || Date.now();
+      } catch {
+        // If version.json doesn't exist, use timestamp
+      }
+
+      // Load from public folder with cache busting
+      const response = await fetch(`/locales/${lang}.json?v=${version}`);
+      const translations = await response.json();
+      setTranslations(translations);
       setLoading(false);
     } catch (error) {
       console.error('Error loading translations:', error);
       // Fallback al inglés si falla cargar el idioma
       if (lang !== 'en') {
         try {
-          const fallbackModule = await import('../locales/en.json');
-          setTranslations(fallbackModule.default || fallbackModule);
+          const response = await fetch(`/locales/en.json?v=${Date.now()}`);
+          const translations = await response.json();
+          setTranslations(translations);
         } catch (fallbackError) {
           console.error('Error loading fallback translations:', fallbackError);
         }

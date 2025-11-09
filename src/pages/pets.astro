@@ -1,27 +1,12 @@
 ---
 import ProtectedLayout from '../layouts/ProtectedLayout.astro';
 import PetsList from '../components/PetsList';
+import PageTitle from '../components/PageTitle';
 ---
 
-<ProtectedLayout title="Mis Mascotas - Gestión de Mascotas">
+<ProtectedLayout title="RobiPet">
+	<PageTitle client:only="react" titleKey="petList.page.title" fallback="RobiPet - Pets" />
 	<main class="max-w-7xl mx-auto px-4 py-6 min-h-screen">
 		<PetsList client:load />
 	</main>
-
-	<script>
-		// Load translations for page title
-		document.addEventListener('DOMContentLoaded', async () => {
-			const locale = localStorage.getItem('locale') || 'en';
-			
-			try {
-				const response = await fetch(`/locales/${locale}.json`);
-				const translations = await response.json();
-				
-				// Update document title dynamically
-				document.title = translations.petList.page.title || 'Mis Mascotas - Gestión de Mascotas';
-			} catch (error) {
-				console.log('Error loading page translations:', error);
-			}
-		});
-	</script>
 </ProtectedLayout>

@@ -18,6 +18,36 @@ const { title } = Astro.props;
 		<link rel="icon" type="image/png" href="/favicon.png" />
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
+		<script is:inline>
+			// Set initial title based on saved language BEFORE page renders
+			(function() {
+				const locale = localStorage.getItem('locale') || 'en';
+				const path = window.location.pathname;
+
+				const titles = {
+					'/': {
+						es: 'RobiPet - Inicio',
+						en: 'RobiPet - Home'
+					},
+					'/pets': {
+						es: 'RobiPet - Mascotas',
+						en: 'RobiPet - Pets'
+					},
+					'/config': {
+						es: 'RobiPet - Configuración',
+						en: 'RobiPet - Settings'
+					},
+					'/users': {
+						es: 'RobiPet - Usuarios',
+						en: 'RobiPet - Users'
+					}
+				};
+
+				if (titles[path] && titles[path][locale]) {
+					document.title = titles[path][locale];
+				}
+			})();
+		</script>
 	</head>
 	<body class="min-h-screen bg-dark-primary text-dark-primary">
 		<AuthenticatedNavigation client:load />

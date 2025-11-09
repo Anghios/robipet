@@ -31,8 +31,12 @@ export default function BasicInfoCard({ dog_info, formatDate }: BasicInfoCardPro
             <Icon icon="mdi:calendar" className="w-4 h-4 text-blue-400 group-hover/item:text-blue-300 group-hover/item:scale-110 transition-all duration-200" />
             {t('home.basicInfo.birthDate')}
           </span>
-          <span className="text-white font-semibold group-hover/item:text-blue-100 transition-colors duration-200">
-            {dog_info?.birth_date ? formatDate(dog_info.birth_date) : t('common.loading')}
+          <span className={`font-semibold transition-colors duration-200 ${
+            dog_info?.birth_date
+              ? 'text-white group-hover/item:text-blue-100'
+              : 'text-slate-400 group-hover/item:text-slate-300 italic'
+          }`}>
+            {dog_info?.birth_date ? formatDate(dog_info.birth_date) : '-'}
           </span>
         </div>
 

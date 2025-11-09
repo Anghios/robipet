@@ -1,15 +1,17 @@
 ---
 import Layout from '../layouts/Layout.astro';
 import UsersList from '../components/UsersList';
+import PageTitle from '../components/PageTitle';
 ---
 
-<Layout title="Usuarios - Gestión de Usuarios">
+<Layout title="RobiPet">
+	<PageTitle client:only="react" titleKey="users.pageTitle" fallback="RobiPet - Users" />
 	<main class="max-w-6xl mx-auto px-4 py-6 min-h-screen">
 		<header class="text-center mb-8 p-8 bg-gradient-to-r from-gradient-start to-gradient-end rounded-2xl text-white shadow-xl">
 			<h1 class="text-4xl font-bold mb-2">Gestión de Usuarios</h1>
 			<p class="text-lg opacity-90">Administra y busca usuarios del sistema</p>
 		</header>
-		
+
 		<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
 			<UsersList client:load />
 		</div>

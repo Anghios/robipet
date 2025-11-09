@@ -30,8 +30,12 @@ export default function PhysicalDataCard({ dog_info, getSizeText, getCurrentWeig
             <Icon icon="mdi:dog" className="w-4 h-4 text-emerald-400 group-hover/item:text-emerald-300 group-hover/item:scale-110 transition-all duration-200" />
             {t('home.basicInfo.breed')}
           </span>
-          <span className="text-white font-semibold group-hover/item:text-emerald-100 transition-colors duration-200">
-            {dog_info?.breed || t('common.loading')}
+          <span className={`font-semibold transition-colors duration-200 ${
+            dog_info?.breed
+              ? 'text-white group-hover/item:text-emerald-100'
+              : 'text-slate-400 group-hover/item:text-slate-300 italic'
+          }`}>
+            {dog_info?.breed || '-'}
           </span>
         </div>
 
@@ -40,8 +44,12 @@ export default function PhysicalDataCard({ dog_info, getSizeText, getCurrentWeig
             <Icon icon="mdi:palette" className="w-4 h-4 text-rose-400 group-hover/item:text-rose-300 group-hover/item:scale-110 transition-all duration-200" />
             {t('home.basicInfo.color')}
           </span>
-          <span className="text-white font-semibold group-hover/item:text-rose-100 transition-colors duration-200">
-            {dog_info?.color || t('common.loading')}
+          <span className={`font-semibold transition-colors duration-200 ${
+            dog_info?.color
+              ? 'text-white group-hover/item:text-rose-100'
+              : 'text-slate-400 group-hover/item:text-slate-300 italic'
+          }`}>
+            {dog_info?.color || '-'}
           </span>
         </div>
 
