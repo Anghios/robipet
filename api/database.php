@@ -454,10 +454,17 @@ class Database {
     }
     
     public function getPetWeightHistory($petId) {
-        // Usar dog_id ya que es la columna que existe en weight_history
-        $stmt = $this->connection->prepare("SELECT * FROM weight_history WHERE dog_id = ? ORDER BY measurement_date DESC");
-        $stmt->execute([$petId]);
-        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        // Primero intentar con pet_id, si falla usar dog_id
+        try {
+            $stmt = $this->connection->prepare("SELECT * FROM weight_history WHERE pet_id = ? ORDER BY measurement_date DESC");
+            $stmt->execute([$petId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            // Si falla con pet_id, intentar con dog_id
+            $stmt = $this->connection->prepare("SELECT * FROM weight_history WHERE dog_id = ? ORDER BY measurement_date DESC");
+            $stmt->execute([$petId]);
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        }
     }
     
     
@@ -553,9 +560,14 @@ class Database {
     // Métodos para gestión de peso
     public function addWeightRecord($petId, $data) {
         try {
-            // Usar dog_id ya que es la columna que existe en weight_history
-            $stmt = $this->connection->prepare("INSERT INTO weight_history (dog_id, weight_kg, measurement_date, notes, added_by_user) VALUES (?, ?, ?, ?, ?)");
-            
+            // Intentar primero con pet_id, si falla usar dog_id para compatibilidad
+            try {
+                $stmt = $this->connection->prepare("INSERT INTO weight_history (pet_id, weight_kg, measurement_date, notes, added_by_user) VALUES (?, ?, ?, ?, ?)");
+            } catch (PDOException $e) {
+                // Si falla, intentar con dog_id
+                $stmt = $this->connection->prepare("INSERT INTO weight_history (dog_id, weight_kg, measurement_date, notes, added_by_user) VALUES (?, ?, ?, ?, ?)");
+            }
+
             $stmt->execute([
                 $petId,
                 $data['weight_kg'],
@@ -563,10 +575,10 @@ class Database {
                 $data['notes'] ?? null,
                 $data['added_by_user'] ?? 'Usuario'
             ]);
-            
+
             // Actualizar el peso actual en la tabla pets con el registro más reciente por fecha
             $this->updateCurrentWeight($petId);
-            
+
             return ['success' => true, 'message' => 'Registro de peso añadido', 'id' => $this->connection->lastInsertId()];
         } catch (PDOException $e) {
             return $this->handleDbError($e, 'database operation');
@@ -575,9 +587,13 @@ class Database {
     
     public function updateWeightRecord($petId, $weightId, $data) {
         try {
-            // Usar dog_id ya que es la columna que existe en weight_history
-            $stmt = $this->connection->prepare("UPDATE weight_history SET weight_kg = ?, measurement_date = ?, notes = ? WHERE id = ? AND dog_id = ?");
-            
+            // Intentar primero con pet_id, si falla usar dog_id
+            try {
+                $stmt = $this->connection->prepare("UPDATE weight_history SET weight_kg = ?, measurement_date = ?, notes = ? WHERE id = ? AND pet_id = ?");
+            } catch (PDOException $e) {
+                $stmt = $this->connection->prepare("UPDATE weight_history SET weight_kg = ?, measurement_date = ?, notes = ? WHERE id = ? AND dog_id = ?");
+            }
+
             $stmt->execute([
                 $data['weight_kg'],
                 $data['measurement_date'],
@@ -585,20 +601,24 @@ class Database {
                 $weightId,
                 $petId
             ]);
-            
+
             // Actualizar el peso actual con el registro más reciente por fecha
             $this->updateCurrentWeight($petId);
-            
+
             return ['success' => true, 'message' => 'Registro de peso actualizado'];
         } catch (PDOException $e) {
             return $this->handleDbError($e, 'database operation');
         }
     }
-    
+
     public function deleteWeightRecord($petId, $weightId) {
         try {
-            // Usar dog_id ya que es la columna que existe en weight_history
-            $stmt = $this->connection->prepare("DELETE FROM weight_history WHERE id = ? AND dog_id = ?");
+            // Intentar primero con pet_id, si falla usar dog_id
+            try {
+                $stmt = $this->connection->prepare("DELETE FROM weight_history WHERE id = ? AND pet_id = ?");
+            } catch (PDOException $e) {
+                $stmt = $this->connection->prepare("DELETE FROM weight_history WHERE id = ? AND dog_id = ?");
+            }
             $stmt->execute([$weightId, $petId]);
             
             // Actualizar el peso actual con el registro más reciente por fecha
@@ -614,10 +634,15 @@ class Database {
     private function updateCurrentWeight($petId) {
         try {
             // Buscar el peso más reciente por fecha (no por ID)
-            $latestStmt = $this->connection->prepare("SELECT weight_kg FROM weight_history WHERE dog_id = ? ORDER BY measurement_date DESC, created_at DESC, id DESC LIMIT 1");
+            // Intentar primero con pet_id, si falla usar dog_id
+            try {
+                $latestStmt = $this->connection->prepare("SELECT weight_kg FROM weight_history WHERE pet_id = ? ORDER BY measurement_date DESC, created_at DESC, id DESC LIMIT 1");
+            } catch (PDOException $e) {
+                $latestStmt = $this->connection->prepare("SELECT weight_kg FROM weight_history WHERE dog_id = ? ORDER BY measurement_date DESC, created_at DESC, id DESC LIMIT 1");
+            }
             $latestStmt->execute([$petId]);
             $latestWeight = $latestStmt->fetchColumn();
-            
+
             if ($latestWeight !== false) {
                 // Actualizar el peso en la tabla pets
                 $updateStmt = $this->connection->prepare("UPDATE pets SET weight_kg = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?");
