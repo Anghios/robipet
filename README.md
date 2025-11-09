@@ -211,7 +211,9 @@ RobiPet seamlessly integrates with your daily routine:
 - [ ] Notifications via email or another app like ntfy.sh...
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the PolyForm Noncommercial License 1.0.0 - see the [LICENSE](LICENSE) file for details.
+
+This means you can use RobiPet for any noncommercial purpose, including personal use, research, hobby projects, and use by charitable/educational organizations. Commercial use requires separate licensing.
 
 ## 💬 Support
 

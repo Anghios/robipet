@@ -45,9 +45,6 @@ export default function Footer() {
           </div>
           <div className="flex space-x-6 text-sm">
             <a href="#" className="text-white/50 hover:text-white transition-colors">
-              {t('footer.privacyPolicy')}
-            </a>
-            <a href="#" className="text-white/50 hover:text-white transition-colors">
               {t('footer.termsOfUse')}
             </a>
             <a href="mailto:nestor@banshee.pro" className="text-white/50 hover:text-white transition-colors">
