@@ -200,6 +200,31 @@ export function useUsersData() {
       const result = await response.json();
       
       if (result.success) {
+        // Check if the updated user is the current logged-in user
+        const currentUser = localStorage.getItem('user');
+        if (currentUser) {
+          const currentUserData = JSON.parse(currentUser);
+          if (currentUserData.id === editingUser.id) {
+            // Fetch updated user data from database to ensure data integrity
+            try {
+              const userResponse = await fetch(`/api/users/${editingUser.id}`, {
+                headers: getAuthHeaders()
+              });
+
+              if (userResponse.ok) {
+                const updatedUser = await userResponse.json();
+                // Update localStorage with verified data from database
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+
+                // Dispatch event to notify other components
+                window.dispatchEvent(new Event('userUpdated'));
+              }
+            } catch (err) {
+              console.error('Error fetching updated user data:', err);
+            }
+          }
+        }
+
         setEditingUser(null);
         setEditForm({ name: '', email: '', username: '', password: '', role: 'user' });
         fetchUsers();

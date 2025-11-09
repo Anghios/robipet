@@ -16,12 +16,27 @@ export default function AuthenticatedNavigation() {
 
   useEffect(() => {
     setCurrentPath(window.location.pathname);
-    
+
     // Cargar usuario desde localStorage
-    const userData = localStorage.getItem('user');
-    if (userData) {
-      setUser(JSON.parse(userData));
-    }
+    const loadUser = () => {
+      const userData = localStorage.getItem('user');
+      if (userData) {
+        setUser(JSON.parse(userData));
+      }
+    };
+
+    loadUser();
+
+    // Listen for user updates
+    const handleUserUpdate = () => {
+      loadUser();
+    };
+
+    window.addEventListener('userUpdated', handleUserUpdate);
+
+    return () => {
+      window.removeEventListener('userUpdated', handleUserUpdate);
+    };
   }, []);
 
   const handleLogout = () => {
