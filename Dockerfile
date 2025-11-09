@@ -34,7 +34,9 @@ RUN mkdir -p /var/www/html/api && \
 
 # Copiar y dar permisos al entrypoint script
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
+# Convertir line endings de Windows (CRLF) a Unix (LF) y dar permisos de ejecución
+RUN sed -i 's/\r$//' /usr/local/bin/entrypoint.sh && \
+    chmod +x /usr/local/bin/entrypoint.sh
 
 # Exponer puerto 8081
 EXPOSE 8081
