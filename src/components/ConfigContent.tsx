@@ -37,17 +37,17 @@ export default function ConfigContent() {
               <button
                 onClick={async () => {
                   try {
-                    // Obtener usuario autenticado
-                    const userData = localStorage.getItem('user');
-                    if (!userData) {
-                      showToast(t('config.database.exportError') + ': No authenticated user', 'error');
+                    // Obtener token de autenticación
+                    const token = localStorage.getItem('authToken');
+                    if (!token) {
+                      showToast(t('config.database.exportError') + ': No authenticated', 'error');
                       return;
                     }
-                    const user = JSON.parse(userData);
 
-                    const response = await fetch(`/api/export_database?userId=${user.id}`, {
+                    const response = await fetch('/api/export_database', {
                       method: 'GET',
                       headers: {
+                        'Authorization': `Bearer ${token}`,
                         'Accept': 'application/octet-stream'
                       }
                     });
