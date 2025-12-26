@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Icon } from '@iconify/react';
 import { useTranslation } from '../../hooks/useTranslation';
 
@@ -28,73 +29,123 @@ export default function DewormingRow({
   onDelete
 }: DewormingRowProps) {
   const { t } = useTranslation();
+  const [isExpanded, setIsExpanded] = useState(false);
   const status = deworming.status || 'pending';
   const isPending = status === 'pending';
 
+  const hasDetails = deworming.veterinarian || deworming.notes || deworming.next_treatment_date || deworming.weight_at_treatment;
+
   return (
-    <div className={`flex items-center gap-4 p-4 rounded-xl ${isPending ? 'bg-orange-500/10' : 'bg-slate-800/50'} border border-slate-700/50 hover:border-slate-600 transition-colors`}>
-      {/* Status Icon */}
-      <div className={`flex-shrink-0 w-10 h-10 rounded-full ${isPending ? 'bg-orange-500/20' : 'bg-green-500/20'} flex items-center justify-center`}>
-        <Icon
-          icon={isPending ? 'mdi:bug-outline' : 'mdi:check-circle'}
-          className={`w-5 h-5 ${isPending ? 'text-orange-400' : 'text-green-400'}`}
-        />
-      </div>
-
-      {/* Main Info */}
-      <div className="flex-1 min-w-0">
-        <div className="flex items-center gap-2">
-          <h4 className="font-semibold text-white truncate">{deworming.product_name}</h4>
-          {deworming.weight_at_treatment && (
-            <span className="text-sm text-slate-400 hidden sm:inline">• {deworming.weight_at_treatment} kg</span>
-          )}
+    <div className={`rounded-xl ${isPending ? 'bg-orange-500/10' : 'bg-slate-800/50'} border border-slate-700/50 hover:border-slate-600 transition-all overflow-hidden`}>
+      {/* Main Row */}
+      <div
+        className={`flex items-center gap-4 p-4 ${hasDetails ? 'cursor-pointer' : ''}`}
+        onClick={() => hasDetails && setIsExpanded(!isExpanded)}
+      >
+        {/* Status Icon */}
+        <div className={`flex-shrink-0 w-10 h-10 rounded-full ${isPending ? 'bg-orange-500/20' : 'bg-green-500/20'} flex items-center justify-center`}>
+          <Icon
+            icon={isPending ? 'mdi:bug-outline' : 'mdi:check-circle'}
+            className={`w-5 h-5 ${isPending ? 'text-orange-400' : 'text-green-400'}`}
+          />
         </div>
-        <div className="flex items-center gap-4 mt-1 text-sm text-slate-400">
-          <span className="flex items-center gap-1">
-            <Icon icon="mdi:calendar" className="w-3.5 h-3.5" />
-            {formatDate(deworming.treatment_date)}
-          </span>
-          {deworming.next_treatment_date && (
+
+        {/* Main Info */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <h4 className="font-semibold text-white truncate">{deworming.product_name}</h4>
+            {deworming.weight_at_treatment && (
+              <span className="text-sm text-slate-400 hidden sm:inline">• {deworming.weight_at_treatment} kg</span>
+            )}
+            <span className={`text-xs px-2 py-0.5 rounded-full ${isPending ? 'bg-orange-500/20 text-orange-400' : 'bg-green-500/20 text-green-400'} hidden sm:inline`}>
+              {isPending ? t('portfolio.common.pending') : t('portfolio.common.completed')}
+            </span>
+          </div>
+          <div className="flex items-center gap-4 mt-1 text-sm text-slate-400">
             <span className="flex items-center gap-1">
-              <Icon icon="mdi:calendar-clock" className="w-3.5 h-3.5" />
-              {formatDate(deworming.next_treatment_date)}
+              <Icon icon="mdi:calendar" className="w-3.5 h-3.5" />
+              {formatDate(deworming.treatment_date)}
             </span>
+            {deworming.next_treatment_date && (
+              <span className="flex items-center gap-1 hidden sm:flex">
+                <Icon icon="mdi:calendar-clock" className="w-3.5 h-3.5 text-yellow-400" />
+                {formatDate(deworming.next_treatment_date)}
+              </span>
+            )}
+          </div>
+        </div>
+
+        {/* Expand indicator */}
+        {hasDetails && (
+          <Icon
+            icon="mdi:chevron-down"
+            className={`w-5 h-5 text-slate-500 transition-transform ${isExpanded ? 'rotate-180' : ''}`}
+          />
+        )}
+
+        {/* Actions */}
+        <div className="flex items-center gap-2 flex-shrink-0" onClick={(e) => e.stopPropagation()}>
+          {isPending && (
+            <button
+              onClick={() => onComplete(deworming)}
+              className="p-2 rounded-lg bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors"
+              title={t('portfolio.dewormings.card.applyTitle')}
+            >
+              <Icon icon="mdi:check" className="w-4 h-4" />
+            </button>
           )}
-          {deworming.veterinarian && (
-            <span className="flex items-center gap-1 hidden sm:flex">
-              <Icon icon="mdi:hospital-building" className="w-3.5 h-3.5" />
-              {deworming.veterinarian}
-            </span>
-          )}
+          <button
+            onClick={() => onEdit(deworming)}
+            className="p-2 rounded-lg bg-slate-700/50 text-slate-300 hover:bg-slate-600 hover:text-white transition-colors"
+            title={t('portfolio.common.edit')}
+          >
+            <Icon icon="mdi:pencil" className="w-4 h-4" />
+          </button>
+          <button
+            onClick={() => onDelete(deworming)}
+            className="p-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
+            title={t('portfolio.common.delete')}
+          >
+            <Icon icon="mdi:delete" className="w-4 h-4" />
+          </button>
         </div>
       </div>
 
-      {/* Actions */}
-      <div className="flex items-center gap-2 flex-shrink-0">
-        {isPending && (
-          <button
-            onClick={() => onComplete(deworming)}
-            className="p-2 rounded-lg bg-green-500/20 text-green-400 hover:bg-green-500/30 transition-colors"
-            title={t('portfolio.dewormings.card.applyTitle')}
-          >
-            <Icon icon="mdi:check" className="w-4 h-4" />
-          </button>
-        )}
-        <button
-          onClick={() => onEdit(deworming)}
-          className="p-2 rounded-lg bg-slate-700/50 text-slate-300 hover:bg-slate-600 hover:text-white transition-colors"
-          title={t('portfolio.common.edit')}
-        >
-          <Icon icon="mdi:pencil" className="w-4 h-4" />
-        </button>
-        <button
-          onClick={() => onDelete(deworming)}
-          className="p-2 rounded-lg bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
-          title={t('portfolio.common.delete')}
-        >
-          <Icon icon="mdi:delete" className="w-4 h-4" />
-        </button>
-      </div>
+      {/* Expanded Details */}
+      {isExpanded && hasDetails && (
+        <div className="px-4 pb-4 pt-0 border-t border-slate-700/50 mt-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-4">
+            {deworming.weight_at_treatment && (
+              <div className="flex items-center gap-2 text-sm">
+                <Icon icon="mdi:scale" className="w-4 h-4 text-blue-400" />
+                <span className="text-slate-400">{t('portfolio.dewormings.weightAtTreatment')}:</span>
+                <span className="text-white">{deworming.weight_at_treatment} kg</span>
+              </div>
+            )}
+            {deworming.next_treatment_date && (
+              <div className="flex items-center gap-2 text-sm">
+                <Icon icon="mdi:calendar-clock" className="w-4 h-4 text-yellow-400" />
+                <span className="text-slate-400">{t('portfolio.dewormings.nextTreatmentDate')}:</span>
+                <span className="text-white">{formatDate(deworming.next_treatment_date)}</span>
+              </div>
+            )}
+            {deworming.veterinarian && (
+              <div className="flex items-center gap-2 text-sm">
+                <Icon icon="mdi:doctor" className="w-4 h-4 text-teal-400" />
+                <span className="text-slate-400">{t('portfolio.dewormings.veterinarian')}:</span>
+                <span className="text-white">{deworming.veterinarian}</span>
+              </div>
+            )}
+            {deworming.notes && (
+              <div className="col-span-full flex items-start gap-2 text-sm">
+                <Icon icon="mdi:note-text" className="w-4 h-4 text-amber-400 mt-0.5" />
+                <span className="text-slate-400">{t('portfolio.dewormings.notes')}:</span>
+                <span className="text-slate-300 italic">{deworming.notes}</span>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

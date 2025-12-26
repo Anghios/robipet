@@ -4,6 +4,7 @@ import { useTranslation } from '../../hooks/useTranslation';
 interface MedicalReviewFormData {
   visit_date: string;
   visit_type: 'routine' | 'illness' | 'emergency' | 'follow_up';
+  status: 'pending' | 'completed';
   veterinarian: string;
   clinic_name: string;
   reason: string;
@@ -54,23 +55,60 @@ export default function MedicalReviewForm({
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        {/* Status selector */}
+        <div className="md:col-span-2 group">
+          <label className="block text-slate-300 font-semibold mb-3 text-sm flex items-center gap-2 group-hover:text-slate-200 transition-colors">
+            <Icon icon="mdi:flag" className="w-4 h-4 text-purple-400" />
+            {t('portfolio.common.status')}
+          </label>
+          <div className="flex gap-3">
+            <button
+              type="button"
+              onClick={() => handleInputChange('status', 'pending')}
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border transition-all duration-300 ${
+                formData.status === 'pending'
+                  ? 'bg-yellow-500/20 border-yellow-500/50 text-yellow-400'
+                  : 'bg-slate-700/50 border-slate-600/50 text-slate-400 hover:border-slate-500/70'
+              }`}
+            >
+              <Icon icon="mdi:clock-outline" className="w-5 h-5" />
+              {t('portfolio.common.pending')}
+            </button>
+            <button
+              type="button"
+              onClick={() => handleInputChange('status', 'completed')}
+              className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border transition-all duration-300 ${
+                formData.status === 'completed'
+                  ? 'bg-green-500/20 border-green-500/50 text-green-400'
+                  : 'bg-slate-700/50 border-slate-600/50 text-slate-400 hover:border-slate-500/70'
+              }`}
+            >
+              <Icon icon="mdi:check-circle" className="w-5 h-5" />
+              {t('portfolio.common.completed')}
+            </button>
+          </div>
+        </div>
+
         <div className="group">
           <label className="block text-slate-300 font-semibold mb-3 text-sm flex items-center gap-2 group-hover:text-slate-200 transition-colors">
             <Icon icon="mdi:calendar" className="w-4 h-4 text-purple-400" />
-            {t('portfolio.medicalReviews.form.visitDateLabel')}
+            {t('portfolio.medicalReviews.form.visitDateLabel')} {formData.status === 'completed' && '*'}
           </label>
           <div className="relative">
             <input
               type="date"
               value={formData.visit_date}
               onChange={(e) => handleInputChange('visit_date', e.target.value)}
-              required
+              required={formData.status === 'completed'}
               className="w-full px-4 py-3 pl-12 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white focus:ring-2 focus:ring-purple-400/50 focus:border-purple-400/50 focus:bg-slate-700/80 transition-all duration-300 hover:border-slate-500/70"
             />
             <Icon icon="mdi:calendar-today" className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
           </div>
+          {formData.status === 'pending' && (
+            <p className="text-xs text-slate-500 mt-2">{t('portfolio.medicalReviews.form.dateOptionalHint')}</p>
+          )}
         </div>
-        
+
         <div className="group">
           <label className="block text-slate-300 font-semibold mb-3 text-sm flex items-center gap-2 group-hover:text-slate-200 transition-colors">
             <Icon icon="mdi:clipboard-pulse" className="w-4 h-4 text-purple-400" />

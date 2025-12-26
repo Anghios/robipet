@@ -66,6 +66,7 @@ export default function DogPortfolio() {
     openDeleteDewormingModal,
     openCompleteDewormingModal,
     openDeleteMedicalReviewModal,
+    openCompleteMedicalReviewModal,
     openDeleteDocumentModal
   } = useConfirmationModals();
 
@@ -209,12 +210,14 @@ export default function DogPortfolio() {
     openDeleteDewormingModal,
     openCompleteDewormingModal,
     openDeleteMedicalReviewModal,
+    openCompleteMedicalReviewModal,
     openDeleteDocumentModal
   });
 
   const {
     handleMarkVaccineCompleted,
     handleDeleteMedicalReview,
+    handleMarkMedicalReviewCompleted,
     handleDeleteVaccine,
     handleDeleteDeworming,
     handleMarkDewormingCompleted,
@@ -476,13 +479,20 @@ export default function DogPortfolio() {
             )}
             <div className="space-y-3">
               {medicalReviews
-                .sort((a: any, b: any) => new Date(b.visit_date).getTime() - new Date(a.visit_date).getTime())
+                .sort((a: any, b: any) => {
+                  // Pending reviews without date come first
+                  if (!a.visit_date && b.visit_date) return -1;
+                  if (a.visit_date && !b.visit_date) return 1;
+                  if (!a.visit_date && !b.visit_date) return 0;
+                  return new Date(b.visit_date).getTime() - new Date(a.visit_date).getTime();
+                })
                 .map((review: any) => (
                   <MedicalReviewRow
                     key={review.id}
                     review={review}
                     formatDate={formatDateLocalized}
                     onEdit={handleEditMedicalReview}
+                    onComplete={handleMarkMedicalReviewCompleted}
                     onDelete={handleDeleteMedicalReview}
                   />
                 ))}
@@ -564,19 +574,49 @@ export default function DogPortfolio() {
   );
 
   // Render settings/info section
-  const renderSettingsContent = () => (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-      <BasicInfoCard
-        dog_info={dog_info}
-        formatDate={formatDateLocalized}
-      />
-      <PhysicalDataCard
-        dog_info={dog_info}
-        getSizeText={getSizeText}
-        getCurrentWeight={getCurrentWeight}
-      />
-    </div>
-  );
+  const renderSettingsContent = () => {
+    const infoItems = [
+      { icon: 'mdi:calendar', color: 'text-blue-400', label: t('home.basicInfo.birthDate'), value: dog_info?.birth_date ? formatDateLocalized(dog_info.birth_date) : '-' },
+      { icon: 'mdi:clock', color: 'text-orange-400', label: t('home.basicInfo.age'), value: `${dog_info?.age_years || 0} ${t('common.years')}, ${dog_info?.age_months || 0} ${t('common.months')}` },
+      ...(dog_info?.species === 'dog' ? [{ icon: 'ph:dog-fill', color: 'text-cyan-400', label: t('home.basicInfo.dogAge'), value: `${dog_info?.dog_years || 0} ${t('common.years')}` }] : []),
+      { icon: 'mdi:dog', color: 'text-emerald-400', label: t('home.basicInfo.breed'), value: dog_info?.breed || '-' },
+      { icon: 'mdi:palette', color: 'text-rose-400', label: t('home.basicInfo.color'), value: dog_info?.color || '-' },
+      { icon: 'mdi:resize', color: 'text-amber-400', label: t('home.physicalData.size'), value: getSizeText(dog_info?.size || 'medium') },
+      { icon: 'mdi:weight', color: 'text-teal-400', label: t('home.physicalData.currentWeight'), value: `${getCurrentWeight()} kg` },
+      { icon: 'mdi:chip', color: 'text-indigo-400', label: t('home.physicalData.microchip'), value: dog_info?.microchip || t('portfolio.physicalData.noMicrochip'), isMono: true },
+      { icon: 'mdi:medical-bag', color: 'text-purple-400', label: t('common.neutered'), value: dog_info?.neutered ? t('common.yes') : t('common.no'), isBadge: true, badgeColor: dog_info?.neutered ? 'green' : 'red' },
+    ];
+
+    return (
+      <div className="space-y-2">
+        {infoItems.map((item, index) => (
+          <div
+            key={index}
+            className="flex items-center justify-between p-4 rounded-xl bg-slate-800/30 border border-slate-700/50 hover:border-slate-600 transition-colors"
+          >
+            <span className="text-slate-300 font-medium flex items-center gap-3">
+              <Icon icon={item.icon} className={`w-5 h-5 ${item.color}`} />
+              {item.label}
+            </span>
+            {item.isBadge ? (
+              <span className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${
+                item.badgeColor === 'green'
+                  ? 'bg-green-500/20 text-green-400'
+                  : 'bg-red-500/20 text-red-400'
+              }`}>
+                <Icon icon={item.badgeColor === 'green' ? 'mdi:check' : 'mdi:close'} className="w-3.5 h-3.5" />
+                {item.value}
+              </span>
+            ) : (
+              <span className={`font-semibold text-white ${item.isMono ? 'font-mono text-sm bg-slate-700/50 px-3 py-1 rounded-lg' : ''}`}>
+                {item.value}
+              </span>
+            )}
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   // Render section content
   const renderSectionContent = () => {

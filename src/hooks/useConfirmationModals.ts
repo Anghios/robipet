@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 
-export type ModalType = 
+export type ModalType =
   | 'deleteVaccine'
   | 'completeVaccine'
   | 'deleteWeight'
@@ -9,6 +9,7 @@ export type ModalType =
   | 'deleteDeworming'
   | 'completeDeworming'
   | 'deleteMedicalReview'
+  | 'completeMedicalReview'
   | 'deleteDocumentFile'
   | 'deleteSelectedFile'
   | 'deleteDocument';
@@ -67,6 +68,10 @@ export function useConfirmationModals() {
     openModal('deleteMedicalReview', medicalReview);
   }, [openModal]);
 
+  const openCompleteMedicalReviewModal = useCallback((medicalReview: any) => {
+    openModal('completeMedicalReview', medicalReview);
+  }, [openModal]);
+
   const openDeleteDocumentFileModal = useCallback((file: any) => {
     openModal('deleteDocumentFile', file);
   }, [openModal]);
@@ -90,6 +95,7 @@ export function useConfirmationModals() {
     openDeleteDewormingModal,
     openCompleteDewormingModal,
     openDeleteMedicalReviewModal,
+    openCompleteMedicalReviewModal,
     openDeleteDocumentFileModal,
     openDeleteSelectedFileModal,
     openDeleteDocumentModal

@@ -47,6 +47,7 @@ export const getModalProps = (
     confirmDeleteDeworming: () => void;
     confirmCompleteDeworming: () => void;
     confirmDeleteMedicalReview: () => void;
+    confirmCompleteMedicalReview: () => void;
     confirmDeleteDocumentFile: () => void;
     confirmDeleteSelectedFile: () => void;
     confirmDeleteDocument: () => void;
@@ -151,6 +152,18 @@ export const getModalProps = (
         confirmColor: 'bg-red-600 hover:bg-red-500 focus:ring-red-400',
         icon: 'mdi:delete',
         onConfirm: confirmActions.confirmDeleteMedicalReview
+      };
+    case 'completeMedicalReview':
+      return {
+        title: safeTranslate(translationFn, 'confirmationModal.completeMedicalReview.title', 'Completar Revisión Médica'),
+        message: interpolate(
+          safeTranslate(translationFn, 'confirmationModal.completeMedicalReview.message', '¿Confirmas que la revisión médica "{reason}" ha sido completada?'),
+          { reason: activeModal.item?.reason || safeTranslate(translationFn, 'portfolio.medicalReviews.card.visitType' + (activeModal.item?.visit_type?.charAt(0).toUpperCase() + activeModal.item?.visit_type?.slice(1)), activeModal.item?.visit_type) }
+        ),
+        confirmText: safeTranslate(translationFn, 'confirmationModal.completeMedicalReview.confirmText', 'Completar'),
+        confirmColor: 'bg-green-600 hover:bg-green-500 focus:ring-green-400',
+        icon: 'mdi:check',
+        onConfirm: confirmActions.confirmCompleteMedicalReview
       };
     case 'deleteDocumentFile':
       return {

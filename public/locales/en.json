@@ -310,6 +310,11 @@
       "message": "Are you sure you want to delete the medical review from {date}? This action cannot be undone.",
       "confirmText": "Delete"
     },
+    "completeMedicalReview": {
+      "title": "Complete Medical Review",
+      "message": "Do you confirm that the medical review \"{reason}\" has been completed?",
+      "confirmText": "Complete"
+    },
     "deleteDocumentFile": {
       "title": "Delete File",
       "message": "Are you sure you want to delete the file \"{name}\"? This action cannot be undone and the file will be permanently deleted.",
@@ -646,6 +651,8 @@
       "deleteReviewTitle": "Delete review",
       "noReviews": "No medical reviews recorded",
       "addFirstReview": "Add your pet's first medical review",
+      "noDateYet": "No date yet",
+      "markCompleted": "Mark as completed",
       "routine": "Routine",
       "emergency": "Emergency",
       "followup": "Follow-up",
@@ -683,11 +690,12 @@
         "updateButton": "Update",
         "savingText": "Saving...",
         "updatingText": "Updating...",
-        "cancelButton": "Cancel"
+        "cancelButton": "Cancel",
+        "dateOptionalHint": "Date is optional for pending reviews"
       },
       "card": {
         "visitTypeRoutine": "Routine",
-        "visitTypeIllness": "Illness", 
+        "visitTypeIllness": "Illness",
         "visitTypeEmergency": "Emergency",
         "visitTypeFollowUp": "Follow-up",
         "dateLabel": "Date:",

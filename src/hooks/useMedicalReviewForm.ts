@@ -4,6 +4,7 @@ import { petApi } from '../services/petApi';
 export interface MedicalReviewFormData {
   visit_date: string;
   visit_type: 'routine' | 'illness' | 'emergency' | 'follow_up';
+  status: 'pending' | 'completed';
   veterinarian: string;
   clinic_name: string;
   reason: string;
@@ -24,8 +25,9 @@ export function useMedicalReviewForm(
   const [showMedicalReviewForm, setShowMedicalReviewForm] = useState(false);
   const [editingMedicalReview, setEditingMedicalReview] = useState<any>(null);
   const [medicalReviewForm, setMedicalReviewForm] = useState<MedicalReviewFormData>({
-    visit_date: new Date().toISOString().split('T')[0],
+    visit_date: '',
     visit_type: 'routine',
+    status: 'pending',
     veterinarian: '',
     clinic_name: '',
     reason: '',
@@ -40,8 +42,9 @@ export function useMedicalReviewForm(
 
   const handleAddMedicalReview = useCallback(() => {
     setMedicalReviewForm({
-      visit_date: new Date().toISOString().split('T')[0],
+      visit_date: '',
       visit_type: 'routine',
+      status: 'pending',
       veterinarian: '',
       clinic_name: '',
       reason: '',
@@ -58,8 +61,9 @@ export function useMedicalReviewForm(
 
   const handleEditMedicalReview = useCallback((review: any) => {
     setMedicalReviewForm({
-      visit_date: review.visit_date,
+      visit_date: review.visit_date || '',
       visit_type: review.visit_type,
+      status: review.status || 'completed',
       veterinarian: review.veterinarian || '',
       clinic_name: review.clinic_name || '',
       reason: review.reason || '',
@@ -75,18 +79,20 @@ export function useMedicalReviewForm(
   }, []);
 
   const handleSaveMedicalReview = useCallback(async () => {
-    if (!medicalReviewForm.visit_date) {
-      onError('Fecha de visita es requerida');
+    // Only require visit_date if status is 'completed'
+    if (medicalReviewForm.status === 'completed' && !medicalReviewForm.visit_date) {
+      onError('Fecha de visita es requerida para revisiones completadas');
       return;
     }
 
     try {
       setSavingMedicalReview(true);
       const petId = getCurrentPetId();
-      
+
       const reviewData = {
-        visit_date: medicalReviewForm.visit_date,
+        visit_date: medicalReviewForm.visit_date || null,
         visit_type: medicalReviewForm.visit_type,
+        status: medicalReviewForm.status,
         veterinarian: medicalReviewForm.veterinarian,
         clinic_name: medicalReviewForm.clinic_name,
         reason: medicalReviewForm.reason,
@@ -120,8 +126,9 @@ export function useMedicalReviewForm(
     setShowMedicalReviewForm(false);
     setEditingMedicalReview(null);
     setMedicalReviewForm({
-      visit_date: new Date().toISOString().split('T')[0],
+      visit_date: '',
       visit_type: 'routine',
+      status: 'pending',
       veterinarian: '',
       clinic_name: '',
       reason: '',

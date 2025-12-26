@@ -310,6 +310,11 @@
       "message": "¿Estás seguro de que quieres eliminar la revisión médica del {date}? Esta acción no se puede deshacer.",
       "confirmText": "Eliminar"
     },
+    "completeMedicalReview": {
+      "title": "Completar Revisión Médica",
+      "message": "¿Confirmas que la revisión médica \"{reason}\" ha sido completada?",
+      "confirmText": "Completar"
+    },
     "deleteDocumentFile": {
       "title": "Eliminar Archivo",
       "message": "¿Estás seguro de que quieres eliminar el archivo \"{name}\"? Esta acción no se puede deshacer y el archivo será eliminado permanentemente.",
@@ -644,6 +649,8 @@
       "deleteReviewTitle": "Eliminar revisión",
       "noReviews": "No hay revisiones médicas registradas",
       "addFirstReview": "Añade la primera revisión médica de tu mascota",
+      "noDateYet": "Sin fecha aún",
+      "markCompleted": "Marcar como completada",
       "routine": "Rutina",
       "emergency": "Emergencia",
       "followup": "Seguimiento",
@@ -681,7 +688,8 @@
         "updateButton": "Actualizar",
         "savingText": "Guardando...",
         "updatingText": "Actualizando...",
-        "cancelButton": "Cancelar"
+        "cancelButton": "Cancelar",
+        "dateOptionalHint": "La fecha es opcional para revisiones pendientes"
       },
       "card": {
         "visitTypeRoutine": "Rutina",
