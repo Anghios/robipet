@@ -1,5 +1,6 @@
 import { Icon } from '@iconify/react';
 import { useTranslation } from '../../hooks/useTranslation';
+import WeightChart from '../Charts/WeightChart';
 
 interface WeightRecord {
   id: number;
@@ -26,24 +27,6 @@ export default function WeightCard({
 }: WeightCardProps) {
   const { t } = useTranslation();
 
-  // Preparar datos para la gráfica
-  const getChartData = () => {
-    if (!weightHistory || weightHistory.length === 0) return [];
-    
-    return [...weightHistory]
-      .sort((a, b) => new Date(a.measurement_date).getTime() - new Date(b.measurement_date).getTime())
-      .map((record, index) => ({
-        date: record.measurement_date,
-        weight: record.weight_kg,
-        index
-      }));
-  };
-
-  const chartData = getChartData();
-  const maxWeight = chartData.length > 0 ? Math.max(...chartData.map(d => d.weight)) : currentWeight;
-  const minWeight = chartData.length > 0 ? Math.min(...chartData.map(d => d.weight)) : currentWeight;
-  const weightRange = maxWeight - minWeight || 1;
-
   return (
     <>
       {/* Current Weight Display */}
@@ -55,99 +38,9 @@ export default function WeightCard({
       </div>
 
       {/* Weight Chart */}
-      {chartData.length > 1 && (
+      {weightHistory && weightHistory.length > 1 && (
         <div className="mb-8">
-          <div className="bg-slate-800 rounded-2xl border border-slate-700 shadow-xl p-6">
-            <h4 className="text-xl font-bold text-white mb-6 flex items-center">
-              <Icon icon="mdi:chart-line" className="mr-3 w-6 h-6 text-green-400" />
-              {t('portfolio.weight.weightEvolution')}
-            </h4>
-            <div className="bg-slate-900/50 rounded-xl p-4 border border-slate-600/30">
-              <svg 
-                viewBox="0 0 600 200" 
-                className="w-full h-40 mb-3"
-                preserveAspectRatio="xMidYMid meet"
-              >
-                {/* Grid lines */}
-                <defs>
-                  <pattern id="grid" width="60" height="30" patternUnits="userSpaceOnUse">
-                    <path d="M 60 0 L 0 0 0 30" fill="none" stroke="rgb(71 85 105)" strokeWidth="0.5" opacity="0.3"/>
-                  </pattern>
-                </defs>
-                <rect width="600" height="200" fill="url(#grid)" />
-                
-                {/* Chart line */}
-                <polyline
-                  points={chartData.map((point, index) => 
-                    `${(index / (chartData.length - 1)) * 560 + 20},${180 - ((point.weight - minWeight) / weightRange) * 140}`
-                  ).join(' ')}
-                  fill="none"
-                  stroke="url(#weightGradient)"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                />
-                
-                {/* Gradient definition */}
-                <defs>
-                  <linearGradient id="weightGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" style={{stopColor: '#10b981', stopOpacity: 1}} />
-                    <stop offset="100%" style={{stopColor: '#06d6a0', stopOpacity: 1}} />
-                  </linearGradient>
-                </defs>
-                
-                {/* Data points */}
-                {chartData.map((point, index) => (
-                  <g key={index}>
-                    <circle
-                      cx={(index / (chartData.length - 1)) * 560 + 20}
-                      cy={180 - ((point.weight - minWeight) / weightRange) * 140}
-                      r="5"
-                      fill="#10b981"
-                      stroke="#ffffff"
-                      strokeWidth="2"
-                      className="hover:r-7 transition-all cursor-pointer"
-                    />
-                    <text
-                      x={(index / (chartData.length - 1)) * 560 + 20}
-                      y={180 - ((point.weight - minWeight) / weightRange) * 140 - 12}
-                      textAnchor="middle"
-                      fontSize="11"
-                      fill="#e2e8f0"
-                      className="font-medium"
-                    >
-                      {point.weight}kg
-                    </text>
-                  </g>
-                ))}
-                
-                {/* Date labels */}
-                {chartData.map((point, index) => (
-                  <text
-                    key={`date-${index}`}
-                    x={(index / (chartData.length - 1)) * 560 + 20}
-                    y={195}
-                    textAnchor="middle"
-                    fontSize="10"
-                    fill="#94a3b8"
-                    className="font-medium"
-                  >
-                    {new Date(point.date).toLocaleDateString('es-ES', { month: 'short', day: 'numeric' })}
-                  </text>
-                ))}
-              </svg>
-              
-              <div className="flex items-center justify-between text-sm text-slate-400">
-                <span className="flex items-center">
-                  <div className="w-3 h-3 bg-gradient-to-r from-green-500 to-green-400 rounded-full mr-2"></div>
-                  {t('portfolio.weight.progressText', { count: chartData.length })}
-                </span>
-                <span>
-                  {t('portfolio.weight.rangeText', { min: minWeight, max: maxWeight })}
-                </span>
-              </div>
-            </div>
-          </div>
+          <WeightChart weightHistory={weightHistory} currentWeight={currentWeight} />
         </div>
       )}
 

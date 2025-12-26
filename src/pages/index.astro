@@ -1,15 +1,8 @@
 ---
-import ProtectedLayout from '../layouts/ProtectedLayout.astro';
+import HomeLayout from '../layouts/HomeLayout.astro';
 import DogPortfolio from '../components/DogPortfolio';
-import PageTitle from '../components/PageTitle';
 ---
 
-<ProtectedLayout title="RobiPet">
-	<PageTitle client:only="react" titleKey="home.pageTitle" fallback="RobiPet - Home" />
-	<main class="max-w-6xl mx-auto px-4 py-6 min-h-screen">
-
-		<div class="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 overflow-hidden">
-			<DogPortfolio client:load />
-		</div>
-	</main>
-</ProtectedLayout>
+<HomeLayout title="RobiPet">
+	<DogPortfolio client:load />
+</HomeLayout>

@@ -7,6 +7,33 @@
     "login": "Login",
     "logout": "Logout"
   },
+  "header": {
+    "switchPet": "Switch pet",
+    "managePets": "Manage pets",
+    "search": "Search"
+  },
+  "sections": {
+    "summary": "Summary",
+    "health": "Health",
+    "documents": "Documents",
+    "settings": "Info"
+  },
+  "health": {
+    "timeline": "Timeline",
+    "vaccines": "Vaccines",
+    "medications": "Medications",
+    "dewormings": "Dewormings",
+    "reviews": "Reviews",
+    "weight": "Weight"
+  },
+  "search": {
+    "placeholder": "Search vaccines, medications, documents...",
+    "typeToSearch": "Type at least 2 characters to search",
+    "noResults": "No results found",
+    "toSelect": "Select",
+    "toClose": "Close",
+    "resultsCount": "{count} results"
+  },
   "no_pets": {
     "title": "No pets added",
     "subtitle": "Add your first pet to start managing their medical information and tracking.",
@@ -16,7 +43,34 @@
     "title": "Your pet's information",
     "subtitle": "Check all medical information and data about your companion",
     "pageTitle": "RobiPet - Home",
+    "months": "months",
+    "years": "years",
+    "cards": {
+      "vaccines": "Vaccines",
+      "medications": "Medications",
+      "reviews": "Reviews",
+      "documents": "Documents",
+      "weightTrend": "Weight",
+      "recentActivity": "Recent Activity",
+      "total": "Total",
+      "active": "Active",
+      "visits": "Visits",
+      "files": "Files",
+      "currentWeight": "Current weight",
+      "last30Days": "{count} events in 30 days"
+    },
+    "alerts": {
+      "overdueVaccines": "Overdue vaccines",
+      "overdueVaccinesDesc": "{count} vaccines need attention",
+      "activeMedications": "Active medications",
+      "activeMedicationsDesc": "{count} ongoing treatments",
+      "upcomingVaccines": "Upcoming vaccines",
+      "upcomingVaccinesDesc": "{count} vaccines in the next 7 days",
+      "viewDetails": "View details"
+    },
     "tabs": {
+      "summary": "Summary",
+      "timeline": "Timeline",
       "info": "Information",
       "medicalReviews": "Medical Reviews",
       "vaccines": "Vaccines",
@@ -441,8 +495,9 @@
       "noWeightRecords": "No weight records yet",
       "addFirstWeight": "Add the first weight record to start tracking your pet's weight evolution",
       "weightEvolution": "Weight Evolution",
-      "progressText": "Progress: {count} measurements",
-      "rangeText": "Range: {min}kg - {max}kg",
+      "progressText": "{count} measurements",
+      "rangeText": "Range: {min} - {max} kg",
+      "average": "Average",
       "noWeightHistory": "No weight records",
       "addFirstWeightRecord": "Add your pet's first weight record",
       "editRecordTitle": "Edit record",
@@ -755,6 +810,91 @@
       "expired": "Expired",
       "active": "Active",
       "inactive": "Inactive"
+    }
+  },
+  "timeline": {
+    "status": {
+      "pending": "Pending",
+      "completed": "Completed",
+      "expired": "Expired"
+    },
+    "filters": {
+      "all": "All",
+      "vaccines": "Vaccines",
+      "medications": "Medications",
+      "dewormings": "Dewormings",
+      "reviews": "Reviews",
+      "weight": "Weight"
+    },
+    "details": {
+      "nextDate": "Next date",
+      "veterinarian": "Veterinarian",
+      "notes": "Notes",
+      "dosage": "Dosage",
+      "frequency": "Frequency",
+      "every": "Every",
+      "endDate": "End date",
+      "weight": "Weight",
+      "type": "Type",
+      "diagnosis": "Diagnosis",
+      "treatment": "Treatment",
+      "cost": "Cost"
+    },
+    "visitType": {
+      "routine": "Routine checkup",
+      "illness": "Illness",
+      "emergency": "Emergency",
+      "followUp": "Follow-up"
+    },
+    "empty": {
+      "title": "No history",
+      "description": "No medical records to show in the timeline yet"
+    },
+    "loadMore": "Load more ({count} remaining)",
+    "stats": {
+      "total": "{count} total events",
+      "vaccines": "{count} vaccines",
+      "reviews": "{count} reviews"
+    }
+  },
+  "dashboard": {
+    "welcome": "{name}'s Summary",
+    "allGood": "Everything is up to date",
+    "alertsCount": "{count} items need attention",
+    "alertsTitle": "Alerts & Pending",
+    "moreAlerts": "+{count} more alerts",
+    "quickActions": "Quick Actions",
+    "alerts": {
+      "overdueVaccine": "Overdue vaccine",
+      "activeMedication": "Active medication",
+      "pendingDeworming": "Pending deworming",
+      "upcomingVaccine": "Upcoming vaccine",
+      "viewVaccines": "View",
+      "viewMedications": "View",
+      "viewDewormings": "View"
+    },
+    "actions": {
+      "vaccines": "Vaccines",
+      "medications": "Medications",
+      "weight": "Weight",
+      "reviews": "Reviews"
+    },
+    "stats": {
+      "vaccines": "Vaccines",
+      "weight": "Current weight",
+      "lastReview": "Last review",
+      "alerts": "Alerts",
+      "records": "{count} records",
+      "noReviews": "No reviews",
+      "urgent": "{count} urgent",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "daysAgo": "{days} days ago",
+      "weeksAgo": "{weeks} weeks ago"
+    },
+    "noAlerts": {
+      "title": "All good",
+      "description": "{name} is up to date with all vaccines and treatments"
     }
   },
   "petList": {

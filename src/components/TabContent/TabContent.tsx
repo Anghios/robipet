@@ -14,11 +14,13 @@ import WeightForm from '../DogPortfolio/WeightForm';
 import DocumentsCard from '../DogPortfolio/DocumentsCard';
 import DocumentsForm from '../DogPortfolio/DocumentsForm';
 import NotificationBadge from '../Visuals/NotificationBadge';
+import DashboardSummary from '../Dashboard/DashboardSummary';
+import MedicalTimeline from '../Timeline/MedicalTimeline';
 import type { DogPortfolio } from '../../types/Pet';
 import { formatDate, getVaccineStatusBadgeData, getSpeciesEmoji } from '../../utils/petUtils';
 import { useTranslation } from '../../hooks/useTranslation';
 
-type TabType = 'info' | 'medical_reviews' | 'vaccines' | 'weight' | 'medication' | 'deworming' | 'documents';
+type TabType = 'summary' | 'info' | 'timeline' | 'medical_reviews' | 'vaccines' | 'weight' | 'medication' | 'deworming' | 'documents';
 
 interface TabContentProps {
   activeTab: TabType;
@@ -100,6 +102,9 @@ interface TabContentProps {
   getVaccineStatusBadge: (status: string) => JSX.Element;
   getVaccineStatusColor: (status: string) => string;
   getSizeText: (size: string) => string;
+
+  // Navigation
+  onNavigateToTab: (tab: TabType) => void;
 }
 
 export default function TabContent(props: TabContentProps) {
@@ -127,17 +132,56 @@ export default function TabContent(props: TabContentProps) {
   const pendingMedications = getPendingCount(medications, 'medications');
   const pendingDewormings = getPendingCount(dewormings, 'dewormings');
 
+  if (activeTab === 'summary') {
+    return (
+      <DashboardSummary
+        vaccines={vaccines}
+        medications={medications}
+        dewormings={dewormings}
+        medicalReviews={medicalReviews}
+        weightHistory={weight_history}
+        currentWeight={getCurrentWeight()}
+        petName={dog_info?.name || ''}
+        onNavigateToTab={props.onNavigateToTab}
+        t={t}
+      />
+    );
+  }
+
   if (activeTab === 'info') {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <BasicInfoCard 
-          dog_info={dog_info} 
+        <BasicInfoCard
+          dog_info={dog_info}
           formatDate={formatDateLocalized}
         />
-        <PhysicalDataCard 
+        <PhysicalDataCard
           dog_info={dog_info}
           getSizeText={getSizeText}
           getCurrentWeight={getCurrentWeight}
+        />
+      </div>
+    );
+  }
+
+  if (activeTab === 'timeline') {
+    return (
+      <div>
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 md:gap-0 mb-8">
+          <h3 className="text-xl font-bold text-white flex items-center">
+            <Icon icon="mdi:timeline" className="mr-4 w-8 h-8 text-indigo-400" />
+            <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+              {t('home.tabs.timeline')}
+            </span>
+          </h3>
+        </div>
+        <MedicalTimeline
+          vaccines={vaccines}
+          medications={medications}
+          dewormings={dewormings}
+          medicalReviews={medicalReviews}
+          weightHistory={weight_history}
+          t={t}
         />
       </div>
     );
