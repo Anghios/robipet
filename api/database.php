@@ -575,21 +575,12 @@ class Database {
     // Métodos para gestión de peso
     public function addWeightRecord($petId, $data) {
         try {
-            error_log("[addWeightRecord] Adding weight for petId: $petId");
-            error_log("[addWeightRecord] Data: " . json_encode($data));
-
             $columnName = $this->getWeightHistoryPetColumn();
-            error_log("[addWeightRecord] Using column: $columnName");
-
-            // Temporarily disable foreign keys to avoid constraint issues with legacy schema
-            // The weight_history table may have FK pointing to dog_info instead of pets
-            $this->connection->exec('PRAGMA foreign_keys = OFF');
 
             // Check if added_by_user column exists
             $tableInfo = $this->connection->query("PRAGMA table_info(weight_history)")->fetchAll(PDO::FETCH_ASSOC);
             $columnNames = array_column($tableInfo, 'name');
             $hasAddedByUser = in_array('added_by_user', $columnNames);
-            error_log("[addWeightRecord] Has added_by_user column: " . ($hasAddedByUser ? 'yes' : 'no'));
 
             if ($hasAddedByUser) {
                 $stmt = $this->connection->prepare("INSERT INTO weight_history ($columnName, weight_kg, measurement_date, notes, added_by_user) VALUES (?, ?, ?, ?, ?)");
@@ -611,19 +602,12 @@ class Database {
             }
 
             $lastId = $this->connection->lastInsertId();
-            error_log("[addWeightRecord] Inserted with ID: $lastId");
-
-            // Re-enable foreign keys
-            $this->connection->exec('PRAGMA foreign_keys = ON');
 
             // Actualizar el peso actual en la tabla pets con el registro más reciente por fecha
             $this->updateCurrentWeight($petId);
 
             return ['success' => true, 'message' => 'Registro de peso añadido', 'id' => $lastId];
         } catch (PDOException $e) {
-            // Make sure to re-enable foreign keys even on error
-            $this->connection->exec('PRAGMA foreign_keys = ON');
-            error_log("[addWeightRecord] Error: " . $e->getMessage());
             return $this->handleDbError($e, 'database operation');
         }
     }
