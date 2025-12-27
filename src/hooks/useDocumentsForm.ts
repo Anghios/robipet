@@ -35,7 +35,7 @@ export function useDocumentsForm(
   getCurrentPetId: () => string,
   onSuccess: (message: string) => void,
   onError: (message: string) => void,
-  onRefresh: () => void
+  onRefresh: () => Promise<void>
 ) {
   const [showDocumentsForm, setShowDocumentsForm] = useState(false);
   const [editingDocument, setEditingDocument] = useState<any>(null);
@@ -254,9 +254,9 @@ export function useDocumentsForm(
         }
       }
 
+      await onRefresh();
       setShowDocumentsForm(false);
       setEditingDocument(null);
-      onRefresh();
     } catch (error) {
       console.error('Error al guardar documento:', error);
       onError(error instanceof Error ? error.message : (editingDocument ? 'Error al actualizar el documento' : 'Error al añadir el documento'));

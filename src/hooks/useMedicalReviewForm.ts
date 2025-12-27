@@ -20,7 +20,7 @@ export function useMedicalReviewForm(
   getCurrentPetId: () => string,
   onSuccess: (message: string) => void,
   onError: (message: string) => void,
-  onRefresh: () => void
+  onRefresh: () => Promise<void>
 ) {
   const [showMedicalReviewForm, setShowMedicalReviewForm] = useState(false);
   const [editingMedicalReview, setEditingMedicalReview] = useState<any>(null);
@@ -108,9 +108,9 @@ export function useMedicalReviewForm(
         : await petApi.createMedicalReview(petId, reviewData);
       
       if (result.success) {
+        await onRefresh();
         setShowMedicalReviewForm(false);
         setEditingMedicalReview(null);
-        onRefresh();
         onSuccess('Revisión médica guardada correctamente');
       } else {
         onError(result.message || 'Error al guardar revisión médica');

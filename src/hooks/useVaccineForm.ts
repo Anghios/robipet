@@ -13,7 +13,7 @@ export function useVaccineForm(
   getCurrentPetId: () => string,
   onSuccess: (message: string) => void,
   onError: (message: string) => void,
-  onRefresh: () => void
+  onRefresh: () => Promise<void>
 ) {
   const [showVaccineForm, setShowVaccineForm] = useState(false);
   const [editingVaccine, setEditingVaccine] = useState<any>(null);
@@ -66,9 +66,9 @@ export function useVaccineForm(
         : await petApi.createVaccine(petId, vaccineForm);
       
       if (result.success) {
+        await onRefresh();
         setShowVaccineForm(false);
         setEditingVaccine(null);
-        onRefresh();
         onSuccess('Vacuna guardada correctamente');
       } else {
         onError(result.message || 'Error al guardar vacuna');

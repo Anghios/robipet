@@ -16,7 +16,7 @@ export function useMedicationForm(
   getCurrentPetId: () => string,
   onSuccess: (message: string) => void,
   onError: (message: string) => void,
-  onRefresh: () => void
+  onRefresh: () => Promise<void>
 ) {
   const [showMedicationForm, setShowMedicationForm] = useState(false);
   const [editingMedication, setEditingMedication] = useState<any>(null);
@@ -89,9 +89,9 @@ export function useMedicationForm(
         : await petApi.createMedication(petId, medicationData);
       
       if (result.success) {
+        await onRefresh();
         setShowMedicationForm(false);
         setEditingMedication(null);
-        onRefresh();
         onSuccess('Medicamento guardado correctamente');
       } else {
         onError(result.message || 'Error al guardar medicamento');

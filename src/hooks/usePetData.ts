@@ -71,7 +71,7 @@ export function usePetData() {
 
       // Fetch pet data
       const result = await petApi.getPetComplete(petId);
-      
+
       if (result.success && result.data) {
         setPortfolio(result.data);
       } else {

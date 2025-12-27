@@ -16,7 +16,7 @@ export function useDewormingForm(
   getCurrentPetId: () => string,
   onSuccess: (message: string) => void,
   onError: (message: string) => void,
-  onRefresh: () => void
+  onRefresh: () => Promise<void>
 ) {
   const [showDewormingForm, setShowDewormingForm] = useState(false);
   const [editingDeworming, setEditingDeworming] = useState<any>(null);
@@ -92,9 +92,9 @@ export function useDewormingForm(
           await addWeightRecord(petId, parseFloat(dewormingForm.weight_at_treatment), dewormingForm.treatment_date, `Peso registrado durante desparasitación con ${dewormingForm.product_name}`);
         }
         
+        await onRefresh();
         setShowDewormingForm(false);
         setEditingDeworming(null);
-        onRefresh();
         onSuccess('Desparasitación guardada correctamente');
       } else {
         onError(result.message || 'Error al guardar desparasitación');

@@ -11,7 +11,7 @@ export function useWeightForm(
   getCurrentPetId: () => string,
   onSuccess: (message: string) => void,
   onError: (message: string) => void,
-  onRefresh: () => void
+  onRefresh: () => Promise<void>
 ) {
   const [showWeightForm, setShowWeightForm] = useState(false);
   const [editingWeight, setEditingWeight] = useState<any>(null);
@@ -51,24 +51,29 @@ export function useWeightForm(
     try {
       setSavingWeight(true);
       const petId = getCurrentPetId();
-      
+
       const weightData = {
         weight_kg: parseFloat(weightForm.weight_kg),
         measurement_date: weightForm.measurement_date,
         notes: weightForm.notes || null
       };
-      
-      const result = editingWeight 
+
+      const result = editingWeight
         ? await petApi.updateWeight(petId, editingWeight.id, weightData)
         : await petApi.createWeight(petId, weightData);
-      
-      if (result.success) {
+
+      // Check both the HTTP response and the actual server response
+      const serverResult = result.data;
+      const isSuccess = result.success && serverResult?.success !== false;
+
+      if (isSuccess) {
+        await onRefresh();
         setShowWeightForm(false);
         setEditingWeight(null);
-        onRefresh();
         onSuccess('Peso guardado correctamente');
       } else {
-        onError(result.message || 'Error al guardar peso');
+        const errorMessage = serverResult?.message || result.message || 'Error al guardar peso';
+        onError(errorMessage);
       }
     } catch (err) {
       onError(err instanceof Error ? err.message : 'Error al guardar peso');

@@ -3,6 +3,7 @@ node_modules
 
 # Example files directory (removed but kept in gitignore)
 ejemplos
+dist/
 
 # Environment variables (keep .env.example)
 .env
