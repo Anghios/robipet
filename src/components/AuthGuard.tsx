@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Icon } from '@iconify/react';
 import Footer from './Footer';
+import SharedHeader from './Navigation/SharedHeader';
 import { useTranslation } from '../hooks/useTranslation';
 
 interface User {
@@ -150,58 +151,19 @@ export default function AuthGuard({ children }: AuthGuardProps) {
   };
 
   if (isLoading) {
-    return (
-      <div className="min-h-screen bg-dark-primary">
-        {/* Skeleton Navigation */}
-        <nav className="bg-dark-card shadow-lg border-b border-dark-hover">
-          <div className="max-w-7xl mx-auto px-4">
-            <div className="flex justify-between h-16">
-              <div className="flex">
-                <div className="flex-shrink-0 flex items-center">
-                  <div className="h-8 w-8 bg-gray-700 rounded-full animate-pulse"></div>
-                  <div className="ml-3 h-6 w-24 bg-gray-700 rounded animate-pulse"></div>
-                </div>
-                <div className="hidden md:ml-6 md:flex md:space-x-8">
-                  {[1, 2, 3].map(i => (
-                    <div key={i} className="h-4 w-16 bg-gray-700 rounded animate-pulse my-6"></div>
-                  ))}
-                </div>
-              </div>
-              <div className="flex items-center space-x-4">
-                <div className="h-8 w-8 bg-gray-700 rounded-full animate-pulse"></div>
-              </div>
-            </div>
-          </div>
-        </nav>
-
-        {/* Skeleton Content */}
-        <main className="max-w-7xl mx-auto px-4 py-6">
-          <div className="mb-8 p-8 bg-gray-800 rounded-2xl animate-pulse">
-            <div className="h-10 w-64 bg-gray-700 rounded mb-4"></div>
-            <div className="h-6 w-96 bg-gray-700 rounded"></div>
-          </div>
-          
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {[1, 2, 3, 4, 5, 6].map(i => (
-              <div key={i} className="bg-gray-800 rounded-2xl p-6 animate-pulse">
-                <div className="h-4 w-3/4 bg-gray-700 rounded mb-4"></div>
-                <div className="space-y-2">
-                  <div className="h-3 w-full bg-gray-700 rounded"></div>
-                  <div className="h-3 w-5/6 bg-gray-700 rounded"></div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </main>
-      </div>
-    );
+    return <div className="min-h-screen bg-slate-900" />;
   }
 
   if (!isAuthenticated) {
     return <LoginForm onLogin={handleLogin} />;
   }
 
-  return <>{children}</>;
+  return (
+    <>
+      <SharedHeader />
+      {children}
+    </>
+  );
 }
 
 interface LoginFormProps {

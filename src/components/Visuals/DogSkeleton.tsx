@@ -1,39 +1,45 @@
 export default function DogSkeleton() {
   return (
-    <div className="min-h-screen bg-slate-900 p-6">
-      <header className="mb-8 p-8 bg-gradient-dark rounded-3xl shadow-2xl">
-        <div className="flex items-center gap-8 max-md:flex-col max-md:text-center">
-          <div className="w-32 h-32 bg-white/20 rounded-full animate-pulse flex items-center justify-center">
-            <div className="w-24 h-24 bg-white/30 rounded-full animate-pulse"></div>
-          </div>
-          <div className="flex-1">
-            <div className="h-12 w-64 bg-white/20 rounded-xl mb-4 animate-pulse"></div>
-            <div className="h-6 w-48 bg-white/20 rounded-lg mb-6 animate-pulse"></div>
-            <div className="flex gap-4 max-md:justify-center">
-              <div className="h-8 w-24 bg-white/20 rounded-full animate-pulse"></div>
-              <div className="h-8 w-32 bg-white/20 rounded-full animate-pulse"></div>
+    <div className="min-h-screen bg-slate-900">
+      {/* Header skeleton */}
+      <header className="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-xl border-b border-slate-800/50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="flex items-center justify-between h-14">
+            <div className="flex items-center gap-3">
+              <div className="w-8 h-8 bg-slate-800 rounded-lg animate-pulse"></div>
+              <div className="h-5 w-16 bg-slate-800 rounded animate-pulse hidden sm:block"></div>
+              <div className="h-6 w-px bg-slate-700 mx-1"></div>
+              <div className="flex items-center gap-2">
+                <div className="w-7 h-7 bg-slate-800 rounded-full animate-pulse"></div>
+                <div className="h-4 w-20 bg-slate-800 rounded animate-pulse"></div>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className="w-9 h-9 bg-slate-800 rounded-lg animate-pulse"></div>
+              <div className="w-9 h-9 bg-slate-800 rounded-lg animate-pulse"></div>
+              <div className="w-9 h-9 bg-slate-800 rounded-full animate-pulse"></div>
             </div>
           </div>
         </div>
       </header>
 
-      <nav className="mb-8 p-2 bg-slate-800 rounded-2xl border border-slate-700">
-        <div className="flex gap-1">
-          <div className="flex-1 h-12 bg-slate-700 rounded-xl animate-pulse"></div>
-          <div className="flex-1 h-12 bg-slate-800 rounded-xl animate-pulse"></div>
-          <div className="flex-1 h-12 bg-slate-800 rounded-xl animate-pulse"></div>
-          <div className="flex-1 h-12 bg-slate-800 rounded-xl animate-pulse"></div>
+      {/* Main content */}
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
+        {/* Section nav skeleton */}
+        <div className="mb-6 flex gap-2">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="h-10 w-24 bg-slate-800 rounded-xl animate-pulse"></div>
+          ))}
         </div>
-      </nav>
 
-      <main className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-        <div className="space-y-6">
-          <div className="h-48 bg-slate-800 rounded-2xl animate-pulse"></div>
-          <div className="h-40 bg-slate-800 rounded-2xl animate-pulse"></div>
-        </div>
-        <div className="space-y-6">
-          <div className="h-64 bg-slate-800 rounded-2xl animate-pulse"></div>
-          <div className="h-48 bg-slate-800 rounded-2xl animate-pulse"></div>
+        {/* Content skeleton */}
+        <div className="min-h-[60vh] space-y-6">
+          <div className="h-32 bg-slate-800/50 rounded-xl animate-pulse"></div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="h-48 bg-slate-800/50 rounded-xl animate-pulse"></div>
+            <div className="h-48 bg-slate-800/50 rounded-xl animate-pulse"></div>
+          </div>
+          <div className="h-40 bg-slate-800/50 rounded-xl animate-pulse"></div>
         </div>
       </main>
     </div>

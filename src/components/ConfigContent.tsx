@@ -1,8 +1,5 @@
 import { Icon } from '@iconify/react';
 import UsersList from './UsersList';
-import ConfigSidebar from './ConfigContent/ConfigSidebar.tsx';
-import ConfigSkeleton from './ConfigContent/ConfigSkeleton.tsx';
-import SectionHeader from './ConfigContent/SectionHeader.tsx';
 import Toast from './Visuals/Toast';
 import { useTranslation } from '../hooks/useTranslation';
 import { useConfigNavigation } from '../hooks/useConfigNavigation.ts';
@@ -13,354 +10,311 @@ export default function ConfigContent() {
   const { currentSection, handleSectionChange } = useConfigNavigation();
   const { toast, showToast, hideToast } = useToast();
 
-  const renderContent = () => {
-    if (currentSection === 'general') {
-      return (
-        <div className="p-4 lg:p-8 space-y-6 lg:space-y-8">
-          <SectionHeader icon="mdi:cog" title={t('config.general')} />
+  const sections = [
+    { id: 'general', icon: 'mdi:cog', label: t('config.general') },
+    { id: 'usuarios', icon: 'mdi:account-group', label: t('config.users') },
+  ];
 
-          {/* Database Management */}
-          <div className="bg-gradient-card rounded-2xl shadow-xl border border-dark-hover p-4 lg:p-8">
-            <div className="flex items-center gap-3 mb-4 lg:mb-6">
-              <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl">
-                <Icon icon="mdi:database" className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-dark-primary">{t('config.database.title')}</h3>
-                <p className="text-dark-secondary text-sm">
-                  {t('config.database.description')}
-                </p>
-              </div>
-            </div>
-            
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <button
-                onClick={async () => {
-                  try {
-                    // Obtener token de autenticación
-                    const token = localStorage.getItem('authToken');
-                    if (!token) {
-                      showToast(t('config.database.exportError') + ': No authenticated', 'error');
-                      return;
-                    }
+  const handleExportDatabase = async () => {
+    try {
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        showToast(t('config.database.exportError') + ': No authenticated', 'error');
+        return;
+      }
 
-                    const response = await fetch('/api/export_database', {
-                      method: 'GET',
-                      headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Accept': 'application/octet-stream'
-                      }
-                    });
-                    
-                    if (!response.ok) {
-                      const contentType = response.headers.get('content-type');
-                      if (contentType && contentType.includes('application/json')) {
-                        const errorData = await response.json();
-                        throw new Error(errorData.error || 'Error al exportar');
-                      }
-                      throw new Error(`Error HTTP: ${response.status}`);
-                    }
-                    
-                    const blob = await response.blob();
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
-                    a.href = url;
-                    a.download = `database_backup_${new Date().toISOString().split('T')[0]}.sqlite`;
-                    document.body.appendChild(a);
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                    document.body.removeChild(a);
+      const response = await fetch('/api/export_database', {
+        method: 'GET',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Accept': 'application/octet-stream'
+        }
+      });
 
-                    // Mostrar toast de éxito
-                    showToast(t('config.database.exportSuccess'), 'success');
-                  } catch (error) {
-                    console.error('Error exportando base de datos:', error);
-                    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-                    showToast(
-                      `${t('config.database.exportError')}: ${errorMessage}`,
-                      'error'
-                    );
-                  }
-                }}
-                className="group flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:scale-105 active:scale-100"
-              >
-                <Icon icon="mdi:download" className="w-6 h-6 group-hover:animate-pulse" />
-                <span className="font-semibold">{t('config.database.exportButton')}</span>
-              </button>
+      if (!response.ok) {
+        const contentType = response.headers.get('content-type');
+        if (contentType && contentType.includes('application/json')) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Error al exportar');
+        }
+        throw new Error(`Error HTTP: ${response.status}`);
+      }
 
-              <button
-                onClick={() => {
-                  const input = document.createElement('input');
-                  input.type = 'file';
-                  input.accept = '.sqlite';
-                  input.onchange = async (e) => {
-                    const file = (e.target as HTMLInputElement).files?.[0];
-                    if (!file) return;
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `database_backup_${new Date().toISOString().split('T')[0]}.sqlite`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      document.body.removeChild(a);
 
-                    // Obtener token de autenticación
-                    const token = localStorage.getItem('authToken');
-                    if (!token) {
-                      showToast(t('config.database.importError') + ': No authenticated', 'error');
-                      return;
-                    }
-
-                    const formData = new FormData();
-                    formData.append('database', file);
-
-                    try {
-                      const response = await fetch('/api/import_database', {
-                        method: 'POST',
-                        headers: {
-                          'Authorization': `Bearer ${token}`
-                        },
-                        body: formData
-                      });
-
-                      // Si la respuesta es exitosa (2xx), consideramos que la importación fue exitosa
-                      // independientemente del contenido de la respuesta
-                      if (response.ok) {
-                        showToast(t('config.database.importSuccess'), 'success');
-                        setTimeout(() => {
-                          window.location.reload();
-                        }, 2000);
-                        return;
-                      }
-
-                      // Solo si hay un error, intentamos obtener más detalles
-                      const contentType = response.headers.get('content-type');
-                      let errorMessage = `Error HTTP: ${response.status}`;
-
-                      if (contentType && contentType.includes('application/json')) {
-                        try {
-                          const errorData = await response.json();
-                          errorMessage = errorData.error || errorMessage;
-                        } catch (e) {
-                          // Si no se puede parsear el JSON, usar el mensaje por defecto
-                        }
-                      }
-
-                      throw new Error(errorMessage);
-                    } catch (error) {
-                      console.error('Error importando base de datos:', error);
-                      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
-                      showToast(
-                        `${t('config.database.importError')}: ${errorMessage}`,
-                        'error'
-                      );
-                    }
-                  };
-                  input.click();
-                }}
-                className="group flex items-center justify-center gap-3 px-6 py-4 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white rounded-xl transition-all duration-300 shadow-lg hover:shadow-2xl hover:scale-105 active:scale-100"
-              >
-                <Icon icon="mdi:upload" className="w-6 h-6 group-hover:animate-pulse" />
-                <span className="font-semibold">{t('config.database.importButton')}</span>
-              </button>
-            </div>
-
-            <div className="bg-amber-900/20 border border-amber-600/30 rounded-xl p-4 mt-4">
-              <div className="flex items-start gap-3">
-                <Icon icon="mdi:alert" className="w-5 h-5 text-amber-400 mt-0.5" />
-                <div>
-                  <p className="font-medium text-amber-300 text-sm">
-                    {t('config.database.importWarning')}
-                  </p>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Idioma */}
-          <div className="bg-gradient-card rounded-2xl shadow-xl border border-dark-hover p-4 lg:p-8">
-            <div className="flex items-center gap-3 mb-4 lg:mb-6">
-              <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-blue-500 to-cyan-600 rounded-xl">
-                <Icon icon="mdi:translate" className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-dark-primary">{t('config.language.title')}</h3>
-                <p className="text-dark-secondary text-sm">
-                  {t('config.language.description')}
-                </p>
-              </div>
-            </div>
-            
-            <div className="space-y-4">
-              <div className="grid grid-cols-1 gap-4">
-                <button
-                  onClick={() => {
-                    changeLanguage('en');
-                    window.dispatchEvent(new Event('localeChanged'));
-                    setTimeout(() => window.location.reload(), 100);
-                  }}
-                  className={`group flex items-center gap-4 px-6 py-4 rounded-2xl border-2 transition-all duration-200 font-medium hover:shadow-lg ${
-                    locale === 'en'
-                      ? 'border-blue-500 bg-blue-900/20 ring-2 ring-blue-500/30 shadow-lg'
-                      : 'border-dark-hover bg-dark-secondary hover:border-blue-400/50 hover:bg-dark-card'
-                  }`}
-                >
-                  <div className="relative">
-                    <Icon icon="flag:us-4x3" className="w-8 h-8 rounded-lg shadow-md" />
-                    {locale === 'en' && (
-                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                        <Icon icon="mdi:check" className="w-3 h-3 text-white" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="text-left flex-1">
-                    <div className="font-bold text-dark-primary text-lg">{t('config.language.english')}</div>
-                  </div>
-                  <Icon 
-                    icon="mdi:chevron-right" 
-                    className={`w-5 h-5 transition-transform duration-200 ${
-                      locale === 'en' ? 'text-blue-400' : 'text-dark-secondary group-hover:text-dark-accent'
-                    }`} 
-                  />
-                </button>
-                
-                <button
-                  onClick={() => {
-                    changeLanguage('es');
-                    window.dispatchEvent(new Event('localeChanged'));
-                    setTimeout(() => window.location.reload(), 100);
-                  }}
-                  className={`group flex items-center gap-4 px-6 py-4 rounded-2xl border-2 transition-all duration-200 font-medium hover:shadow-lg ${
-                    locale === 'es'
-                      ? 'border-blue-500 bg-blue-900/20 ring-2 ring-blue-500/30 shadow-lg'
-                      : 'border-dark-hover bg-dark-secondary hover:border-blue-400/50 hover:bg-dark-card'
-                  }`}
-                >
-                  <div className="relative">
-                    <Icon icon="flag:es-4x3" className="w-8 h-8 rounded-lg shadow-md" />
-                    {locale === 'es' && (
-                      <div className="absolute -top-1 -right-1 w-4 h-4 bg-blue-500 rounded-full flex items-center justify-center">
-                        <Icon icon="mdi:check" className="w-3 h-3 text-white" />
-                      </div>
-                    )}
-                  </div>
-                  <div className="text-left flex-1">
-                    <div className="font-bold text-dark-primary text-lg">{t('config.language.spanish')}</div>
-                  </div>
-                  <Icon 
-                    icon="mdi:chevron-right" 
-                    className={`w-5 h-5 transition-transform duration-200 ${
-                      locale === 'es' ? 'text-blue-400' : 'text-dark-secondary group-hover:text-dark-accent'
-                    }`} 
-                  />
-                </button>
-              </div>
-              
-              <div className="bg-blue-900/20 border border-blue-600/30 rounded-xl p-4">
-                <div className="flex items-start gap-3">
-                  <Icon icon="mdi:information" className="w-5 h-5 text-blue-400 mt-0.5" />
-                  <div>
-                    <p className="font-medium text-blue-300 text-sm">
-                      {t('config.language.reloadMessage')}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Moneda */}
-          <div className="bg-gradient-card rounded-2xl shadow-xl border border-dark-hover p-4 lg:p-8">
-            <div className="flex items-center gap-3 mb-4 lg:mb-6">
-              <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-green-500 to-emerald-600 rounded-xl">
-                <Icon icon="mdi:currency-usd" className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-dark-primary">{t('config.currency.title')}</h3>
-                <p className="text-dark-secondary text-sm">
-                  {t('config.currency.description')}
-                </p>
-              </div>
-            </div>
-            
-            <div className="relative">
-              <select
-                className="w-full pl-12 pr-4 py-3 border border-dark-hover rounded-xl bg-dark-card text-dark-primary focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                defaultValue="eur"
-                disabled
-              >
-                <option value="eur">{t('config.currency.eur')}</option>
-                <option value="usd">{t('config.currency.usd')}</option>
-              </select>
-              <Icon icon="mdi:chevron-down" className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-dark-secondary pointer-events-none" />
-              <Icon icon="mdi:currency-eur" className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-dark-secondary" />
-            </div>
-          </div>
-
-          {/* Formato de Fecha */}
-          <div className="bg-gradient-card rounded-2xl shadow-xl border border-dark-hover p-4 lg:p-8">
-            <div className="flex items-center gap-3 mb-4 lg:mb-6">
-              <div className="flex items-center justify-center w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-600 rounded-xl">
-                <Icon icon="mdi:calendar" className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-dark-primary">{t('config.dateFormat.title')}</h3>
-                <p className="text-dark-secondary text-sm">
-                  {t('config.dateFormat.description')}
-                </p>
-              </div>
-            </div>
-            
-            <div className="relative">
-              <select
-                className="w-full pl-12 pr-4 py-3 border border-dark-hover rounded-xl bg-dark-card text-dark-primary focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                defaultValue="dmySlash"
-                disabled
-              >
-                <option value="dmySlash">{t('config.dateFormat.dmySlash')}</option>
-                <option value="mdySlash">{t('config.dateFormat.mdySlash')}</option>
-                <option value="ymdDash">{t('config.dateFormat.ymdDash')}</option>
-                <option value="dmyDot">{t('config.dateFormat.dmyDot')}</option>
-              </select>
-              <Icon icon="mdi:chevron-down" className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-dark-secondary pointer-events-none" />
-              <Icon icon="mdi:calendar-outline" className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-dark-secondary" />
-            </div>
-          </div>
-        </div>
-      );
+      showToast(t('config.database.exportSuccess'), 'success');
+    } catch (error) {
+      console.error('Error exportando base de datos:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+      showToast(`${t('config.database.exportError')}: ${errorMessage}`, 'error');
     }
-
-    if (currentSection === 'usuarios') {
-      return (
-        <div className="p-4 lg:p-8 space-y-6 lg:space-y-8">
-          <SectionHeader icon="mdi:account-group" title={t('config.users')} />
-          <UsersList />
-        </div>
-      );
-    }
-
-    return (
-      <div className="p-8">
-        <h2 className="text-2xl font-bold text-dark-primary mb-6">{t('config.errors.sectionNotFound')}</h2>
-        <div className="p-4 bg-yellow-900 rounded-lg">
-          <p className="text-yellow-200">
-            {t('config.errors.debugMessage', { section: currentSection })}
-          </p>
-        </div>
-      </div>
-    );
   };
 
-  if (loading) {
-    return <ConfigSkeleton />;
-  }
+  const handleImportDatabase = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.sqlite';
+    input.onchange = async (e) => {
+      const file = (e.target as HTMLInputElement).files?.[0];
+      if (!file) return;
 
-  return (
-    <>
-      <div className="flex flex-col lg:flex-row gap-6">
-        <ConfigSidebar
-          currentSection={currentSection}
-          onSectionChange={handleSectionChange}
-        />
+      const token = localStorage.getItem('authToken');
+      if (!token) {
+        showToast(t('config.database.importError') + ': No authenticated', 'error');
+        return;
+      }
 
-        {/* Content Area */}
-        <div className="flex-1 bg-dark-card rounded-2xl shadow-xl border border-dark overflow-hidden">
-          {renderContent()}
+      const formData = new FormData();
+      formData.append('database', file);
+
+      try {
+        const response = await fetch('/api/import_database', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          },
+          body: formData
+        });
+
+        if (response.ok) {
+          showToast(t('config.database.importSuccess'), 'success');
+          setTimeout(() => {
+            window.location.reload();
+          }, 2000);
+          return;
+        }
+
+        const contentType = response.headers.get('content-type');
+        let errorMessage = `Error HTTP: ${response.status}`;
+
+        if (contentType && contentType.includes('application/json')) {
+          try {
+            const errorData = await response.json();
+            errorMessage = errorData.error || errorMessage;
+          } catch (e) {
+            // Si no se puede parsear el JSON, usar el mensaje por defecto
+          }
+        }
+
+        throw new Error(errorMessage);
+      } catch (error) {
+        console.error('Error importando base de datos:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        showToast(`${t('config.database.importError')}: ${errorMessage}`, 'error');
+      }
+    };
+    input.click();
+  };
+
+  const renderGeneralContent = () => (
+    <div className="space-y-4">
+      {/* Database Management */}
+      <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 p-4">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+            <Icon icon="mdi:database" className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-white">{t('config.database.title')}</h3>
+            <p className="text-slate-400 text-sm">{t('config.database.description')}</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button
+            onClick={handleExportDatabase}
+            className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-500 hover:to-blue-600 text-white rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105"
+          >
+            <Icon icon="mdi:download" className="w-5 h-5" />
+            <span className="font-medium">{t('config.database.exportButton')}</span>
+          </button>
+
+          <button
+            onClick={handleImportDatabase}
+            className="flex items-center justify-center gap-2 px-4 py-3 bg-gradient-to-r from-green-600 to-green-700 hover:from-green-500 hover:to-green-600 text-white rounded-xl transition-all duration-200 shadow-md hover:shadow-lg hover:scale-105"
+          >
+            <Icon icon="mdi:upload" className="w-5 h-5" />
+            <span className="font-medium">{t('config.database.importButton')}</span>
+          </button>
+        </div>
+
+        <div className="bg-amber-500/10 border border-amber-500/30 rounded-lg p-3 mt-3">
+          <div className="flex items-start gap-2">
+            <Icon icon="mdi:alert" className="w-4 h-4 text-amber-400 mt-0.5 flex-shrink-0" />
+            <p className="text-amber-300 text-sm">{t('config.database.importWarning')}</p>
+          </div>
         </div>
       </div>
+
+      {/* Language */}
+      <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 p-4">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-600 flex items-center justify-center">
+            <Icon icon="mdi:translate" className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-white">{t('config.language.title')}</h3>
+            <p className="text-slate-400 text-sm">{t('config.language.description')}</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button
+            onClick={() => {
+              changeLanguage('en');
+              window.dispatchEvent(new Event('localeChanged'));
+              setTimeout(() => window.location.reload(), 100);
+            }}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
+              locale === 'en'
+                ? 'border-blue-500 bg-blue-500/10'
+                : 'border-slate-700 hover:border-slate-600 bg-slate-800/50'
+            }`}
+          >
+            <Icon icon="flag:us-4x3" className="w-7 h-5 rounded shadow-sm" />
+            <span className={`font-medium ${locale === 'en' ? 'text-blue-400' : 'text-white'}`}>
+              {t('config.language.english')}
+            </span>
+            {locale === 'en' && (
+              <Icon icon="mdi:check-circle" className="w-5 h-5 text-blue-400 ml-auto" />
+            )}
+          </button>
+
+          <button
+            onClick={() => {
+              changeLanguage('es');
+              window.dispatchEvent(new Event('localeChanged'));
+              setTimeout(() => window.location.reload(), 100);
+            }}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
+              locale === 'es'
+                ? 'border-blue-500 bg-blue-500/10'
+                : 'border-slate-700 hover:border-slate-600 bg-slate-800/50'
+            }`}
+          >
+            <Icon icon="flag:es-4x3" className="w-7 h-5 rounded shadow-sm" />
+            <span className={`font-medium ${locale === 'es' ? 'text-blue-400' : 'text-white'}`}>
+              {t('config.language.spanish')}
+            </span>
+            {locale === 'es' && (
+              <Icon icon="mdi:check-circle" className="w-5 h-5 text-blue-400 ml-auto" />
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* Currency */}
+      <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 p-4">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center">
+            <Icon icon="mdi:currency-usd" className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-white">{t('config.currency.title')}</h3>
+            <p className="text-slate-400 text-sm">{t('config.currency.description')}</p>
+          </div>
+        </div>
+
+        <div className="relative">
+          <select
+            className="w-full pl-10 pr-4 py-3 border border-slate-700 rounded-xl bg-slate-800/50 text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            defaultValue="eur"
+            disabled
+          >
+            <option value="eur">{t('config.currency.eur')}</option>
+            <option value="usd">{t('config.currency.usd')}</option>
+          </select>
+          <Icon icon="mdi:currency-eur" className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+          <Icon icon="mdi:chevron-down" className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
+        </div>
+      </div>
+
+      {/* Date Format */}
+      <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 p-4">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-pink-600 flex items-center justify-center">
+            <Icon icon="mdi:calendar" className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-white">{t('config.dateFormat.title')}</h3>
+            <p className="text-slate-400 text-sm">{t('config.dateFormat.description')}</p>
+          </div>
+        </div>
+
+        <div className="relative">
+          <select
+            className="w-full pl-10 pr-4 py-3 border border-slate-700 rounded-xl bg-slate-800/50 text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+            defaultValue="dmySlash"
+            disabled
+          >
+            <option value="dmySlash">{t('config.dateFormat.dmySlash')}</option>
+            <option value="mdySlash">{t('config.dateFormat.mdySlash')}</option>
+            <option value="ymdDash">{t('config.dateFormat.ymdDash')}</option>
+            <option value="dmyDot">{t('config.dateFormat.dmyDot')}</option>
+          </select>
+          <Icon icon="mdi:calendar-outline" className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
+          <Icon icon="mdi:chevron-down" className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
+        </div>
+      </div>
+    </div>
+  );
+
+  const renderUsersContent = () => (
+    <UsersList />
+  );
+
+  const renderContent = () => {
+    switch (currentSection) {
+      case 'general':
+        return renderGeneralContent();
+      case 'usuarios':
+        return renderUsersContent();
+      default:
+        return (
+          <div className="text-center py-12">
+            <Icon icon="mdi:alert-circle" className="w-12 h-12 text-slate-500 mx-auto mb-4" />
+            <h3 className="text-lg font-semibold text-slate-300">{t('config.errors.sectionNotFound')}</h3>
+          </div>
+        );
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-900">
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
+        {/* Section Navigation */}
+        <div className="mb-6">
+          <div className="flex gap-2 overflow-x-auto pb-2">
+            {sections.map((section) => (
+              <button
+                key={section.id}
+                onClick={() => handleSectionChange(section.id)}
+                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all whitespace-nowrap ${
+                  currentSection === section.id
+                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
+                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-800 hover:text-white'
+                }`}
+              >
+                <Icon icon={section.icon} className="w-5 h-5" />
+                <span>{section.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="min-h-[60vh]">
+          {renderContent()}
+        </div>
+      </main>
 
       {/* Toast notifications */}
       {toast && (
@@ -370,6 +324,6 @@ export default function ConfigContent() {
           duration={5000}
         />
       )}
-    </>
+    </div>
   );
 }

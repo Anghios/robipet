@@ -3,15 +3,12 @@ import { Icon } from '@iconify/react';
 import { useTranslation } from '../hooks/useTranslation';
 import Toast from './Visuals/Toast';
 import ConfirmationModal from './Visuals/ConfirmationModal';
-import DogSkeleton from './Visuals/DogSkeleton';
 import NoPetsState from './ErrorStates/NoPetsState';
 import GenericErrorState from './ErrorStates/GenericErrorState';
 import NotFoundState from './ErrorStates/NotFoundState';
-import CompactHeader from './Navigation/CompactHeader';
 import SectionNav from './Navigation/SectionNav';
 import type { SectionType, HealthSubSection } from './Navigation/SectionNav';
 import HomeView from './Home/HomeView';
-import GlobalSearch from './Search/GlobalSearch';
 import MedicalTimeline from './Timeline/MedicalTimeline';
 import { useToast } from '../hooks/useToast';
 import { useConfirmationModals } from '../hooks/useConfirmationModals';
@@ -86,7 +83,6 @@ export default function DogPortfolio() {
   // Navigation state
   const [activeSection, setActiveSection] = useState<SectionType>('summary');
   const [activeHealthSub, setActiveHealthSub] = useState<HealthSubSection>('timeline');
-  const [showSearch, setShowSearch] = useState(false);
 
   // Form hooks
   const {
@@ -226,18 +222,6 @@ export default function DogPortfolio() {
     handleMarkMedicationCompleted
   } = modalHandlers;
 
-  // Keyboard shortcut for search
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault();
-        setShowSearch(true);
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
-
   // Pet change handler
   const handlePetChange = (petId: string) => {
     selectPet(petId);
@@ -285,12 +269,22 @@ export default function DogPortfolio() {
   const pendingDewormings = getPendingCount(dewormings, 'dewormings');
   const totalPending = pendingVaccines + pendingMedications + pendingDewormings;
 
-  // Loading and error states
-  if (loading) return <DogSkeleton />;
+  // Error states
   if (error === 'no_pets') return <NoPetsState />;
   if (error === 'not_found') return <NotFoundState />;
   if (error) return <GenericErrorState error={error} />;
-  if (!portfolio) return <NoPetsState />;
+  if (!portfolio && !loading) return <NoPetsState />;
+
+  // Show minimal UI while loading
+  if (loading && !portfolio) {
+    return (
+      <div className="min-h-screen bg-slate-900">
+        <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
+          <div className="min-h-[60vh]" />
+        </main>
+      </div>
+    );
+  }
 
   // Render section header with add button
   const renderSectionHeader = (icon: string, iconColor: string, title: string, gradientColors: string, onAdd: () => void, buttonGradient: string, count?: number) => (
@@ -642,14 +636,6 @@ export default function DogPortfolio() {
 
   return (
     <div className="min-h-screen bg-slate-900">
-      {/* Compact Header */}
-      <CompactHeader
-        currentPet={dog_info}
-        availablePets={availablePets}
-        onPetChange={handlePetChange}
-        onSearchOpen={() => setShowSearch(true)}
-      />
-
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
         {/* Section Navigation */}
@@ -669,12 +655,6 @@ export default function DogPortfolio() {
           {renderSectionContent()}
         </div>
       </main>
-
-      {/* Global Search Modal */}
-      <GlobalSearch
-        isOpen={showSearch}
-        onClose={() => setShowSearch(false)}
-      />
 
       {/* Confirmation Modal */}
       {activeModal && (() => {
