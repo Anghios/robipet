@@ -302,7 +302,7 @@ export default function DogPortfolio() {
       >
         <span className="flex items-center">
           <Icon icon="mdi:plus" className="mr-2 w-4 h-4" />
-          {t('portfolio.common.save')}
+          {t('common.new')}
         </span>
       </button>
     </div>

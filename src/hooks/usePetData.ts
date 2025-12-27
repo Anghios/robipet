@@ -131,6 +131,18 @@ export function usePetData() {
     fetchAvailablePets();
   }, [fetchDogPortfolio, fetchAvailablePets]);
 
+  // Listen for pet changes from SharedHeader
+  useEffect(() => {
+    const handlePetChanged = (event: CustomEvent<{ petId: string }>) => {
+      fetchDogPortfolio();
+    };
+
+    window.addEventListener('petChanged', handlePetChanged as EventListener);
+    return () => {
+      window.removeEventListener('petChanged', handlePetChanged as EventListener);
+    };
+  }, [fetchDogPortfolio]);
+
   return {
     // Data
     portfolio,
