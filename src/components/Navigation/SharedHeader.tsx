@@ -149,7 +149,6 @@ export default function SharedHeader() {
 
   const isHomePage = currentPath === '/';
   const isPetsPage = currentPath === '/pets';
-  const isConfigPage = currentPath === '/config';
 
   return (
     <header className="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-xl border-b border-slate-800/50">
@@ -296,18 +295,6 @@ export default function SharedHeader() {
               title={t('navigation.pets')}
             >
               <Icon icon="mdi:paw" className="w-5 h-5" />
-            </a>
-
-            <a
-              href="/config"
-              className={`p-2 rounded-lg transition-colors ${
-                isConfigPage
-                  ? 'text-purple-400 bg-purple-500/10'
-                  : 'text-slate-400 hover:text-white hover:bg-slate-800'
-              }`}
-              title={t('navigation.config')}
-            >
-              <Icon icon="mdi:cog" className="w-5 h-5" />
             </a>
 
             {/* User Menu */}

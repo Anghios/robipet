@@ -43,8 +43,12 @@
     "title": "Información de tu mascota",
     "subtitle": "Consulta toda la información médica y datos de tu compañero",
     "pageTitle": "RobiPet - Inicio",
-    "months": "meses",
+    "year": "año",
     "years": "años",
+    "month": "mes",
+    "months": "meses",
+    "and": "y",
+    "humanYears": "años humanos",
     "cards": {
       "vaccines": "Vacunas",
       "medications": "Medicamentos",
