@@ -3,6 +3,7 @@ import { Icon } from '@iconify/react';
 import { useTranslation } from '../hooks/useTranslation';
 import Toast from './Visuals/Toast';
 import ConfirmationModal from './Visuals/ConfirmationModal';
+import Modal from './ui/Modal';
 import NoPetsState from './ErrorStates/NoPetsState';
 import GenericErrorState from './ErrorStates/GenericErrorState';
 import NotFoundState from './ErrorStates/NotFoundState';
@@ -345,7 +346,12 @@ export default function DogPortfolio() {
               'from-green-600 to-emerald-600',
               pendingVaccines
             )}
-            {showVaccineForm && (
+            <Modal
+              isOpen={showVaccineForm}
+              onClose={cancelVaccineForm}
+              title={editingVaccine ? t('portfolio.vaccines.editVaccine') : t('portfolio.vaccines.newVaccine')}
+              size="lg"
+            >
               <VaccineForm
                 formData={vaccineForm}
                 isEditing={!!editingVaccine}
@@ -354,7 +360,7 @@ export default function DogPortfolio() {
                 onSave={handleSaveVaccine}
                 onCancel={cancelVaccineForm}
               />
-            )}
+            </Modal>
             <div className="space-y-3">
               {vaccines
                 .sort((a: any, b: any) => new Date(b.vaccine_date).getTime() - new Date(a.vaccine_date).getTime())
@@ -384,7 +390,12 @@ export default function DogPortfolio() {
               'from-blue-600 to-purple-600',
               pendingMedications
             )}
-            {showMedicationForm && (
+            <Modal
+              isOpen={showMedicationForm}
+              onClose={cancelMedicationForm}
+              title={editingMedication ? t('portfolio.medications.editMedication') : t('portfolio.medications.newMedication')}
+              size="lg"
+            >
               <MedicationForm
                 formData={medicationForm}
                 isEditing={!!editingMedication}
@@ -393,7 +404,7 @@ export default function DogPortfolio() {
                 onSave={handleSaveMedication}
                 onCancel={cancelMedicationForm}
               />
-            )}
+            </Modal>
             <div className="space-y-3">
               {medications
                 .sort((a: any, b: any) => new Date(b.start_date).getTime() - new Date(a.start_date).getTime())
@@ -423,7 +434,12 @@ export default function DogPortfolio() {
               'from-orange-500 to-red-500',
               pendingDewormings
             )}
-            {showDewormingForm && (
+            <Modal
+              isOpen={showDewormingForm}
+              onClose={cancelDewormingForm}
+              title={editingDeworming ? t('portfolio.dewormings.editDeworming') : t('portfolio.dewormings.newDeworming')}
+              size="lg"
+            >
               <DewormingForm
                 formData={dewormingForm}
                 isEditing={!!editingDeworming}
@@ -432,7 +448,7 @@ export default function DogPortfolio() {
                 onSave={handleSaveDeworming}
                 onCancel={cancelDewormingForm}
               />
-            )}
+            </Modal>
             <div className="space-y-3">
               {dewormings
                 .sort((a: any, b: any) => new Date(b.treatment_date).getTime() - new Date(a.treatment_date).getTime())
@@ -461,7 +477,12 @@ export default function DogPortfolio() {
               handleAddMedicalReview,
               'from-purple-600 to-pink-600'
             )}
-            {showMedicalReviewForm && (
+            <Modal
+              isOpen={showMedicalReviewForm}
+              onClose={cancelMedicalReviewForm}
+              title={editingMedicalReview ? t('portfolio.medicalReviews.editReview') : t('portfolio.medicalReviews.newReview')}
+              size="lg"
+            >
               <MedicalReviewForm
                 formData={medicalReviewForm}
                 isEditing={!!editingMedicalReview}
@@ -470,7 +491,7 @@ export default function DogPortfolio() {
                 onSave={handleSaveMedicalReview}
                 onCancel={cancelMedicalReviewForm}
               />
-            )}
+            </Modal>
             <div className="space-y-3">
               {medicalReviews
                 .sort((a: any, b: any) => {
@@ -505,7 +526,12 @@ export default function DogPortfolio() {
               handleAddWeight,
               'from-cyan-600 to-teal-600'
             )}
-            {showWeightForm && (
+            <Modal
+              isOpen={showWeightForm}
+              onClose={cancelWeightForm}
+              title={editingWeight ? t('portfolio.weight.editWeight') : t('portfolio.weight.newWeight')}
+              size="md"
+            >
               <WeightForm
                 formData={weightForm}
                 isEditing={!!editingWeight}
@@ -514,7 +540,7 @@ export default function DogPortfolio() {
                 onSave={handleSaveWeight}
                 onCancel={cancelWeightForm}
               />
-            )}
+            </Modal>
             <WeightCard
               weightHistory={weight_history}
               currentWeight={getCurrentWeight()}
@@ -540,7 +566,12 @@ export default function DogPortfolio() {
         handleAddDocument,
         'from-teal-600 to-cyan-600'
       )}
-      {showDocumentsForm && (
+      <Modal
+        isOpen={showDocumentsForm}
+        onClose={cancelDocumentsForm}
+        title={editingDocument ? t('portfolio.documents.editDocument') : t('portfolio.documents.newDocument')}
+        size="lg"
+      >
         <DocumentsForm
           formData={documentsForm}
           isEditing={!!editingDocument}
@@ -549,7 +580,7 @@ export default function DogPortfolio() {
           onSave={handleSaveDocument}
           onCancel={cancelDocumentsForm}
         />
-      )}
+      </Modal>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         {documents
           .sort((a: any, b: any) => new Date(b.upload_date).getTime() - new Date(a.upload_date).getTime())

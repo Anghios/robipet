@@ -492,6 +492,8 @@
     },
     "weight": {
       "title": "Weight History",
+      "newWeight": "New Weight",
+      "editWeight": "Edit Weight",
       "newButton": "New",
       "newRecord": "New Record",
       "editRecord": "Edit Record",

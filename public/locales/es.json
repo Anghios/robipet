@@ -492,6 +492,8 @@
     },
     "weight": {
       "title": "Historial de Peso",
+      "newWeight": "Nuevo Peso",
+      "editWeight": "Editar Peso",
       "newButton": "Nuevo",
       "newRecord": "Nuevo Registro",
       "editRecord": "Editar Registro",
