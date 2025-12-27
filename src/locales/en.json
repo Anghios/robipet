@@ -1,4 +1,7 @@
 {
+  "header": {
+    "search": "Search..."
+  },
   "navigation": {
     "home": "Home",
     "pets": "My Pets",
@@ -448,6 +451,7 @@
       "addFirstWeight": "Add the first weight record to start tracking your pet's weight evolution",
       "weightEvolution": "Weight Evolution",
       "progressText": "Progress: {count} measurements",
+      "average": "Average: {avg}kg",
       "rangeText": "Range: {min}kg - {max}kg",
       "noWeightHistory": "No weight records",
       "addFirstWeightRecord": "Add your pet's first weight record",

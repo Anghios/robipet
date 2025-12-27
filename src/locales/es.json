@@ -1,4 +1,7 @@
 {
+  "header": {
+    "search": "Buscar..."
+  },
   "navigation": {
     "home": "Inicio",
     "pets": "Mis Mascotas",
@@ -448,6 +451,7 @@
       "addFirstWeight": "Añade el primer registro de peso para comenzar a rastrear la evolución del peso de tu mascota",
       "weightEvolution": "Evolución del Peso",
       "progressText": "Progreso: {count} mediciones",
+      "average": "Promedio: {avg}kg",
       "rangeText": "Rango: {min}kg - {max}kg",
       "noWeightHistory": "Sin historial de peso",
       "addFirstWeightRecord": "Añade el primer registro de peso de tu mascota",

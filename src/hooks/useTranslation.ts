@@ -59,15 +59,18 @@ export const useTranslation = () => {
   const t = (key: string, params?: Record<string, string | number>) => {
     const keys = key.split('.');
     let value: any = translations;
-    
+
     // Navegar por el objeto anidado usando la clave con puntos
     for (const k of keys) {
       value = value?.[k];
     }
-    
+
     // Si no se encuentra la traducción, devolver la clave
+    // Solo mostrar warning si ya terminó de cargar (para evitar warnings durante la carga inicial)
     if (typeof value !== 'string') {
-      console.warn(`Translation not found for key: ${key}`);
+      if (!loading) {
+        console.warn(`Translation not found for key: ${key}`);
+      }
       return key;
     }
     
