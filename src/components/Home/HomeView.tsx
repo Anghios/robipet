@@ -97,14 +97,38 @@ export default function HomeView({ portfolio, onNavigateToSection, t }: HomeView
     if (!dog_info?.birth_date) return null;
     const birth = new Date(dog_info.birth_date);
     const now = new Date();
-    const years = now.getFullYear() - birth.getFullYear();
-    const months = now.getMonth() - birth.getMonth();
+    const diffTime = Math.abs(now.getTime() - birth.getTime());
+    const totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const years = Math.floor(totalDays / 365);
+    const remainingDays = totalDays % 365;
+    const months = Math.floor(remainingDays / 30);
 
     if (years < 1) {
-      return `${months + (years * 12)} ${t('home.months')}`;
+      return `${months} ${months === 1 ? t('home.month') : t('home.months')}`;
     }
-    return `${years} ${t('home.years')}`;
+    if (months > 0) {
+      return `${years} ${years === 1 ? t('home.year') : t('home.years')} ${t('home.and')} ${months} ${months === 1 ? t('home.month') : t('home.months')}`;
+    }
+    return `${years} ${years === 1 ? t('home.year') : t('home.years')}`;
   }, [dog_info?.birth_date, t]);
+
+  // Dog years calculation (only for dogs)
+  const dogYears = useMemo(() => {
+    if (!dog_info?.birth_date || dog_info?.species !== 'dog') return null;
+    const birth = new Date(dog_info.birth_date);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - birth.getTime());
+    const totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+    const ageInYears = totalDays / 365.25;
+
+    let years = 0;
+    if (ageInYears >= 1) {
+      years = 15 + ((ageInYears - 1) * 4);
+    } else {
+      years = ageInYears * 15;
+    }
+    return Math.round(years * 10) / 10;
+  }, [dog_info?.birth_date, dog_info?.species]);
 
   return (
     <div className="space-y-6">
@@ -140,7 +164,9 @@ export default function HomeView({ portfolio, onNavigateToSection, t }: HomeView
         <div className="flex-1 min-w-0">
           <h2 className="text-xl font-bold text-white truncate">{dog_info?.name}</h2>
           <p className="text-slate-400 text-sm">
-            {dog_info?.breed} {petAge && `• ${petAge}`}
+            {dog_info?.breed}
+            {petAge && ` • ${petAge}`}
+            {dogYears !== null && ` • ${dogYears} ${t('home.humanYears')}`}
           </p>
         </div>
         {currentWeight && (
