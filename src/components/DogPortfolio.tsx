@@ -85,6 +85,16 @@ export default function DogPortfolio() {
   const [activeSection, setActiveSection] = useState<SectionType>('summary');
   const [activeHealthSub, setActiveHealthSub] = useState<HealthSubSection>('timeline');
 
+  // Reset to summary when pet changes from SharedHeader
+  useEffect(() => {
+    const handlePetChanged = () => {
+      setActiveSection('summary');
+      setActiveHealthSub('timeline');
+    };
+    window.addEventListener('petChanged', handlePetChanged as EventListener);
+    return () => window.removeEventListener('petChanged', handlePetChanged as EventListener);
+  }, []);
+
   // Form hooks
   const {
     showVaccineForm,
