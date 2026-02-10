@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { Icon } from '@iconify/react';
 
 interface ModalProps {
@@ -52,9 +53,9 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' }:
     xl: 'max-w-3xl'
   };
 
-  return (
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn"
+      className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn"
       onClick={handleBackdropClick}
     >
       <div
@@ -77,6 +78,7 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' }:
           {children}
         </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
