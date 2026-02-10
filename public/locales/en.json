@@ -72,6 +72,21 @@
       "upcomingVaccinesDesc": "{count} vaccines in the next 7 days",
       "viewDetails": "View details"
     },
+    "pending": {
+      "title": "Pending tasks",
+      "allClear": "All clear",
+      "allClearDesc": "No pending tasks for your pet",
+      "pendingItems": "{count} pending",
+      "viewAll": "View all pending",
+      "vaccines": "Pending vaccines",
+      "medications": "Active medications",
+      "dewormings": "Pending dewormings",
+      "reviews": "Pending reviews",
+      "dueDateLabel": "Due: {date}",
+      "sinceLabel": "Since: {date}",
+      "scheduledLabel": "Scheduled: {date}",
+      "noDate": "No date"
+    },
     "tabs": {
       "summary": "Summary",
       "timeline": "Timeline",

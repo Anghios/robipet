@@ -1,7 +1,10 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { Icon } from '@iconify/react';
 import HealthCard from './HealthCard';
 import AlertBanner from './AlertBanner';
+import PendingItemsButton from './PendingItemsButton';
+import PendingItemsModal from './PendingItemsModal';
+import Modal from '../ui/Modal';
 
 interface HomeViewProps {
   portfolio: any;
@@ -11,6 +14,7 @@ interface HomeViewProps {
 
 export default function HomeView({ portfolio, onNavigateToSection, t }: HomeViewProps) {
   const { dog_info, vaccines, medications, dewormings, medical_reviews, weight_history, documents } = portfolio || {};
+  const [showPendingModal, setShowPendingModal] = useState(false);
 
   // Calculate alerts
   const alerts = useMemo(() => {
@@ -112,6 +116,24 @@ export default function HomeView({ portfolio, onNavigateToSection, t }: HomeView
     return `${years} ${years === 1 ? t('home.year') : t('home.years')}`;
   }, [dog_info?.birth_date, t]);
 
+  // Pending items count
+  const totalPending = useMemo(() => {
+    const pVaccines = vaccines?.filter((v: any) => {
+      const s = v.status || 'pending';
+      return s === 'pending' || s === 'overdue';
+    }).length || 0;
+    const pMeds = medications?.filter((m: any) => (m.status || 'pending') === 'pending').length || 0;
+    const pDeworm = dewormings?.filter((d: any) => (d.status || 'pending') === 'pending').length || 0;
+    const pReviews = medical_reviews?.filter((r: any) => (r.status || 'completed') === 'pending').length || 0;
+    return pVaccines + pMeds + pDeworm + pReviews;
+  }, [vaccines, medications, dewormings, medical_reviews]);
+
+  // Format date helper
+  const formatDateLocal = (dateString: string) => {
+    const date = new Date(dateString + 'T00:00:00');
+    return date.toLocaleDateString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric' });
+  };
+
   // Dog years calculation (only for dogs)
   const dogYears = useMemo(() => {
     if (!dog_info?.birth_date || dog_info?.species !== 'dog') return null;
@@ -176,6 +198,13 @@ export default function HomeView({ portfolio, onNavigateToSection, t }: HomeView
           </div>
         )}
       </div>
+
+      {/* Pending Items Button */}
+      <PendingItemsButton
+        totalPending={totalPending}
+        onClick={() => setShowPendingModal(true)}
+        t={t}
+      />
 
       {/* Main Health Cards Grid */}
       <div className="grid grid-cols-2 gap-4">
@@ -281,6 +310,24 @@ export default function HomeView({ portfolio, onNavigateToSection, t }: HomeView
           ))}
         </div>
       </div>
+      {/* Pending Items Modal */}
+      <Modal
+        isOpen={showPendingModal}
+        onClose={() => setShowPendingModal(false)}
+        title={t('home.pending.title')}
+        size="lg"
+      >
+        <PendingItemsModal
+          vaccines={vaccines || []}
+          medications={medications || []}
+          dewormings={dewormings || []}
+          medicalReviews={medical_reviews || []}
+          onNavigate={onNavigateToSection}
+          onClose={() => setShowPendingModal(false)}
+          t={t}
+          formatDate={formatDateLocal}
+        />
+      </Modal>
     </div>
   );
 }

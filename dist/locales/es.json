@@ -72,6 +72,21 @@
       "upcomingVaccinesDesc": "{count} vacunas en los próximos 7 días",
       "viewDetails": "Ver detalles"
     },
+    "pending": {
+      "title": "Tareas pendientes",
+      "allClear": "Todo al día",
+      "allClearDesc": "No hay tareas pendientes para tu mascota",
+      "pendingItems": "{count} pendiente(s)",
+      "viewAll": "Ver todo lo pendiente",
+      "vaccines": "Vacunas pendientes",
+      "medications": "Medicaciones activas",
+      "dewormings": "Desparasitaciones pendientes",
+      "reviews": "Revisiones pendientes",
+      "dueDateLabel": "Próxima: {date}",
+      "sinceLabel": "Desde: {date}",
+      "scheduledLabel": "Programada: {date}",
+      "noDate": "Sin fecha"
+    },
     "tabs": {
       "summary": "Resumen",
       "timeline": "Timeline",
