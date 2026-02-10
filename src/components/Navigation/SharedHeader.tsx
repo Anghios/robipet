@@ -151,6 +151,7 @@ export default function SharedHeader() {
   const isPetsPage = currentPath === '/pets';
 
   return (
+  <>
     <header className="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-xl border-b border-slate-800/50">
       <div className="max-w-6xl mx-auto px-4 sm:px-6">
         <div className="flex items-center justify-between h-14">
@@ -341,11 +342,13 @@ export default function SharedHeader() {
         </div>
       </div>
 
-      {/* Global Search Modal */}
-      <GlobalSearch
-        isOpen={showSearch}
-        onClose={() => setShowSearch(false)}
-      />
     </header>
+
+    {/* Global Search Modal - rendered outside header to avoid backdrop-blur containing block */}
+    <GlobalSearch
+      isOpen={showSearch}
+      onClose={() => setShowSearch(false)}
+    />
+  </>
   );
 }

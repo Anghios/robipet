@@ -212,15 +212,15 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-start justify-center pt-20 px-4">
-      {/* Backdrop */}
-      <div
-        className="absolute inset-0 bg-black/60 backdrop-blur-sm"
-        onClick={onClose}
-      />
-
+    <div
+      className="fixed inset-0 z-[100] flex items-start justify-center pt-20 px-4 bg-black/70 backdrop-blur-sm"
+      onClick={onClose}
+    >
       {/* Search Modal */}
-      <div className="relative w-full max-w-2xl bg-slate-800 rounded-2xl shadow-2xl border border-slate-700 overflow-hidden">
+      <div
+        className="relative w-full max-w-2xl bg-slate-800 rounded-2xl shadow-2xl border border-slate-700 overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Search Input */}
         <div className="flex items-center gap-3 p-4 border-b border-slate-700">
           <Icon icon="mdi:magnify" className="w-6 h-6 text-slate-400" />
