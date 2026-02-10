@@ -68,14 +68,17 @@ export default function PendingItemsModal({
       title: t('home.pending.vaccines'),
       section: 'health',
       subSection: 'vaccines',
-      items: pendingVaccines.map((v: any) => ({
-        id: v.id,
-        name: v.vaccine_name,
-        date: v.next_due_date,
-        dateLabel: v.next_due_date
-          ? t('home.pending.dueDateLabel', { date: formatDate(v.next_due_date) })
-          : t('home.pending.noDate')
-      }))
+      items: pendingVaccines.map((v: any) => {
+        const date = v.next_due_date || v.vaccine_date;
+        return {
+          id: v.id,
+          name: v.vaccine_name,
+          date,
+          dateLabel: date
+            ? t('home.pending.dueDateLabel', { date: formatDate(date) })
+            : t('home.pending.noDate')
+        };
+      })
     },
     {
       key: 'medications',
@@ -85,14 +88,17 @@ export default function PendingItemsModal({
       title: t('home.pending.medications'),
       section: 'health',
       subSection: 'medications',
-      items: pendingMedications.map((m: any) => ({
-        id: m.id,
-        name: m.medication_name,
-        date: m.start_date,
-        dateLabel: m.start_date
-          ? t('home.pending.sinceLabel', { date: formatDate(m.start_date) })
-          : t('home.pending.noDate')
-      }))
+      items: pendingMedications.map((m: any) => {
+        const date = m.end_date || m.start_date;
+        return {
+          id: m.id,
+          name: m.medication_name,
+          date,
+          dateLabel: date
+            ? t('home.pending.sinceLabel', { date: formatDate(date) })
+            : t('home.pending.noDate')
+        };
+      })
     },
     {
       key: 'dewormings',
@@ -102,14 +108,17 @@ export default function PendingItemsModal({
       title: t('home.pending.dewormings'),
       section: 'health',
       subSection: 'dewormings',
-      items: pendingDewormings.map((d: any) => ({
-        id: d.id,
-        name: d.product_name,
-        date: d.next_treatment_date,
-        dateLabel: d.next_treatment_date
-          ? t('home.pending.scheduledLabel', { date: formatDate(d.next_treatment_date) })
-          : t('home.pending.noDate')
-      }))
+      items: pendingDewormings.map((d: any) => {
+        const date = d.next_treatment_date || d.treatment_date;
+        return {
+          id: d.id,
+          name: d.product_name,
+          date,
+          dateLabel: date
+            ? t('home.pending.scheduledLabel', { date: formatDate(date) })
+            : t('home.pending.noDate')
+        };
+      })
     },
     {
       key: 'reviews',
