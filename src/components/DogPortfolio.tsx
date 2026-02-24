@@ -610,45 +610,84 @@ export default function DogPortfolio() {
 
   // Render settings/info section
   const renderSettingsContent = () => {
-    const infoItems = [
-      { icon: 'mdi:calendar', color: 'text-blue-400', label: t('home.basicInfo.birthDate'), value: dog_info?.birth_date ? formatDateLocalized(dog_info.birth_date) : '-' },
-      { icon: 'mdi:clock', color: 'text-orange-400', label: t('home.basicInfo.age'), value: `${dog_info?.age_years || 0} ${t('common.years')}, ${dog_info?.age_months || 0} ${t('common.months')}` },
-      ...(dog_info?.species === 'dog' ? [{ icon: 'ph:dog-fill', color: 'text-cyan-400', label: t('home.basicInfo.dogAge'), value: `${dog_info?.dog_years || 0} ${t('common.years')}` }] : []),
-      { icon: 'mdi:dog', color: 'text-emerald-400', label: t('home.basicInfo.breed'), value: dog_info?.breed || '-' },
-      { icon: 'mdi:palette', color: 'text-rose-400', label: t('home.basicInfo.color'), value: dog_info?.color || '-' },
-      { icon: 'mdi:resize', color: 'text-amber-400', label: t('home.physicalData.size'), value: getSizeText(dog_info?.size || 'medium') },
-      { icon: 'mdi:weight', color: 'text-teal-400', label: t('home.physicalData.currentWeight'), value: `${getCurrentWeight()} kg` },
-      { icon: 'mdi:chip', color: 'text-indigo-400', label: t('home.physicalData.microchip'), value: dog_info?.microchip || t('portfolio.physicalData.noMicrochip'), isMono: true },
-      { icon: 'mdi:medical-bag', color: 'text-purple-400', label: t('common.neutered'), value: dog_info?.neutered ? t('common.yes') : t('common.no'), isBadge: true, badgeColor: dog_info?.neutered ? 'green' : 'red' },
-    ];
+    const InfoRow = ({ icon, color, label, value, isMono, isBadge, badgeColor }: {
+      icon: string; color: string; label: string; value: string;
+      isMono?: boolean; isBadge?: boolean; badgeColor?: 'green' | 'red';
+    }) => (
+      <div className="flex items-center justify-between py-3 px-2 -mx-2 rounded-lg hover:bg-slate-700/20 transition-colors">
+        <span className="text-slate-300 font-medium flex items-center gap-3">
+          <Icon icon={icon} className={`w-5 h-5 ${color}`} />
+          {label}
+        </span>
+        {isBadge ? (
+          <span className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${
+            badgeColor === 'green' ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'
+          }`}>
+            <Icon icon={badgeColor === 'green' ? 'mdi:check' : 'mdi:close'} className="w-3.5 h-3.5" />
+            {value}
+          </span>
+        ) : (
+          <span className={`font-semibold text-white ${isMono ? 'font-mono text-sm bg-slate-700/50 px-3 py-1 rounded-lg' : ''}`}>
+            {value}
+          </span>
+        )}
+      </div>
+    );
+
+    const CardSection = ({ icon, color, bgColor, title, children }: {
+      icon: string; color: string; bgColor: string; title: string; children: React.ReactNode;
+    }) => (
+      <div className="rounded-2xl bg-gradient-to-br from-slate-800/50 to-slate-900/50 border border-slate-700/50 p-5">
+        <div className="flex items-center gap-3 mb-4">
+          <div className={`w-9 h-9 rounded-xl ${bgColor} flex items-center justify-center`}>
+            <Icon icon={icon} className={`w-5 h-5 ${color}`} />
+          </div>
+          <h3 className="text-white font-semibold text-base">{title}</h3>
+        </div>
+        <div className="divide-y divide-slate-700/30">
+          {children}
+        </div>
+      </div>
+    );
 
     return (
-      <div className="space-y-2">
-        {infoItems.map((item, index) => (
-          <div
-            key={index}
-            className="flex items-center justify-between p-4 rounded-xl bg-slate-800/30 border border-slate-700/50 hover:border-slate-600 transition-colors"
-          >
-            <span className="text-slate-300 font-medium flex items-center gap-3">
-              <Icon icon={item.icon} className={`w-5 h-5 ${item.color}`} />
-              {item.label}
-            </span>
-            {item.isBadge ? (
-              <span className={`flex items-center gap-1 px-3 py-1 rounded-full text-sm font-medium ${
-                item.badgeColor === 'green'
-                  ? 'bg-green-500/20 text-green-400'
-                  : 'bg-red-500/20 text-red-400'
-              }`}>
-                <Icon icon={item.badgeColor === 'green' ? 'mdi:check' : 'mdi:close'} className="w-3.5 h-3.5" />
-                {item.value}
-              </span>
+      <div className="space-y-4">
+        {/* Identity Card */}
+        <CardSection icon="mdi:paw" color="text-blue-400" bgColor="bg-blue-500/15" title={t('portfolio.info.identity')}>
+          <div className="flex items-center gap-4 py-3">
+            {dog_info?.photo_url ? (
+              <img src={dog_info.photo_url} alt={dog_info.name} className="w-14 h-14 rounded-xl object-cover ring-2 ring-slate-600" />
             ) : (
-              <span className={`font-semibold text-white ${item.isMono ? 'font-mono text-sm bg-slate-700/50 px-3 py-1 rounded-lg' : ''}`}>
-                {item.value}
-              </span>
+              <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center ring-2 ring-slate-600">
+                <Icon icon="mdi:paw" className="w-7 h-7 text-white" />
+              </div>
             )}
+            <div>
+              <p className="text-white font-bold text-lg">{dog_info?.name || '-'}</p>
+              <p className="text-slate-400 text-sm capitalize">{dog_info?.species || '-'}</p>
+            </div>
           </div>
-        ))}
+          <InfoRow icon="mdi:gender-male-female" color="text-pink-400" label={t('portfolio.physicalData.gender')} value={dog_info?.gender === 'male' ? t('portfolio.physicalData.male') : t('portfolio.physicalData.female')} />
+          <InfoRow icon="mdi:calendar" color="text-blue-400" label={t('home.basicInfo.birthDate')} value={dog_info?.birth_date ? formatDateLocalized(dog_info.birth_date) : '-'} />
+          <InfoRow icon="mdi:clock" color="text-orange-400" label={t('home.basicInfo.age')} value={`${dog_info?.age_years || 0} ${t('common.years')}, ${dog_info?.age_months || 0} ${t('common.months')}`} />
+          {dog_info?.species === 'dog' && (
+            <InfoRow icon="ph:dog-fill" color="text-cyan-400" label={t('home.basicInfo.dogAge')} value={`${dog_info?.dog_years || 0} ${t('common.years')}`} />
+          )}
+        </CardSection>
+
+        {/* Appearance Card */}
+        <CardSection icon="mdi:palette" color="text-rose-400" bgColor="bg-rose-500/15" title={t('portfolio.info.appearance')}>
+          <InfoRow icon="mdi:dog" color="text-emerald-400" label={t('home.basicInfo.breed')} value={dog_info?.breed || '-'} />
+          <InfoRow icon="mdi:palette" color="text-rose-400" label={t('home.basicInfo.color')} value={dog_info?.color || '-'} />
+          <InfoRow icon="mdi:resize" color="text-amber-400" label={t('home.physicalData.size')} value={getSizeText(dog_info?.size || 'medium')} />
+        </CardSection>
+
+        {/* Health & ID Card */}
+        <CardSection icon="mdi:medical-bag" color="text-emerald-400" bgColor="bg-emerald-500/15" title={t('portfolio.info.healthId')}>
+          <InfoRow icon="mdi:weight" color="text-teal-400" label={t('home.physicalData.currentWeight')} value={`${getCurrentWeight()} kg`} />
+          <InfoRow icon="mdi:chip" color="text-indigo-400" label={t('home.physicalData.microchip')} value={dog_info?.microchip || t('portfolio.physicalData.noMicrochip')} isMono />
+          <InfoRow icon="mdi:medical-bag" color="text-purple-400" label={t('common.neutered')} value={dog_info?.neutered ? t('common.yes') : t('common.no')} isBadge badgeColor={dog_info?.neutered ? 'green' : 'red'} />
+        </CardSection>
       </div>
     );
   };

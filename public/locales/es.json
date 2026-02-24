@@ -453,6 +453,11 @@
     "support": "Soporte"
   },
   "portfolio": {
+    "info": {
+      "identity": "Identidad",
+      "appearance": "Apariencia",
+      "healthId": "Salud e ID"
+    },
     "basicInfo": {
       "title": "Información Básica",
       "age": "Edad",
