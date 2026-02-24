@@ -46,3 +46,26 @@
 .animate-scaleIn {
   animation: scaleIn 0.2s ease-out;
 }
+
+/* Dark scrollbar for modals and scrollable areas */
+.dark-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.dark-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dark-scrollbar::-webkit-scrollbar-thumb {
+  background-color: #475569;
+  border-radius: 3px;
+}
+
+.dark-scrollbar::-webkit-scrollbar-thumb:hover {
+  background-color: #64748b;
+}
+
+.dark-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #475569 transparent;
+}
