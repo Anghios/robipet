@@ -669,9 +669,37 @@ export default function DogPortfolio() {
           </div>
           <InfoRow icon="mdi:gender-male-female" color="text-pink-400" label={t('portfolio.physicalData.gender')} value={dog_info?.gender === 'male' ? t('portfolio.physicalData.male') : t('portfolio.physicalData.female')} />
           <InfoRow icon="mdi:calendar" color="text-blue-400" label={t('home.basicInfo.birthDate')} value={dog_info?.birth_date ? formatDateLocalized(dog_info.birth_date) : '-'} />
-          <InfoRow icon="mdi:clock" color="text-orange-400" label={t('home.basicInfo.age')} value={`${dog_info?.age_years || 0} ${t('common.years')}, ${dog_info?.age_months || 0} ${t('common.months')}`} />
-          {dog_info?.species === 'dog' && (
-            <InfoRow icon="ph:dog-fill" color="text-cyan-400" label={t('home.basicInfo.dogAge')} value={`${dog_info?.dog_years || 0} ${t('common.years')}`} />
+          <InfoRow icon="mdi:clock" color="text-orange-400" label={t('home.basicInfo.age')} value={(() => {
+            if (!dog_info?.birth_date) return '-';
+            const birth = new Date(dog_info.birth_date);
+            const now = new Date();
+            let years = now.getFullYear() - birth.getFullYear();
+            let months = now.getMonth() - birth.getMonth();
+            let days = now.getDate() - birth.getDate();
+            if (days < 0) {
+              months--;
+              const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+              days += prevMonth.getDate();
+            }
+            if (months < 0) {
+              years--;
+              months += 12;
+            }
+            const parts: string[] = [];
+            if (years > 0) parts.push(`${years} ${years === 1 ? t('home.year') : t('home.years')}`);
+            if (months > 0) parts.push(`${months} ${months === 1 ? t('home.month') : t('home.months')}`);
+            parts.push(`${days} ${days === 1 ? t('home.day') : t('home.days')}`);
+            if (parts.length <= 1) return parts[0];
+            return parts.slice(0, -1).join(', ') + ` ${t('home.and')} ` + parts[parts.length - 1];
+          })()} />
+          {dog_info?.species === 'dog' && dog_info?.birth_date && (
+            <InfoRow icon="ph:dog-fill" color="text-cyan-400" label={t('home.basicInfo.dogAge')} value={(() => {
+              const birth = new Date(dog_info.birth_date);
+              const now = new Date();
+              const ageInYears = Math.floor(Math.abs(now.getTime() - birth.getTime()) / (1000 * 60 * 60 * 24)) / 365.25;
+              const dogYears = ageInYears >= 1 ? 15 + ((ageInYears - 1) * 4) : ageInYears * 15;
+              return `${Math.round(dogYears * 10) / 10} ${t('home.humanYears')}`;
+            })()} />
           )}
         </CardSection>
 

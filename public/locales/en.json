@@ -47,6 +47,8 @@
     "years": "years",
     "month": "month",
     "months": "months",
+    "day": "day",
+    "days": "days",
     "and": "and",
     "humanYears": "human years",
     "cards": {
