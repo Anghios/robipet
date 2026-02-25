@@ -39,6 +39,7 @@
       "birthDate": "Birth date",
       "age": "Age",
       "dogAge": "Dog age",
+      "catAge": "Cat age",
       "breed": "Breed",
       "color": "Color"
     },
@@ -220,7 +221,8 @@
     "selectPet": "Select pet:",
     "loading": "Loading...",
     "yearsOld": "years old",
-    "dogYears": "dog years"
+    "dogYears": "dog years",
+    "catYears": "cat years"
   },
   "confirmationModal": {
     "cancel": "Cancel",

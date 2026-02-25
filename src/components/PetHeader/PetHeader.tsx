@@ -17,6 +17,7 @@ interface DogInfo {
   photo_url?: string;
   age_years?: number;
   dog_years?: number;
+  human_years?: number;
 }
 
 interface PetHeaderProps {
@@ -132,9 +133,9 @@ export default function PetHeader({
               <span className="bg-white/20 px-3 py-1 rounded-full text-xs text-center font-medium">
                 {dog_info?.age_years || 0} {t('petHeader.yearsOld')}
               </span>
-              {dog_info?.species === 'dog' && (
+              {(dog_info?.species === 'dog' || dog_info?.species === 'cat') && (
                 <span className="bg-white/10 px-3 py-1 rounded-full text-xs text-center font-medium">
-                  {dog_info?.dog_years || 0} {t('petHeader.dogYears')}
+                  {dog_info?.human_years || dog_info?.dog_years || 0} {dog_info?.species === 'cat' ? t('petHeader.catYears') : t('petHeader.dogYears')}
                 </span>
               )}
             </div>
@@ -175,9 +176,9 @@ export default function PetHeader({
               <span className="bg-white/20 px-4 py-2 rounded-full text-sm font-medium">
                 {dog_info?.age_years || 0} {t('petHeader.yearsOld')}
               </span>
-              {dog_info?.species === 'dog' && (
+              {(dog_info?.species === 'dog' || dog_info?.species === 'cat') && (
                 <span className="bg-white/10 px-4 py-2 rounded-full text-sm">
-                  {dog_info?.dog_years || 0} {t('petHeader.dogYears')}
+                  {dog_info?.human_years || dog_info?.dog_years || 0} {dog_info?.species === 'cat' ? t('petHeader.catYears') : t('petHeader.dogYears')}
                 </span>
               )}
             </div>

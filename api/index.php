@@ -88,21 +88,34 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
                 $totalDays = $ageDays;
                 $ageInYears = $totalDays / 365.25; // Usar 365.25 para años bisiestos
                 
-                $dogYears = 0;
-                if ($ageInYears >= 1) {
-                    // Más de un año: primer año = 15 años caninos, después 4 por año
-                    $yearsAfterFirst = $ageInYears - 1;
-                    $dogYears = 15 + ($yearsAfterFirst * 4);
-                } else {
-                    // Menos de un año: proporcional al primer año
-                    $dogYears = $ageInYears * 15;
+                $species = $petComplete['dog_info']['species'] ?? 'dog';
+                $humanYears = null;
+                if ($species === 'dog') {
+                    $dogYears = 0;
+                    if ($ageInYears >= 1) {
+                        $dogYears = 15 + (($ageInYears - 1) * 4);
+                    } else {
+                        $dogYears = $ageInYears * 15;
+                    }
+                    $humanYears = round($dogYears, 1);
+                } elseif ($species === 'cat') {
+                    $catYears = 0;
+                    if ($ageInYears >= 2) {
+                        $catYears = 24 + (($ageInYears - 2) * 4);
+                    } elseif ($ageInYears >= 1) {
+                        $catYears = 15 + (($ageInYears - 1) * 9);
+                    } else {
+                        $catYears = $ageInYears * 15;
+                    }
+                    $humanYears = round($catYears, 1);
                 }
-                
+
                 $petComplete['dog_info']['age_years'] = $ageYears;
                 $petComplete['dog_info']['age_months'] = $ageMonths;
                 $petComplete['dog_info']['age_days'] = $ageDays;
-                $petComplete['dog_info']['age_days_only'] = $diff->d; // Solo los días del diff
-                $petComplete['dog_info']['dog_years'] = round($dogYears, 1);
+                $petComplete['dog_info']['age_days_only'] = $diff->d;
+                $petComplete['dog_info']['dog_years'] = $humanYears;
+                $petComplete['dog_info']['human_years'] = $humanYears;
                 
                 error_log("Enviando respuesta JSON para pet ID: " . $petId);
                 echo json_encode($petComplete);
@@ -741,23 +754,30 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
                     $totalDays = $ageDays;
                     $ageInYears = $totalDays / 365.25; // Usar 365.25 para años bisiestos
                     
-                    // Conversión a edad canina (aproximada)
-                    $dogYears = 0;
-                    if ($ageInYears >= 1) {
-                        // Más de un año: primer año = 15 años caninos, después 4 por año
-                        $yearsAfterFirst = $ageInYears - 1;
-                        $dogYears = 15 + ($yearsAfterFirst * 4);
-                    } else {
-                        // Menos de un año: proporcional al primer año
-                        $dogYears = $ageInYears * 15;
+                    // Conversión a edad humana (según especie)
+                    $species = $dogInfo['species'] ?? 'dog';
+                    $humanYears = null;
+                    if ($species === 'dog') {
+                        $dogYears = $ageInYears >= 1 ? 15 + (($ageInYears - 1) * 4) : $ageInYears * 15;
+                        $humanYears = round($dogYears, 1);
+                    } elseif ($species === 'cat') {
+                        if ($ageInYears >= 2) {
+                            $catYears = 24 + (($ageInYears - 2) * 4);
+                        } elseif ($ageInYears >= 1) {
+                            $catYears = 15 + (($ageInYears - 1) * 9);
+                        } else {
+                            $catYears = $ageInYears * 15;
+                        }
+                        $humanYears = round($catYears, 1);
                     }
-                    
+
                     $dogInfo['age_years'] = $ageYears;
                     $dogInfo['age_months'] = $ageMonths;
                     $dogInfo['age_days'] = $ageDays;
-                    $dogInfo['age_days_only'] = $diff->d; // Solo los días del diff
-                    $dogInfo['dog_years'] = round($dogYears, 1);
-                    
+                    $dogInfo['age_days_only'] = $diff->d;
+                    $dogInfo['dog_years'] = $humanYears;
+                    $dogInfo['human_years'] = $humanYears;
+
                     echo json_encode($dogInfo);
                 } else {
                     echo json_encode(['error' => 'Dog not found']);
@@ -808,22 +828,29 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
                     $totalDays = $ageDays;
                     $ageInYears = $totalDays / 365.25; // Usar 365.25 para años bisiestos
                     
-                    $dogYears = 0;
-                    if ($ageInYears >= 1) {
-                        // Más de un año: primer año = 15 años caninos, después 4 por año
-                        $yearsAfterFirst = $ageInYears - 1;
-                        $dogYears = 15 + ($yearsAfterFirst * 4);
-                    } else {
-                        // Menos de un año: proporcional al primer año
-                        $dogYears = $ageInYears * 15;
+                    $species = $dogInfo['species'] ?? 'dog';
+                    $humanYears = null;
+                    if ($species === 'dog') {
+                        $dogYears = $ageInYears >= 1 ? 15 + (($ageInYears - 1) * 4) : $ageInYears * 15;
+                        $humanYears = round($dogYears, 1);
+                    } elseif ($species === 'cat') {
+                        if ($ageInYears >= 2) {
+                            $catYears = 24 + (($ageInYears - 2) * 4);
+                        } elseif ($ageInYears >= 1) {
+                            $catYears = 15 + (($ageInYears - 1) * 9);
+                        } else {
+                            $catYears = $ageInYears * 15;
+                        }
+                        $humanYears = round($catYears, 1);
                     }
-                    
+
                     $dogInfo['age_years'] = $ageYears;
                     $dogInfo['age_months'] = $ageMonths;
                     $dogInfo['age_days'] = $ageDays;
-                    $dogInfo['age_days_only'] = $diff->d; // Solo los días del diff
-                    $dogInfo['dog_years'] = round($dogYears, 1);
-                    
+                    $dogInfo['age_days_only'] = $diff->d;
+                    $dogInfo['dog_years'] = $humanYears;
+                    $dogInfo['human_years'] = $humanYears;
+
                     echo json_encode([
                         'dog_info' => $dogInfo,
                         'vaccines' => $vaccines,

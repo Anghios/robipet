@@ -87,6 +87,34 @@ export const calculateDogYears = (birthDate: string): number => {
   return Math.round(dogYears * 10) / 10;
 };
 
+export const calculateCatYears = (birthDate: string): number => {
+  const birth = new Date(birthDate);
+  const today = new Date();
+  const diffTime = Math.abs(today.getTime() - birth.getTime());
+  const totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+  const ageInYears = totalDays / 365.25;
+
+  let catYears = 0;
+  if (ageInYears >= 2) {
+    // More than 2 years: first year = 15, second year = +9, then 4 per year
+    catYears = 24 + (ageInYears - 2) * 4;
+  } else if (ageInYears >= 1) {
+    // Between 1 and 2 years: first year = 15, second year proportional to 9
+    catYears = 15 + (ageInYears - 1) * 9;
+  } else {
+    // Less than 1 year: proportional to first year
+    catYears = ageInYears * 15;
+  }
+
+  return Math.round(catYears * 10) / 10;
+};
+
+export const calculateHumanYears = (birthDate: string, species: string): number | null => {
+  if (species === 'dog') return calculateDogYears(birthDate);
+  if (species === 'cat') return calculateCatYears(birthDate);
+  return null;
+};
+
 export const validatePetData = (pet: NewPet | Pet): { isValid: boolean; error?: string } => {
   if (!pet.name.trim()) {
     return { isValid: false, error: 'El nombre es requerido' };

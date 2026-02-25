@@ -108,6 +108,7 @@
       "birthDate": "Nació el",
       "age": "Edad",
       "dogAge": "Edad canina",
+      "catAge": "Edad felina",
       "breed": "Raza",
       "color": "Color"
     },
@@ -292,7 +293,8 @@
     "selectPet": "Seleccionar mascota:",
     "loading": "Cargando...",
     "yearsOld": "años",
-    "dogYears": "años caninos"
+    "dogYears": "años caninos",
+    "catYears": "años felinos"
   },
   "confirmationModal": {
     "cancel": "Cancelar",

@@ -1,6 +1,6 @@
 import { Icon } from '@iconify/react';
 import type { Pet } from '../../types/Pet';
-import { calculateAgeWithTranslation, getSpeciesEmoji, getSizeText, calculateDogYears } from './helpers.ts';
+import { calculateAgeWithTranslation, getSpeciesEmoji, getSizeText, calculateHumanYears } from './helpers.ts';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useSettings } from '../../hooks/useSettings';
 
@@ -14,7 +14,7 @@ interface PetCardProps {
 export default function PetCard({ pet, onEdit, onDelete, onView }: PetCardProps) {
   const { t } = useTranslation();
   const { getWeightUnitLabel, formatWeight } = useSettings();
-  const dogYears = pet.species === 'dog' ? calculateDogYears(pet.birth_date) : null;
+  const humanYears = calculateHumanYears(pet.birth_date, pet.species);
 
   return (
     <div
@@ -73,10 +73,10 @@ export default function PetCard({ pet, onEdit, onDelete, onView }: PetCardProps)
               <Icon icon="mdi:calendar" className="w-3.5 h-3.5 text-orange-400" />
               {calculateAgeWithTranslation(pet.birth_date, t)}
             </span>
-            {pet.species === 'dog' && dogYears !== null && (
+            {humanYears !== null && (
               <span className="flex items-center gap-1">
-                <Icon icon="ph:dog-fill" className="w-3.5 h-3.5 text-cyan-400" />
-                {dogYears} {t('petList.card.humanYears')}
+                <Icon icon={pet.species === 'cat' ? 'ph:cat' : 'ph:dog-fill'} className="w-3.5 h-3.5 text-cyan-400" />
+                {humanYears} {t('petList.card.humanYears')}
               </span>
             )}
             <span className="flex items-center gap-1">

@@ -7,6 +7,7 @@ import PendingItemsModal from './PendingItemsModal';
 import Modal from '../ui/Modal';
 import { useSettings } from '../../hooks/useSettings';
 import { formatDateObj } from '../../utils/petUtils';
+import { calculateHumanYears } from '../PetList/helpers';
 
 interface HomeViewProps {
   portfolio: any;
@@ -140,16 +141,16 @@ export default function HomeView({ portfolio, onNavigateToSection, t }: HomeView
     return formatDateObj(date, getDateFormat());
   };
 
-  // Dog years calculation (only for dogs)
-  const dogYears = useMemo(() => {
-    if (!dog_info?.birth_date || dog_info?.species !== 'dog') return null;
-    const birth = new Date(dog_info.birth_date);
-    const now = new Date();
-    const ageInYears = Math.floor(Math.abs(now.getTime() - birth.getTime()) / (1000 * 60 * 60 * 24)) / 365.25;
-    const totalDogYears = ageInYears >= 1 ? 15 + ((ageInYears - 1) * 4) : ageInYears * 15;
-    const yrs = Math.floor(totalDogYears);
-    const mos = Math.floor((totalDogYears - yrs) * 12);
-    const dys = Math.floor(((totalDogYears - yrs) * 12 - mos) * 30);
+  // Human years calculation (dogs and cats)
+  const humanYears = useMemo(() => {
+    if (!dog_info?.birth_date) return null;
+    const species = dog_info?.species;
+    if (species !== 'dog' && species !== 'cat') return null;
+    const totalHumanYears = calculateHumanYears(dog_info.birth_date, species);
+    if (totalHumanYears === null) return null;
+    const yrs = Math.floor(totalHumanYears);
+    const mos = Math.floor((totalHumanYears - yrs) * 12);
+    const dys = Math.floor(((totalHumanYears - yrs) * 12 - mos) * 30);
     const parts: string[] = [];
     if (yrs > 0) parts.push(`${yrs} ${yrs === 1 ? t('home.year') : t('home.years')}`);
     if (mos > 0) parts.push(`${mos} ${mos === 1 ? t('home.month') : t('home.months')}`);
@@ -193,7 +194,7 @@ export default function HomeView({ portfolio, onNavigateToSection, t }: HomeView
           <h2 className="text-xl font-bold text-white truncate">{dog_info?.name}</h2>
           <p className="text-slate-400 text-sm flex items-center gap-1.5"><Icon icon="mdi:dog" className="w-3.5 h-3.5 text-emerald-400" />{dog_info?.breed}</p>
           {petAge && <p className="text-slate-400 text-sm flex items-center gap-1.5"><Icon icon="mdi:clock" className="w-3.5 h-3.5 text-orange-400" />{petAge}</p>}
-          {dogYears !== null && <p className="text-slate-400 text-sm flex items-center gap-1.5"><Icon icon="mdi:account" className="w-3.5 h-3.5 text-cyan-400" />{dogYears} ({t('home.humanYears')})</p>}
+          {humanYears !== null && <p className="text-slate-400 text-sm flex items-center gap-1.5"><Icon icon={dog_info?.species === 'cat' ? 'mdi:cat' : 'mdi:dog'} className="w-3.5 h-3.5 text-cyan-400" />{humanYears} ({t('home.humanYears')})</p>}
         </div>
         <div className="text-right">
           {currentWeight && (

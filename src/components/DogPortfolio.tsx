@@ -25,6 +25,7 @@ import { useModalHandlers } from '../hooks/useModalHandlers';
 import { getModalProps } from '../utils/modalConfigs';
 import { getSizeText, getVaccineStatusColor, getVaccineStatusBadgeData, formatDate } from '../utils/petUtils';
 import { useSettings } from '../hooks/useSettings';
+import { calculateHumanYears } from './PetList/helpers';
 
 // Card & Form components
 import BasicInfoCard from './DogPortfolio/BasicInfoCard';
@@ -725,23 +726,19 @@ export default function DogPortfolio() {
             if (parts.length <= 1) return parts[0];
             return parts.slice(0, -1).join(', ') + ` ${t('home.and')} ` + parts[parts.length - 1];
           })()} />
-          {dog_info?.species === 'dog' && dog_info?.birth_date && (
-            <InfoRow icon="ph:dog-fill" color="text-cyan-400" label={t('home.basicInfo.dogAge')} value={(() => {
-              const birth = new Date(dog_info.birth_date);
-              const now = new Date();
-              const ageInYears = Math.floor(Math.abs(now.getTime() - birth.getTime()) / (1000 * 60 * 60 * 24)) / 365.25;
-              const totalDogYears = ageInYears >= 1 ? 15 + ((ageInYears - 1) * 4) : ageInYears * 15;
-              const dogYears = Math.floor(totalDogYears);
-              const dogMonths = Math.floor((totalDogYears - dogYears) * 12);
-              const dogDays = Math.floor(((totalDogYears - dogYears) * 12 - dogMonths) * 30);
-              const parts: string[] = [];
-              if (dogYears > 0) parts.push(`${dogYears} ${dogYears === 1 ? t('home.year') : t('home.years')}`);
-              if (dogMonths > 0) parts.push(`${dogMonths} ${dogMonths === 1 ? t('home.month') : t('home.months')}`);
-              parts.push(`${dogDays} ${dogDays === 1 ? t('home.day') : t('home.days')}`);
-              if (parts.length <= 1) return parts[0];
-              return parts.slice(0, -1).join(', ') + ` ${t('home.and')} ` + parts[parts.length - 1];
-            })()} />
-          )}
+          {(dog_info?.species === 'dog' || dog_info?.species === 'cat') && dog_info?.birth_date && (() => {
+            const totalHumanYears = calculateHumanYears(dog_info.birth_date, dog_info.species);
+            if (totalHumanYears === null) return null;
+            const yrs = Math.floor(totalHumanYears);
+            const mos = Math.floor((totalHumanYears - yrs) * 12);
+            const dys = Math.floor(((totalHumanYears - yrs) * 12 - mos) * 30);
+            const parts: string[] = [];
+            if (yrs > 0) parts.push(`${yrs} ${yrs === 1 ? t('home.year') : t('home.years')}`);
+            if (mos > 0) parts.push(`${mos} ${mos === 1 ? t('home.month') : t('home.months')}`);
+            parts.push(`${dys} ${dys === 1 ? t('home.day') : t('home.days')}`);
+            const value = parts.length <= 1 ? parts[0] : parts.slice(0, -1).join(', ') + ` ${t('home.and')} ` + parts[parts.length - 1];
+            return <InfoRow icon={dog_info.species === 'cat' ? 'ph:cat' : 'ph:dog-fill'} color="text-cyan-400" label={dog_info.species === 'cat' ? t('home.basicInfo.catAge') : t('home.basicInfo.dogAge')} value={value} />;
+          })()}
         </CardSection>
 
         {/* Appearance Card */}
