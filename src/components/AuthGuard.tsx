@@ -134,7 +134,8 @@ export default function AuthGuard({ children }: AuthGuardProps) {
         localStorage.setItem('authToken', result.token);
         localStorage.setItem('user', JSON.stringify(result.user));
         setUser(result.user);
-        setIsAuthenticated(true);
+        // Delay auth transition to allow login success animation
+        setTimeout(() => setIsAuthenticated(true), 1500);
         return true;
       }
       return false;
@@ -202,6 +203,7 @@ function LoginForm({ onLogin }: LoginFormProps) {
   const [password, setPassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [loginSuccess, setLoginSuccess] = useState(false);
   const [animals, setAnimals] = useState<Array<ReturnType<typeof spawnAnimal>>>([]);
 
   useEffect(() => {
@@ -227,16 +229,18 @@ function LoginForm({ onLogin }: LoginFormProps) {
     setError('');
 
     const success = await onLogin(username, password);
-    
-    if (!success) {
+
+    if (success) {
+      setLoginSuccess(true);
+    } else {
       setError(t('auth.invalidCredentials'));
+      setIsLoading(false);
     }
-    
-    setIsLoading(false);
   };
 
   return (
-    <div className="min-h-screen bg-slate-900 flex flex-col relative overflow-hidden">
+    <div className="fixed inset-0 overflow-hidden bg-slate-900">
+    <div className={['h-full flex flex-col relative transition-all duration-700', loginSuccess ? 'opacity-0 scale-[1.03]' : ''].join(' ')} style={loginSuccess ? { transitionDelay: '0.7s' } : undefined}>
       {/* Background animated orbs */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute -top-40 -left-40 w-80 h-80 bg-blue-600/8 rounded-full blur-3xl animate-[pulse_8s_ease-in-out_infinite]" />
@@ -259,7 +263,13 @@ function LoginForm({ onLogin }: LoginFormProps) {
           </div>
 
           {/* Card */}
-          <div className="bg-slate-800/50 backdrop-blur-sm rounded-2xl border border-slate-700/50 p-6 shadow-xl shadow-black/20">
+          <div className={['bg-slate-800/50 backdrop-blur-sm rounded-2xl border p-6 shadow-xl relative overflow-hidden transition-all duration-500', loginSuccess ? 'border-green-500/50 shadow-green-500/25' : 'border-slate-700/50 shadow-black/20'].join(' ')}>
+              {/* Success overlay */}
+              {loginSuccess && (
+                <div className="absolute inset-0 flex items-center justify-center bg-slate-800/90 rounded-2xl z-10">
+                  <Icon icon="mdi:check-circle" className="w-16 h-16 text-green-400" />
+                </div>
+              )}
               {/* Error message */}
               {error && (
                 <div className="mb-5 p-3 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-2">
@@ -331,8 +341,11 @@ function LoginForm({ onLogin }: LoginFormProps) {
         {animals.map((animal, i) => (
           <div
             key={`${i}-${animal.x}-${animal.y}`}
-            className={['absolute', animal.size].join(' ')}
-            style={{ left: animal.x, top: animal.y }}
+            className={['absolute transition-all duration-700 ease-in', animal.size].join(' ')}
+            style={loginSuccess
+              ? { left: '50%', top: '45%', opacity: 0, transform: 'scale(0)' }
+              : { left: animal.x, top: animal.y }
+            }
           >
             <span className="inline-block animate-bounce" style={{ animationDuration: animal.dur, animationDelay: animal.delay }}>
               {animal.emoji}
@@ -342,6 +355,7 @@ function LoginForm({ onLogin }: LoginFormProps) {
       </div>
 
       <Footer />
+    </div>
     </div>
   );
 }
