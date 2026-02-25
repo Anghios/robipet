@@ -188,18 +188,30 @@ export default function HomeView({ portfolio, onNavigateToSection, t }: HomeView
         )}
         <div className="flex-1 min-w-0">
           <h2 className="text-xl font-bold text-white truncate">{dog_info?.name}</h2>
-          <p className="text-slate-400 text-sm">
-            {dog_info?.breed}
-            {petAge && ` • ${petAge}`}
-            {dogYears !== null && ` • ${dogYears} ${t('home.humanYears')}`}
-          </p>
+          <p className="text-slate-400 text-sm flex items-center gap-1.5"><Icon icon="mdi:dog" className="w-3.5 h-3.5 text-emerald-400" />{dog_info?.breed}</p>
+          {petAge && <p className="text-slate-400 text-sm flex items-center gap-1.5"><Icon icon="mdi:clock" className="w-3.5 h-3.5 text-orange-400" />{petAge}</p>}
+          {dogYears !== null && <p className="text-slate-400 text-sm flex items-center gap-1.5"><Icon icon="mdi:account" className="w-3.5 h-3.5 text-cyan-400" />{dogYears} ({t('home.humanYears')})</p>}
         </div>
-        {currentWeight && (
-          <div className="text-right">
-            <p className="text-2xl font-bold text-white">{currentWeight.weight_kg}</p>
-            <p className="text-xs text-slate-500 uppercase">kg</p>
-          </div>
-        )}
+        <div className="text-right">
+          {currentWeight && (
+            <p className="text-2xl font-bold text-white">{currentWeight.weight_kg} <span className="text-sm text-slate-500">kg</span></p>
+          )}
+          {dog_info?.birth_date && (() => {
+            const now = new Date();
+            const birth = new Date(dog_info.birth_date);
+            const nextBirthday = new Date(now.getFullYear(), birth.getMonth(), birth.getDate());
+            if (nextBirthday < now && nextBirthday.toDateString() !== now.toDateString()) {
+              nextBirthday.setFullYear(now.getFullYear() + 1);
+            }
+            const diffDays = Math.ceil((nextBirthday.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
+            return (
+              <p className="text-xs text-slate-500 mt-1 flex items-center justify-end gap-1">
+                <Icon icon={diffDays === 0 ? 'mdi:party-popper' : 'mdi:cake-variant'} className={`w-3.5 h-3.5 ${diffDays === 0 ? 'text-yellow-400' : 'text-pink-400'}`} />
+                {diffDays === 0 ? t('home.birthdayToday') : t('home.daysUntilBirthday', { days: diffDays })}
+              </p>
+            );
+          })()}
+        </div>
       </div>
 
       {/* Pending Items Button */}

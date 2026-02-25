@@ -51,6 +51,8 @@
     "days": "days",
     "and": "and",
     "humanYears": "human years",
+    "birthdayToday": "Today is their birthday!",
+    "daysUntilBirthday": "{days} days until birthday",
     "cards": {
       "vaccines": "Vaccines",
       "medications": "Medications",
