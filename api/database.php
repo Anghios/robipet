@@ -124,19 +124,19 @@ class Database {
         
         // Migrar weight_history de dog_id a pet_id si es necesario
         try {
-            // Verificar si hay registros con dog_id en weight_history
             $result = $this->connection->query("PRAGMA table_info(weight_history)");
             $columns = $result->fetchAll(PDO::FETCH_ASSOC);
-            $hasDogId = false;
-            foreach ($columns as $column) {
-                if ($column['name'] === 'dog_id') {
-                    $hasDogId = true;
-                    break;
-                }
+            $columnNames = array_column($columns, 'name');
+            $hasDogId = in_array('dog_id', $columnNames);
+            $hasPetId = in_array('pet_id', $columnNames);
+
+            // Add pet_id column if it doesn't exist
+            if (!$hasPetId) {
+                $this->connection->exec("ALTER TABLE weight_history ADD COLUMN pet_id INTEGER");
             }
-            
+
+            // Copy dog_id values to pet_id
             if ($hasDogId) {
-                // Copiar datos de dog_id a pet_id si pet_id está NULL
                 $this->connection->exec("UPDATE weight_history SET pet_id = dog_id WHERE pet_id IS NULL");
             }
         } catch (PDOException $e) {
