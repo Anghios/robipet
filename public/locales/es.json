@@ -856,7 +856,12 @@
       "expired": "Vencido",
       "active": "Activo",
       "inactive": "Inactivo",
-      "linkedDocuments": "Documentos vinculados"
+      "linkedDocuments": "Documentos vinculados",
+      "linkDocuments": "Vincular documentos",
+      "noDocumentsLinked": "Sin documentos vinculados",
+      "documentsLinked": "documentos vinculados",
+      "selectDocuments": "Seleccionar documentos",
+      "linkedToOther": "Vinculado a"
     }
   },
   "timeline": {

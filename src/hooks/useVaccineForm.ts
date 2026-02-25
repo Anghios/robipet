@@ -13,7 +13,8 @@ export function useVaccineForm(
   getCurrentPetId: () => string,
   onSuccess: (message: string) => void,
   onError: (message: string) => void,
-  onRefresh: () => Promise<void>
+  onRefresh: () => Promise<void>,
+  getDocuments: () => any[]
 ) {
   const [showVaccineForm, setShowVaccineForm] = useState(false);
   const [editingVaccine, setEditingVaccine] = useState<any>(null);
@@ -25,6 +26,7 @@ export function useVaccineForm(
     status: 'pending'
   });
   const [savingVaccine, setSavingVaccine] = useState(false);
+  const [linkedDocumentIds, setLinkedDocumentIds] = useState<number[]>([]);
 
   const handleAddVaccine = useCallback(() => {
     setVaccineForm({
@@ -35,6 +37,7 @@ export function useVaccineForm(
       status: 'pending'
     });
     setEditingVaccine(null);
+    setLinkedDocumentIds([]);
     setShowVaccineForm(true);
   }, []);
 
@@ -48,8 +51,11 @@ export function useVaccineForm(
       status: currentStatus
     });
     setEditingVaccine(vaccine);
+    const docs = getDocuments();
+    const linked = docs.filter((d: any) => d.linked_type === 'vaccine' && Number(d.linked_id) === vaccine.id);
+    setLinkedDocumentIds(linked.map((d: any) => d.id));
     setShowVaccineForm(true);
-  }, []);
+  }, [getDocuments]);
 
   const handleSaveVaccine = useCallback(async () => {
     if (!vaccineForm.vaccine_name || !vaccineForm.vaccine_date) {
@@ -60,15 +66,32 @@ export function useVaccineForm(
     try {
       setSavingVaccine(true);
       const petId = getCurrentPetId();
-      
-      const result = editingVaccine 
+
+      const result = editingVaccine
         ? await petApi.updateVaccine(petId, editingVaccine.id, vaccineForm)
         : await petApi.createVaccine(petId, vaccineForm);
-      
+
       if (result.success) {
+        const entryId = editingVaccine ? editingVaccine.id : result.id;
+        const docs = getDocuments();
+        const previouslyLinked = docs
+          .filter((d: any) => d.linked_type === 'vaccine' && Number(d.linked_id) === entryId)
+          .map((d: any) => d.id);
+
+        const toLink = linkedDocumentIds.filter(id => !previouslyLinked.includes(id));
+        const toUnlink = previouslyLinked.filter((id: number) => !linkedDocumentIds.includes(id));
+
+        for (const docId of toLink) {
+          await petApi.updateDocument(docId, { linked_type: 'vaccine', linked_id: entryId, pet_id: petId });
+        }
+        for (const docId of toUnlink) {
+          await petApi.updateDocument(docId, { linked_type: null, linked_id: null, pet_id: petId });
+        }
+
         await onRefresh();
         setShowVaccineForm(false);
         setEditingVaccine(null);
+        setLinkedDocumentIds([]);
         onSuccess('Vacuna guardada correctamente');
       } else {
         onError(result.message || 'Error al guardar vacuna');
@@ -78,11 +101,12 @@ export function useVaccineForm(
     } finally {
       setSavingVaccine(false);
     }
-  }, [vaccineForm, editingVaccine, getCurrentPetId, onSuccess, onError, onRefresh]);
+  }, [vaccineForm, editingVaccine, getCurrentPetId, onSuccess, onError, onRefresh, linkedDocumentIds, getDocuments]);
 
   const cancelVaccineForm = useCallback(() => {
     setShowVaccineForm(false);
     setEditingVaccine(null);
+    setLinkedDocumentIds([]);
     setVaccineForm({
       vaccine_name: '',
       vaccine_date: new Date().toISOString().split('T')[0],
@@ -98,9 +122,11 @@ export function useVaccineForm(
     editingVaccine,
     vaccineForm,
     savingVaccine,
-    
+    linkedDocumentIds,
+
     // Actions
     setVaccineForm,
+    setLinkedDocumentIds,
     handleAddVaccine,
     handleEditVaccine,
     handleSaveVaccine,

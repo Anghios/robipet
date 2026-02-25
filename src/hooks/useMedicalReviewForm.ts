@@ -20,7 +20,8 @@ export function useMedicalReviewForm(
   getCurrentPetId: () => string,
   onSuccess: (message: string) => void,
   onError: (message: string) => void,
-  onRefresh: () => Promise<void>
+  onRefresh: () => Promise<void>,
+  getDocuments: () => any[]
 ) {
   const [showMedicalReviewForm, setShowMedicalReviewForm] = useState(false);
   const [editingMedicalReview, setEditingMedicalReview] = useState<any>(null);
@@ -39,6 +40,7 @@ export function useMedicalReviewForm(
     documents: []
   });
   const [savingMedicalReview, setSavingMedicalReview] = useState(false);
+  const [linkedDocumentIds, setLinkedDocumentIds] = useState<number[]>([]);
 
   const handleAddMedicalReview = useCallback(() => {
     setMedicalReviewForm({
@@ -56,6 +58,7 @@ export function useMedicalReviewForm(
       documents: []
     });
     setEditingMedicalReview(null);
+    setLinkedDocumentIds([]);
     setShowMedicalReviewForm(true);
   }, []);
 
@@ -75,8 +78,11 @@ export function useMedicalReviewForm(
       documents: []
     });
     setEditingMedicalReview(review);
+    const docs = getDocuments();
+    const linked = docs.filter((d: any) => d.linked_type === 'review' && Number(d.linked_id) === review.id);
+    setLinkedDocumentIds(linked.map((d: any) => d.id));
     setShowMedicalReviewForm(true);
-  }, []);
+  }, [getDocuments]);
 
   const handleSaveMedicalReview = useCallback(async () => {
     // Only require visit_date if status is 'completed'
@@ -102,15 +108,32 @@ export function useMedicalReviewForm(
         next_visit: medicalReviewForm.next_visit,
         notes: medicalReviewForm.notes
       };
-      
-      const result = editingMedicalReview 
+
+      const result = editingMedicalReview
         ? await petApi.updateMedicalReview(petId, editingMedicalReview.id, reviewData)
         : await petApi.createMedicalReview(petId, reviewData);
-      
+
       if (result.success) {
+        const entryId = editingMedicalReview ? editingMedicalReview.id : result.id;
+        const docs = getDocuments();
+        const previouslyLinked = docs
+          .filter((d: any) => d.linked_type === 'review' && Number(d.linked_id) === entryId)
+          .map((d: any) => d.id);
+
+        const toLink = linkedDocumentIds.filter(id => !previouslyLinked.includes(id));
+        const toUnlink = previouslyLinked.filter((id: number) => !linkedDocumentIds.includes(id));
+
+        for (const docId of toLink) {
+          await petApi.updateDocument(docId, { linked_type: 'review', linked_id: entryId, pet_id: petId });
+        }
+        for (const docId of toUnlink) {
+          await petApi.updateDocument(docId, { linked_type: null, linked_id: null, pet_id: petId });
+        }
+
         await onRefresh();
         setShowMedicalReviewForm(false);
         setEditingMedicalReview(null);
+        setLinkedDocumentIds([]);
         onSuccess('Revisión médica guardada correctamente');
       } else {
         onError(result.message || 'Error al guardar revisión médica');
@@ -120,11 +143,12 @@ export function useMedicalReviewForm(
     } finally {
       setSavingMedicalReview(false);
     }
-  }, [medicalReviewForm, editingMedicalReview, getCurrentPetId, onSuccess, onError, onRefresh]);
+  }, [medicalReviewForm, editingMedicalReview, getCurrentPetId, onSuccess, onError, onRefresh, linkedDocumentIds, getDocuments]);
 
   const cancelMedicalReviewForm = useCallback(() => {
     setShowMedicalReviewForm(false);
     setEditingMedicalReview(null);
+    setLinkedDocumentIds([]);
     setMedicalReviewForm({
       visit_date: '',
       visit_type: 'routine',
@@ -147,9 +171,11 @@ export function useMedicalReviewForm(
     editingMedicalReview,
     medicalReviewForm,
     savingMedicalReview,
-    
+    linkedDocumentIds,
+
     // Actions
     setMedicalReviewForm,
+    setLinkedDocumentIds,
     handleAddMedicalReview,
     handleEditMedicalReview,
     handleSaveMedicalReview,

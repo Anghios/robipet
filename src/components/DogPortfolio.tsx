@@ -98,12 +98,16 @@ export default function DogPortfolio() {
   }, []);
 
   // Form hooks
+  const getDocuments = () => portfolio?.documents || [];
+
   const {
     showVaccineForm,
     editingVaccine,
     vaccineForm,
     savingVaccine,
+    linkedDocumentIds: vaccineLinkedDocIds,
     setVaccineForm,
+    setLinkedDocumentIds: setVaccineLinkedDocIds,
     handleAddVaccine,
     handleEditVaccine,
     handleSaveVaccine,
@@ -112,7 +116,8 @@ export default function DogPortfolio() {
     getCurrentPetId,
     (message: string) => showToast(message, 'success'),
     (message: string) => showToast(message, 'error'),
-    fetchDogPortfolio
+    fetchDogPortfolio,
+    getDocuments
   );
 
   const {
@@ -120,7 +125,9 @@ export default function DogPortfolio() {
     editingMedication,
     medicationForm,
     savingMedication,
+    linkedDocumentIds: medicationLinkedDocIds,
     setMedicationForm,
+    setLinkedDocumentIds: setMedicationLinkedDocIds,
     handleAddMedication,
     handleEditMedication,
     handleSaveMedication,
@@ -129,7 +136,8 @@ export default function DogPortfolio() {
     getCurrentPetId,
     (message: string) => showToast(message, 'success'),
     (message: string) => showToast(message, 'error'),
-    fetchDogPortfolio
+    fetchDogPortfolio,
+    getDocuments
   );
 
   const {
@@ -137,7 +145,9 @@ export default function DogPortfolio() {
     editingDeworming,
     dewormingForm,
     savingDeworming,
+    linkedDocumentIds: dewormingLinkedDocIds,
     setDewormingForm,
+    setLinkedDocumentIds: setDewormingLinkedDocIds,
     handleAddDeworming,
     handleEditDeworming,
     handleSaveDeworming,
@@ -146,7 +156,8 @@ export default function DogPortfolio() {
     getCurrentPetId,
     (message: string) => showToast(message, 'success'),
     (message: string) => showToast(message, 'error'),
-    fetchDogPortfolio
+    fetchDogPortfolio,
+    getDocuments
   );
 
   const {
@@ -154,7 +165,9 @@ export default function DogPortfolio() {
     editingMedicalReview,
     medicalReviewForm,
     savingMedicalReview,
+    linkedDocumentIds: reviewLinkedDocIds,
     setMedicalReviewForm,
+    setLinkedDocumentIds: setReviewLinkedDocIds,
     handleAddMedicalReview,
     handleEditMedicalReview,
     handleSaveMedicalReview,
@@ -163,7 +176,8 @@ export default function DogPortfolio() {
     getCurrentPetId,
     (message: string) => showToast(message, 'success'),
     (message: string) => showToast(message, 'error'),
-    fetchDogPortfolio
+    fetchDogPortfolio,
+    getDocuments
   );
 
   const {
@@ -371,6 +385,9 @@ export default function DogPortfolio() {
                 onFormChange={setVaccineForm}
                 onSave={handleSaveVaccine}
                 onCancel={cancelVaccineForm}
+                documents={documents}
+                linkedDocumentIds={vaccineLinkedDocIds}
+                onLinkedDocsChange={setVaccineLinkedDocIds}
               />
             </Modal>
             <div className="space-y-3">
@@ -416,6 +433,9 @@ export default function DogPortfolio() {
                 onFormChange={setMedicationForm}
                 onSave={handleSaveMedication}
                 onCancel={cancelMedicationForm}
+                documents={documents}
+                linkedDocumentIds={medicationLinkedDocIds}
+                onLinkedDocsChange={setMedicationLinkedDocIds}
               />
             </Modal>
             <div className="space-y-3">
@@ -461,6 +481,9 @@ export default function DogPortfolio() {
                 onFormChange={setDewormingForm}
                 onSave={handleSaveDeworming}
                 onCancel={cancelDewormingForm}
+                documents={documents}
+                linkedDocumentIds={dewormingLinkedDocIds}
+                onLinkedDocsChange={setDewormingLinkedDocIds}
               />
             </Modal>
             <div className="space-y-3">
@@ -505,6 +528,9 @@ export default function DogPortfolio() {
                 onFormChange={setMedicalReviewForm}
                 onSave={handleSaveMedicalReview}
                 onCancel={cancelMedicalReviewForm}
+                documents={documents}
+                linkedDocumentIds={reviewLinkedDocIds}
+                onLinkedDocsChange={setReviewLinkedDocIds}
               />
             </Modal>
             <div className="space-y-3">

@@ -858,7 +858,12 @@
       "expired": "Expired",
       "active": "Active",
       "inactive": "Inactive",
-      "linkedDocuments": "Linked documents"
+      "linkedDocuments": "Linked documents",
+      "linkDocuments": "Link documents",
+      "noDocumentsLinked": "No documents linked",
+      "documentsLinked": "documents linked",
+      "selectDocuments": "Select documents",
+      "linkedToOther": "Linked to"
     }
   },
   "timeline": {

@@ -16,7 +16,8 @@ export function useDewormingForm(
   getCurrentPetId: () => string,
   onSuccess: (message: string) => void,
   onError: (message: string) => void,
-  onRefresh: () => Promise<void>
+  onRefresh: () => Promise<void>,
+  getDocuments: () => any[]
 ) {
   const [showDewormingForm, setShowDewormingForm] = useState(false);
   const [editingDeworming, setEditingDeworming] = useState<any>(null);
@@ -30,6 +31,7 @@ export function useDewormingForm(
     status: 'pending'
   });
   const [savingDeworming, setSavingDeworming] = useState(false);
+  const [linkedDocumentIds, setLinkedDocumentIds] = useState<number[]>([]);
 
   const handleAddDeworming = useCallback((currentWeight?: number) => {
     setDewormingForm({
@@ -42,6 +44,7 @@ export function useDewormingForm(
       status: 'pending'
     });
     setEditingDeworming(null);
+    setLinkedDocumentIds([]);
     setShowDewormingForm(true);
   }, []);
 
@@ -57,8 +60,11 @@ export function useDewormingForm(
       status: currentStatus
     });
     setEditingDeworming(deworming);
+    const docs = getDocuments();
+    const linked = docs.filter((d: any) => d.linked_type === 'deworming' && Number(d.linked_id) === deworming.id);
+    setLinkedDocumentIds(linked.map((d: any) => d.id));
     setShowDewormingForm(true);
-  }, []);
+  }, [getDocuments]);
 
   const handleSaveDeworming = useCallback(async () => {
     if (!dewormingForm.product_name || !dewormingForm.treatment_date) {
@@ -69,7 +75,7 @@ export function useDewormingForm(
     try {
       setSavingDeworming(true);
       const petId = getCurrentPetId();
-      
+
       const dewormingData = {
         product_name: dewormingForm.product_name,
         treatment_date: dewormingForm.treatment_date,
@@ -79,22 +85,39 @@ export function useDewormingForm(
         notes: dewormingForm.notes || null,
         status: dewormingForm.status
       };
-      
-      const result = editingDeworming 
+
+      const result = editingDeworming
         ? await petApi.updateDeworming(petId, editingDeworming.id, dewormingData)
         : await petApi.createDeworming(petId, dewormingData);
-      
+
       if (result.success) {
         // Si se proporcionó un peso Y el status es 'completed', añadir un registro de peso
-        if (dewormingForm.weight_at_treatment && 
-            !isNaN(parseFloat(dewormingForm.weight_at_treatment)) && 
+        if (dewormingForm.weight_at_treatment &&
+            !isNaN(parseFloat(dewormingForm.weight_at_treatment)) &&
             dewormingForm.status === 'completed') {
           await addWeightRecord(petId, parseFloat(dewormingForm.weight_at_treatment), dewormingForm.treatment_date, `Peso registrado durante desparasitación con ${dewormingForm.product_name}`);
         }
-        
+
+        const entryId = editingDeworming ? editingDeworming.id : result.id;
+        const docs = getDocuments();
+        const previouslyLinked = docs
+          .filter((d: any) => d.linked_type === 'deworming' && Number(d.linked_id) === entryId)
+          .map((d: any) => d.id);
+
+        const toLink = linkedDocumentIds.filter(id => !previouslyLinked.includes(id));
+        const toUnlink = previouslyLinked.filter((id: number) => !linkedDocumentIds.includes(id));
+
+        for (const docId of toLink) {
+          await petApi.updateDocument(docId, { linked_type: 'deworming', linked_id: entryId, pet_id: petId });
+        }
+        for (const docId of toUnlink) {
+          await petApi.updateDocument(docId, { linked_type: null, linked_id: null, pet_id: petId });
+        }
+
         await onRefresh();
         setShowDewormingForm(false);
         setEditingDeworming(null);
+        setLinkedDocumentIds([]);
         onSuccess('Desparasitación guardada correctamente');
       } else {
         onError(result.message || 'Error al guardar desparasitación');
@@ -104,11 +127,12 @@ export function useDewormingForm(
     } finally {
       setSavingDeworming(false);
     }
-  }, [dewormingForm, editingDeworming, getCurrentPetId, onSuccess, onError, onRefresh]);
+  }, [dewormingForm, editingDeworming, getCurrentPetId, onSuccess, onError, onRefresh, linkedDocumentIds, getDocuments]);
 
   const cancelDewormingForm = useCallback(() => {
     setShowDewormingForm(false);
     setEditingDeworming(null);
+    setLinkedDocumentIds([]);
     setDewormingForm({
       product_name: '',
       treatment_date: new Date().toISOString().split('T')[0],
@@ -126,9 +150,11 @@ export function useDewormingForm(
     editingDeworming,
     dewormingForm,
     savingDeworming,
-    
+    linkedDocumentIds,
+
     // Actions
     setDewormingForm,
+    setLinkedDocumentIds,
     handleAddDeworming,
     handleEditDeworming,
     handleSaveDeworming,

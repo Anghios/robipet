@@ -1,5 +1,6 @@
 import { Icon } from '@iconify/react';
 import { useTranslation } from '../../hooks/useTranslation';
+import DocumentLinkSelector from './DocumentLinkSelector';
 
 interface MedicationFormData {
   medication_name: string;
@@ -19,6 +20,9 @@ interface MedicationFormProps {
   onFormChange: (data: MedicationFormData) => void;
   onSave: () => void;
   onCancel: () => void;
+  documents?: any[];
+  linkedDocumentIds?: number[];
+  onLinkedDocsChange?: (ids: number[]) => void;
 }
 
 export default function MedicationForm({
@@ -27,7 +31,10 @@ export default function MedicationForm({
   isSaving,
   onFormChange,
   onSave,
-  onCancel
+  onCancel,
+  documents = [],
+  linkedDocumentIds = [],
+  onLinkedDocsChange
 }: MedicationFormProps) {
   const { t } = useTranslation();
 
@@ -178,6 +185,14 @@ export default function MedicationForm({
           <Icon icon="mdi:pencil" className="absolute left-4 top-4 w-4 h-4 text-slate-400" />
         </div>
       </div>
+
+      {onLinkedDocsChange && documents.length > 0 && (
+        <DocumentLinkSelector
+          documents={documents}
+          linkedDocumentIds={linkedDocumentIds}
+          onLinkedDocsChange={onLinkedDocsChange}
+        />
+      )}
 
       <div className="flex gap-3 pt-4 border-t border-slate-700/50">
         <button

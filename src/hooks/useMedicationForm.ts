@@ -16,7 +16,8 @@ export function useMedicationForm(
   getCurrentPetId: () => string,
   onSuccess: (message: string) => void,
   onError: (message: string) => void,
-  onRefresh: () => Promise<void>
+  onRefresh: () => Promise<void>,
+  getDocuments: () => any[]
 ) {
   const [showMedicationForm, setShowMedicationForm] = useState(false);
   const [editingMedication, setEditingMedication] = useState<any>(null);
@@ -31,6 +32,7 @@ export function useMedicationForm(
     status: 'pending'
   });
   const [savingMedication, setSavingMedication] = useState(false);
+  const [linkedDocumentIds, setLinkedDocumentIds] = useState<number[]>([]);
 
   const handleAddMedication = useCallback(() => {
     setMedicationForm({
@@ -44,6 +46,7 @@ export function useMedicationForm(
       status: 'pending'
     });
     setEditingMedication(null);
+    setLinkedDocumentIds([]);
     setShowMedicationForm(true);
   }, []);
 
@@ -60,8 +63,11 @@ export function useMedicationForm(
       status: currentStatus
     });
     setEditingMedication(medication);
+    const docs = getDocuments();
+    const linked = docs.filter((d: any) => d.linked_type === 'medication' && Number(d.linked_id) === medication.id);
+    setLinkedDocumentIds(linked.map((d: any) => d.id));
     setShowMedicationForm(true);
-  }, []);
+  }, [getDocuments]);
 
   const handleSaveMedication = useCallback(async () => {
     if (!medicationForm.medication_name || !medicationForm.dosage || !medicationForm.frequency_hours || !medicationForm.start_date) {
@@ -72,7 +78,7 @@ export function useMedicationForm(
     try {
       setSavingMedication(true);
       const petId = getCurrentPetId();
-      
+
       const medicationData = {
         medication_name: medicationForm.medication_name,
         dosage: medicationForm.dosage,
@@ -83,15 +89,32 @@ export function useMedicationForm(
         notes: medicationForm.notes || null,
         status: medicationForm.status
       };
-      
-      const result = editingMedication 
+
+      const result = editingMedication
         ? await petApi.updateMedication(petId, editingMedication.id, medicationData)
         : await petApi.createMedication(petId, medicationData);
-      
+
       if (result.success) {
+        const entryId = editingMedication ? editingMedication.id : result.id;
+        const docs = getDocuments();
+        const previouslyLinked = docs
+          .filter((d: any) => d.linked_type === 'medication' && Number(d.linked_id) === entryId)
+          .map((d: any) => d.id);
+
+        const toLink = linkedDocumentIds.filter(id => !previouslyLinked.includes(id));
+        const toUnlink = previouslyLinked.filter((id: number) => !linkedDocumentIds.includes(id));
+
+        for (const docId of toLink) {
+          await petApi.updateDocument(docId, { linked_type: 'medication', linked_id: entryId, pet_id: petId });
+        }
+        for (const docId of toUnlink) {
+          await petApi.updateDocument(docId, { linked_type: null, linked_id: null, pet_id: petId });
+        }
+
         await onRefresh();
         setShowMedicationForm(false);
         setEditingMedication(null);
+        setLinkedDocumentIds([]);
         onSuccess('Medicamento guardado correctamente');
       } else {
         onError(result.message || 'Error al guardar medicamento');
@@ -101,11 +124,12 @@ export function useMedicationForm(
     } finally {
       setSavingMedication(false);
     }
-  }, [medicationForm, editingMedication, getCurrentPetId, onSuccess, onError, onRefresh]);
+  }, [medicationForm, editingMedication, getCurrentPetId, onSuccess, onError, onRefresh, linkedDocumentIds, getDocuments]);
 
   const cancelMedicationForm = useCallback(() => {
     setShowMedicationForm(false);
     setEditingMedication(null);
+    setLinkedDocumentIds([]);
     setMedicationForm({
       medication_name: '',
       dosage: '',
@@ -124,9 +148,11 @@ export function useMedicationForm(
     editingMedication,
     medicationForm,
     savingMedication,
-    
+    linkedDocumentIds,
+
     // Actions
     setMedicationForm,
+    setLinkedDocumentIds,
     handleAddMedication,
     handleEditMedication,
     handleSaveMedication,

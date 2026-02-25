@@ -1,6 +1,7 @@
 import { Icon } from '@iconify/react';
 import { useTranslation } from '../../hooks/useTranslation';
 import { useSettings } from '../../hooks/useSettings';
+import DocumentLinkSelector from './DocumentLinkSelector';
 
 interface MedicalReviewFormData {
   visit_date: string;
@@ -23,6 +24,9 @@ interface MedicalReviewFormProps {
   onFormChange: (data: MedicalReviewFormData) => void;
   onSave: () => void;
   onCancel: () => void;
+  documents?: any[];
+  linkedDocumentIds?: number[];
+  onLinkedDocsChange?: (ids: number[]) => void;
 }
 
 export default function MedicalReviewForm({
@@ -31,7 +35,10 @@ export default function MedicalReviewForm({
   isSaving,
   onFormChange,
   onSave,
-  onCancel
+  onCancel,
+  documents = [],
+  linkedDocumentIds = [],
+  onLinkedDocsChange
 }: MedicalReviewFormProps) {
   const { t } = useTranslation();
   const { getCurrencyIcon } = useSettings();
@@ -254,6 +261,14 @@ export default function MedicalReviewForm({
           <Icon icon="mdi:pencil" className="absolute left-4 top-4 w-4 h-4 text-slate-400" />
         </div>
       </div>
+
+      {onLinkedDocsChange && documents.length > 0 && (
+        <DocumentLinkSelector
+          documents={documents}
+          linkedDocumentIds={linkedDocumentIds}
+          onLinkedDocsChange={onLinkedDocsChange}
+        />
+      )}
 
       <div className="flex gap-3 pt-4 border-t border-slate-700/50">
         <button
