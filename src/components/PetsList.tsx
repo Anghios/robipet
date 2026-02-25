@@ -59,7 +59,7 @@ export default function PetsList() {
   }, [fetchPets]);
 
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="flex-1 bg-slate-900">
       {/* Main Content */}
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
         {/* Botón para mostrar/ocultar formulario */}

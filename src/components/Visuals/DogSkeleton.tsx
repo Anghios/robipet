@@ -1,6 +1,6 @@
 export default function DogSkeleton() {
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="flex-1 bg-slate-900">
       {/* Header skeleton */}
       <header className="sticky top-0 z-50 bg-slate-900/95 backdrop-blur-xl border-b border-slate-800/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6">

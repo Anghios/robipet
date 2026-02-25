@@ -161,7 +161,10 @@ export default function AuthGuard({ children }: AuthGuardProps) {
   return (
     <>
       <SharedHeader />
-      {children}
+      <main className="flex-1 flex flex-col">
+        {children}
+      </main>
+      <Footer />
     </>
   );
 }

@@ -2,7 +2,7 @@ import PetsCompactHeader from './PetsCompactHeader';
 
 export default function PetsSkeleton() {
   return (
-    <div className="min-h-screen bg-slate-900">
+    <div className="flex-1 bg-slate-900">
       {/* Header */}
       <PetsCompactHeader />
 
