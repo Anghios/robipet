@@ -195,38 +195,41 @@ function LoginForm({ onLogin }: LoginFormProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-slate-900 flex flex-col">
-      <div className="flex-grow flex items-center justify-center p-4">
-        <div className="max-w-lg w-full">
-          <div className="bg-white/10 backdrop-blur-lg rounded-3xl shadow-2xl border border-white/20 p-12">
-            {/* Header */}
-            <div className="text-center mb-10">
-              <div className="flex items-center justify-center w-24 h-24 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mx-auto mb-6 overflow-hidden shadow-lg">
-                <img src="/logo.png" alt="Robipet Logo" className="w-16 h-16 object-contain" />
-              </div>
-              <h1 className="text-3xl font-bold text-white mb-3">{t('auth.welcome')}</h1>
+    <div className="min-h-screen bg-slate-900 flex flex-col">
+      <div className="flex-1 flex items-center justify-center p-4">
+        <div className="w-full max-w-sm">
+          {/* Logo + Brand */}
+          <div className="text-center mb-8">
+            <div className="flex items-center justify-center w-16 h-16 bg-slate-800 border border-slate-700/50 rounded-2xl mx-auto mb-4 overflow-hidden">
+              <img src="/logo.png" alt="Robipet Logo" className="w-11 h-11 object-contain" />
             </div>
+            <h1 className="text-2xl font-bold text-white">{t('auth.welcome')}</h1>
+          </div>
 
+          {/* Card */}
+          <div className="bg-slate-800/50 rounded-2xl border border-slate-700/50 p-6">
             {/* Error message */}
             {error && (
-              <div className="mb-8 p-4 bg-red-500/20 backdrop-blur border border-red-400/30 rounded-xl">
-                <p className="text-red-200 text-sm text-center font-medium">{error}</p>
+              <div className="mb-5 p-3 bg-red-500/10 border border-red-500/20 rounded-xl flex items-center gap-2">
+                <Icon icon="mdi:alert-circle" className="w-4 h-4 text-red-400 flex-shrink-0" />
+                <p className="text-red-400 text-sm">{error}</p>
               </div>
             )}
 
             {/* Login Form */}
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
+                <label className="text-sm font-medium text-slate-400 mb-1.5 block">{t('auth.userPlaceholder')}</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Icon icon="mdi:account-outline" className="w-6 h-6 text-white/50" />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Icon icon="mdi:account-outline" className="w-5 h-5 text-slate-500" />
                   </div>
                   <input
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     required
-                    className="w-full pl-12 pr-5 py-4 bg-white/10 backdrop-blur border border-white/20 text-white rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all placeholder-white/50 text-lg"
+                    className="w-full pl-10 pr-4 py-3 bg-slate-900/50 border border-slate-700 text-white rounded-xl focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500/50 transition-all placeholder-slate-600"
                     placeholder={t('auth.userPlaceholder')}
                     disabled={isLoading}
                   />
@@ -234,17 +237,18 @@ function LoginForm({ onLogin }: LoginFormProps) {
               </div>
 
               <div>
+                <label className="text-sm font-medium text-slate-400 mb-1.5 block">{t('auth.passwordPlaceholder')}</label>
                 <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                    <Icon icon="mdi:lock-outline" className="w-6 h-6 text-white/50" />
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Icon icon="mdi:lock-outline" className="w-5 h-5 text-slate-500" />
                   </div>
                   <input
                     type="password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="w-full pl-12 pr-5 py-4 bg-white/10 backdrop-blur border border-white/20 text-white rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-blue-400 transition-all placeholder-white/50 text-lg"
-                    placeholder={t('auth.passwordPlaceholder')}
+                    className="w-full pl-10 pr-4 py-3 bg-slate-900/50 border border-slate-700 text-white rounded-xl focus:ring-2 focus:ring-blue-500/40 focus:border-blue-500/50 transition-all placeholder-slate-600"
+                    placeholder="••••••••"
                     disabled={isLoading}
                   />
                 </div>
@@ -253,12 +257,12 @@ function LoginForm({ onLogin }: LoginFormProps) {
               <button
                 type="submit"
                 disabled={isLoading}
-                className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-6 rounded-xl font-semibold text-lg hover:shadow-xl hover:scale-105 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none shadow-lg"
+                className="w-full bg-blue-600 hover:bg-blue-500 text-white py-3 px-6 rounded-xl font-semibold transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed mt-2"
               >
                 {isLoading ? (
-                  <div className="flex items-center justify-center">
-                    <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-white mr-3"></div>
-                    {t('auth.loggingIn')}
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="animate-spin rounded-full h-5 w-5 border-2 border-white/30 border-t-white"></div>
+                    <span>{t('auth.loggingIn')}</span>
                   </div>
                 ) : (
                   <div className="flex items-center justify-center gap-2">
