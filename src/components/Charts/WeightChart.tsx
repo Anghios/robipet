@@ -50,8 +50,8 @@ export default function WeightChart({ weightHistory, currentWeight }: WeightChar
 
   // Calcular dominio Y con padding
   const yPadding = (maxWeight - minWeight) * 0.2 || 1;
-  const yMin = Math.max(0, minWeight - yPadding);
-  const yMax = maxWeight + yPadding;
+  const yMin = Math.max(0, Math.floor((minWeight - yPadding) * 10) / 10);
+  const yMax = Math.ceil((maxWeight + yPadding) * 10) / 10;
 
   const CustomTooltip = ({ active, payload }: any) => {
     if (active && payload && payload.length) {
@@ -100,8 +100,8 @@ export default function WeightChart({ weightHistory, currentWeight }: WeightChar
               fontSize={12}
               tickLine={false}
               axisLine={false}
-              tickFormatter={(value) => `${value}${getWeightUnitLabel()}`}
-              width={50}
+              tickFormatter={(value) => `${parseFloat(value).toFixed(1)}${getWeightUnitLabel()}`}
+              width={55}
             />
             <Tooltip content={<CustomTooltip />} />
             <ReferenceLine
