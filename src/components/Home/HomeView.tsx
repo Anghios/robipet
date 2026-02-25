@@ -101,19 +101,22 @@ export default function HomeView({ portfolio, onNavigateToSection, t }: HomeView
     if (!dog_info?.birth_date) return null;
     const birth = new Date(dog_info.birth_date);
     const now = new Date();
-    const diffTime = Math.abs(now.getTime() - birth.getTime());
-    const totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    const years = Math.floor(totalDays / 365);
-    const remainingDays = totalDays % 365;
-    const months = Math.floor(remainingDays / 30);
+    let years = now.getFullYear() - birth.getFullYear();
+    let months = now.getMonth() - birth.getMonth();
+    let days = now.getDate() - birth.getDate();
+    if (days < 0) {
+      months--;
+      const prevMonth = new Date(now.getFullYear(), now.getMonth(), 0);
+      days += prevMonth.getDate();
+    }
+    if (months < 0) { years--; months += 12; }
 
-    if (years < 1) {
-      return `${months} ${months === 1 ? t('home.month') : t('home.months')}`;
-    }
-    if (months > 0) {
-      return `${years} ${years === 1 ? t('home.year') : t('home.years')} ${t('home.and')} ${months} ${months === 1 ? t('home.month') : t('home.months')}`;
-    }
-    return `${years} ${years === 1 ? t('home.year') : t('home.years')}`;
+    const parts: string[] = [];
+    if (years > 0) parts.push(`${years} ${years === 1 ? t('home.year') : t('home.years')}`);
+    if (months > 0) parts.push(`${months} ${months === 1 ? t('home.month') : t('home.months')}`);
+    parts.push(`${days} ${days === 1 ? t('home.day') : t('home.days')}`);
+    if (parts.length <= 1) return parts[0];
+    return parts.slice(0, -1).join(', ') + ` ${t('home.and')} ` + parts[parts.length - 1];
   }, [dog_info?.birth_date, t]);
 
   // Pending items count
