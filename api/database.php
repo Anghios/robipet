@@ -1422,12 +1422,13 @@ class Database {
 
     private function createDefaultSettings() {
         try {
-            $stmt = $this->connection->prepare("SELECT COUNT(*) FROM settings");
-            $stmt->execute();
-            $total = $stmt->fetchColumn();
-
-            if ($total == 0) {
-                $this->connection->exec("INSERT INTO settings (key, value) VALUES ('currency', 'eur')");
+            $defaults = [
+                'currency' => 'eur',
+                'language' => 'en'
+            ];
+            foreach ($defaults as $key => $value) {
+                $stmt = $this->connection->prepare("INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)");
+                $stmt->execute([$key, $value]);
             }
         } catch (PDOException $e) {
             error_log("Error creating default settings: " . $e->getMessage());

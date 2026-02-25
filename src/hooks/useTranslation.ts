@@ -9,10 +9,26 @@ export const useTranslation = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Cargar idioma guardado del localStorage al inicializar
+    // Cargar idioma: primero localStorage (rápido), luego BD (fuente de verdad)
     const savedLocale = localStorage.getItem('locale') as Locale;
     if (savedLocale && (savedLocale === 'es' || savedLocale === 'en')) {
       setLocale(savedLocale);
+    }
+
+    // Sincronizar con la BD
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      fetch('/api/settings', { headers: { 'Authorization': `Bearer ${token}` } })
+        .then(res => res.ok ? res.json() : null)
+        .then(settings => {
+          if (settings?.language && (settings.language === 'es' || settings.language === 'en')) {
+            localStorage.setItem('locale', settings.language);
+            if (settings.language !== savedLocale) {
+              setLocale(settings.language as Locale);
+            }
+          }
+        })
+        .catch(() => {});
     }
   }, []);
 
@@ -90,6 +106,16 @@ export const useTranslation = () => {
   const changeLanguage = (newLocale: Locale) => {
     localStorage.setItem('locale', newLocale);
     setLocale(newLocale);
+
+    // Guardar en BD
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      fetch('/api/settings', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+        body: JSON.stringify({ key: 'language', value: newLocale })
+      }).catch(() => {});
+    }
   };
 
   // Función para obtener el idioma actual
