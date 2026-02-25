@@ -591,6 +591,7 @@ export default function DogPortfolio() {
           onFormChange={setDocumentsForm}
           onSave={handleSaveDocument}
           onCancel={cancelDocumentsForm}
+          linkableItems={{ vaccines: vaccines || [], medications, dewormings, medicalReviews }}
         />
       </Modal>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">

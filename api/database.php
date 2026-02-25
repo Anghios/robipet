@@ -289,7 +289,19 @@ class Database {
         } catch (PDOException $e) {
             // La columna ya existe, no hacer nada
         }
-        
+
+        // Migración: Añadir columnas linked_type y linked_id a documents
+        try {
+            $this->connection->exec("ALTER TABLE documents ADD COLUMN linked_type TEXT DEFAULT NULL");
+        } catch (PDOException $e) {
+            // La columna ya existe
+        }
+        try {
+            $this->connection->exec("ALTER TABLE documents ADD COLUMN linked_id INTEGER DEFAULT NULL");
+        } catch (PDOException $e) {
+            // La columna ya existe
+        }
+
         // Crear tabla settings
         $settingsSql = "CREATE TABLE IF NOT EXISTS settings (
             key TEXT PRIMARY KEY,
@@ -1142,17 +1154,19 @@ class Database {
             $this->connection->beginTransaction();
             
             // Insertar el documento principal
-            $stmt = $this->connection->prepare("INSERT INTO documents (pet_id, document_name, document_type, upload_date, file_path, description, expiry_date, veterinarian, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt = $this->connection->prepare("INSERT INTO documents (pet_id, document_name, document_type, upload_date, file_path, description, expiry_date, veterinarian, notes, linked_type, linked_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([
                 $petId,
                 $data['document_name'],
                 $data['document_type'],
                 $data['upload_date'],
-                $data['file_path'] ?? null, // Mantener compatibilidad con archivos únicos
+                $data['file_path'] ?? null,
                 $data['description'] ?? '',
                 $data['expiry_date'] ?? null,
                 $data['veterinarian'] ?? '',
-                $data['notes'] ?? ''
+                $data['notes'] ?? '',
+                $data['linked_type'] ?? null,
+                $data['linked_id'] ?? null
             ]);
             
             $documentId = $this->connection->lastInsertId();
@@ -1214,11 +1228,19 @@ class Database {
                 $setClauses[] = "notes = ?";
                 $params[] = $data['notes'];
             }
-            
+            if (array_key_exists('linked_type', $data)) {
+                $setClauses[] = "linked_type = ?";
+                $params[] = $data['linked_type'];
+            }
+            if (array_key_exists('linked_id', $data)) {
+                $setClauses[] = "linked_id = ?";
+                $params[] = $data['linked_id'];
+            }
+
             if (empty($setClauses)) {
                 return ['success' => false, 'message' => 'No data to update'];
             }
-            
+
             $setClauses[] = "updated_at = CURRENT_TIMESTAMP";
             $params[] = $documentId;
             $params[] = $petId;

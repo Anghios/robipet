@@ -51,7 +51,9 @@ export function useDocumentsForm(
     filesWithNames: [],
     existingFiles: [],
     filesToDelete: [],
-    filesUpdated: []
+    filesUpdated: [],
+    linked_type: '',
+    linked_id: null
   });
   const [savingDocument, setSavingDocument] = useState(false);
 
@@ -68,7 +70,9 @@ export function useDocumentsForm(
       filesWithNames: [],
       existingFiles: [],
       filesToDelete: [],
-      filesUpdated: []
+      filesUpdated: [],
+      linked_type: '',
+      linked_id: null
     });
     setEditingDocument(null);
     setShowDocumentsForm(true);
@@ -101,7 +105,9 @@ export function useDocumentsForm(
       filesWithNames: [],
       existingFiles: existingFiles,
       filesToDelete: [],
-      filesUpdated: []
+      filesUpdated: [],
+      linked_type: document.linked_type || '',
+      linked_id: document.linked_id || null
     });
     setEditingDocument(document);
     setShowDocumentsForm(true);
@@ -178,6 +184,8 @@ export function useDocumentsForm(
           description: documentsForm.description,
           veterinarian: documentsForm.veterinarian,
           notes: documentsForm.notes,
+          linked_type: documentsForm.linked_type || null,
+          linked_id: documentsForm.linked_id || null,
           pet_id: petId
         };
 
