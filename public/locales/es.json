@@ -706,7 +706,7 @@
         "clinicPlaceholder": "Nombre de la clínica",
         "reasonLabel": "Motivo de la visita",
         "reasonPlaceholder": "ej: Chequeo anual, vómitos, cojera...",
-        "costLabel": "Costo (€)",
+        "costLabel": "Costo",
         "costPlaceholder": "45.50",
         "diagnosisLabel": "Diagnóstico",
         "diagnosisPlaceholder": "Diagnóstico del veterinario...",

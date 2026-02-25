@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Icon } from '@iconify/react';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useSettings } from '../../hooks/useSettings';
 
 interface MedicalReview {
   id: number;
@@ -32,6 +33,7 @@ export default function MedicalReviewRow({
   onDelete
 }: MedicalReviewRowProps) {
   const { t } = useTranslation();
+  const { getCurrencySymbol, getCurrencyIcon } = useSettings();
   const [isExpanded, setIsExpanded] = useState(false);
   const status = review.status || 'completed';
   const isPending = status === 'pending';
@@ -103,8 +105,8 @@ export default function MedicalReviewRow({
             )}
             {review.cost && (
               <span className="flex items-center gap-1 text-green-400">
-                <Icon icon="mdi:currency-eur" className="w-3.5 h-3.5" />
-                {review.cost}€
+                <Icon icon={getCurrencyIcon()} className="w-3.5 h-3.5" />
+                {review.cost}{getCurrencySymbol()}
               </span>
             )}
           </div>
@@ -184,9 +186,9 @@ export default function MedicalReviewRow({
             )}
             {review.cost && (
               <div className="flex items-center gap-2 text-sm">
-                <Icon icon="mdi:currency-eur" className="w-4 h-4 text-green-400" />
+                <Icon icon={getCurrencyIcon()} className="w-4 h-4 text-green-400" />
                 <span className="text-slate-400">{t('portfolio.medicalReviews.cost')}:</span>
-                <span className="text-white">{review.cost}€</span>
+                <span className="text-white">{review.cost}{getCurrencySymbol()}</span>
               </div>
             )}
             {review.notes && (

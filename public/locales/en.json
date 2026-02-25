@@ -708,7 +708,7 @@
         "clinicPlaceholder": "Clinic name",
         "reasonLabel": "Reason for visit",
         "reasonPlaceholder": "e.g.: Annual checkup, vomiting, limping...",
-        "costLabel": "Cost (€)",
+        "costLabel": "Cost",
         "costPlaceholder": "45.50",
         "diagnosisLabel": "Diagnosis",
         "diagnosisPlaceholder": "Veterinarian's diagnosis...",

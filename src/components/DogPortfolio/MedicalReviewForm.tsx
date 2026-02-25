@@ -1,5 +1,6 @@
 import { Icon } from '@iconify/react';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useSettings } from '../../hooks/useSettings';
 
 interface MedicalReviewFormData {
   visit_date: string;
@@ -33,6 +34,7 @@ export default function MedicalReviewForm({
   onCancel
 }: MedicalReviewFormProps) {
   const { t } = useTranslation();
+  const { getCurrencyIcon } = useSettings();
 
   const handleInputChange = (field: keyof MedicalReviewFormData, value: string) => {
     onFormChange({ ...formData, [field]: value });
@@ -169,7 +171,7 @@ export default function MedicalReviewForm({
 
         <div className="group">
           <label className="block text-slate-300 font-medium mb-2 text-sm flex items-center gap-2">
-            <Icon icon="mdi:currency-eur" className="w-4 h-4 text-purple-400" />
+            <Icon icon={getCurrencyIcon()} className="w-4 h-4 text-purple-400" />
             {t('portfolio.medicalReviews.form.costLabel')}
           </label>
           <div className="relative">

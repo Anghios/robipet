@@ -2,6 +2,7 @@ import { Icon } from '@iconify/react';
 import { useMemo, useState } from 'react';
 import TimelineEntry from './TimelineEntry';
 import type { TimelineType } from './TimelineEntry';
+import { useSettings } from '../../hooks/useSettings';
 
 interface Vaccine {
   id: number;
@@ -85,6 +86,7 @@ export default function MedicalTimeline({
   weightHistory,
   t
 }: MedicalTimelineProps) {
+  const { getCurrencySymbol } = useSettings();
   const [filter, setFilter] = useState<FilterType>('all');
   const [showCount, setShowCount] = useState(10);
 
@@ -162,7 +164,7 @@ export default function MedicalTimeline({
           [t('timeline.details.type')]: visitTypeLabels[r.visit_type] || r.visit_type,
           [t('timeline.details.diagnosis')]: r.diagnosis || '-',
           [t('timeline.details.treatment')]: r.treatment || '-',
-          [t('timeline.details.cost')]: r.cost ? `${r.cost}` : '-',
+          [t('timeline.details.cost')]: r.cost ? `${r.cost}${getCurrencySymbol()}` : '-',
           [t('timeline.details.veterinarian')]: r.veterinarian || '-'
         }
       });

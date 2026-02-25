@@ -1,6 +1,7 @@
 import { Icon } from '@iconify/react';
 import { useEffect } from 'react';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useSettings } from '../../hooks/useSettings';
 
 interface MedicalReview {
   id: number;
@@ -25,6 +26,7 @@ interface MedicalReviewCardProps {
 
 export default function MedicalReviewCard({ review, formatDate, onEdit, onDelete }: MedicalReviewCardProps) {
   const { t } = useTranslation();
+  const { getCurrencySymbol } = useSettings();
   // Añadir la animación de shake CSS una sola vez
   useEffect(() => {
     if (!document.getElementById('shake-animation')) {
@@ -70,7 +72,7 @@ export default function MedicalReviewCard({ review, formatDate, onEdit, onDelete
           </span>
           {review.cost && (
             <span className="bg-green-500/20 text-green-300 px-3 py-1.5 rounded-full text-sm font-bold group-hover:bg-green-500/30 group-hover:text-green-200 group-hover:scale-105 transition-all duration-300">
-              {review.cost}€
+              {review.cost}{getCurrencySymbol()}
             </span>
           )}
         </div>
