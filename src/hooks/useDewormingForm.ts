@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import { petApi } from '../services/petApi';
 import { addWeightRecord } from '../utils/petUtils';
+import { useSettings } from './useSettings';
 
 export interface DewormingFormData {
   product_name: string;
@@ -19,6 +20,9 @@ export function useDewormingForm(
   onRefresh: () => Promise<void>,
   getDocuments: () => any[]
 ) {
+  const { settings } = useSettings();
+  const isLb = settings.weightUnit === 'lb';
+
   const [showDewormingForm, setShowDewormingForm] = useState(false);
   const [editingDeworming, setEditingDeworming] = useState<any>(null);
   const [dewormingForm, setDewormingForm] = useState<DewormingFormData>({
@@ -34,11 +38,14 @@ export function useDewormingForm(
   const [linkedDocumentIds, setLinkedDocumentIds] = useState<number[]>([]);
 
   const handleAddDeworming = useCallback((currentWeight?: number) => {
+    const displayWeight = currentWeight
+      ? (isLb ? (currentWeight * 2.20462).toFixed(1) : currentWeight.toString())
+      : '';
     setDewormingForm({
       product_name: '',
       treatment_date: new Date().toISOString().split('T')[0],
       next_treatment_date: '',
-      weight_at_treatment: currentWeight?.toString() || '',
+      weight_at_treatment: displayWeight,
       veterinarian: '',
       notes: '',
       status: 'pending'
@@ -46,15 +53,18 @@ export function useDewormingForm(
     setEditingDeworming(null);
     setLinkedDocumentIds([]);
     setShowDewormingForm(true);
-  }, []);
+  }, [isLb]);
 
   const handleEditDeworming = useCallback((deworming: any) => {
     const currentStatus = deworming.status || 'pending';
+    const displayWeight = deworming.weight_at_treatment
+      ? (isLb ? (deworming.weight_at_treatment * 2.20462).toFixed(1) : deworming.weight_at_treatment.toString())
+      : '';
     setDewormingForm({
       product_name: deworming.product_name,
       treatment_date: deworming.treatment_date,
       next_treatment_date: deworming.next_treatment_date || '',
-      weight_at_treatment: deworming.weight_at_treatment?.toString() || '',
+      weight_at_treatment: displayWeight,
       veterinarian: deworming.veterinarian || '',
       notes: deworming.notes || '',
       status: currentStatus
@@ -64,7 +74,7 @@ export function useDewormingForm(
     const linked = docs.filter((d: any) => d.links?.some((l: any) => l.linked_type === 'deworming' && Number(l.linked_id) === deworming.id));
     setLinkedDocumentIds(linked.map((d: any) => d.id));
     setShowDewormingForm(true);
-  }, [getDocuments]);
+  }, [getDocuments, isLb]);
 
   const handleSaveDeworming = useCallback(async () => {
     if (!dewormingForm.product_name || !dewormingForm.treatment_date) {
@@ -80,7 +90,9 @@ export function useDewormingForm(
         product_name: dewormingForm.product_name,
         treatment_date: dewormingForm.treatment_date,
         next_treatment_date: dewormingForm.next_treatment_date || null,
-        weight_at_treatment: dewormingForm.weight_at_treatment ? parseFloat(dewormingForm.weight_at_treatment) : null,
+        weight_at_treatment: dewormingForm.weight_at_treatment
+          ? parseFloat((isLb ? parseFloat(dewormingForm.weight_at_treatment) / 2.20462 : parseFloat(dewormingForm.weight_at_treatment)).toFixed(2))
+          : null,
         veterinarian: dewormingForm.veterinarian || null,
         notes: dewormingForm.notes || null,
         status: dewormingForm.status
@@ -95,7 +107,8 @@ export function useDewormingForm(
         if (dewormingForm.weight_at_treatment &&
             !isNaN(parseFloat(dewormingForm.weight_at_treatment)) &&
             dewormingForm.status === 'completed') {
-          await addWeightRecord(petId, parseFloat(dewormingForm.weight_at_treatment), dewormingForm.treatment_date, `Peso registrado durante desparasitación con ${dewormingForm.product_name}`);
+          const weightKg = isLb ? parseFloat(dewormingForm.weight_at_treatment) / 2.20462 : parseFloat(dewormingForm.weight_at_treatment);
+          await addWeightRecord(petId, parseFloat(weightKg.toFixed(2)), dewormingForm.treatment_date, `Peso registrado durante desparasitación con ${dewormingForm.product_name}`);
         }
 
         const entryId = editingDeworming ? editingDeworming.id : result.data?.id;
@@ -127,7 +140,7 @@ export function useDewormingForm(
     } finally {
       setSavingDeworming(false);
     }
-  }, [dewormingForm, editingDeworming, getCurrentPetId, onSuccess, onError, onRefresh, linkedDocumentIds, getDocuments]);
+  }, [dewormingForm, editingDeworming, getCurrentPetId, onSuccess, onError, onRefresh, linkedDocumentIds, getDocuments, isLb]);
 
   const cancelDewormingForm = useCallback(() => {
     setShowDewormingForm(false);

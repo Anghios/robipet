@@ -1,6 +1,7 @@
 import { Icon } from '@iconify/react';
 import { useEffect } from 'react';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useSettings } from '../../hooks/useSettings';
 
 interface Deworming {
   id: number;
@@ -38,6 +39,7 @@ export default function DewormingCard({
   linkedDocuments
 }: DewormingCardProps) {
   const { t } = useTranslation();
+  const { getWeightUnitLabel, formatWeight } = useSettings();
   // Add shake animation CSS once
   useEffect(() => {
     if (!document.getElementById('shake-animation')) {
@@ -98,7 +100,7 @@ export default function DewormingCard({
               <Icon icon="mdi:scale" className="w-4 h-4 text-purple-400 group-hover/item:text-purple-300 group-hover/item:scale-110 transition-all duration-200" />
               {t('portfolio.dewormings.card.weightLabel')}
             </span>
-            <span className="text-white font-medium group-hover/item:text-emerald-100 transition-colors duration-200">{deworming.weight_at_treatment} kg</span>
+            <span className="text-white font-medium group-hover/item:text-emerald-100 transition-colors duration-200">{formatWeight(deworming.weight_at_treatment)} {getWeightUnitLabel()}</span>
           </div>
         )}
         

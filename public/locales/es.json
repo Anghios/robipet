@@ -133,7 +133,7 @@
       "measurements": "Historial de mediciones",
       "newRecord": "Nuevo Registro de Peso",
       "editRecord": "Editar Registro de Peso",
-      "weightKg": "Peso (kg)",
+      "weightKg": "Peso",
       "date": "Fecha",
       "notes": "Observaciones (opcional)",
       "save": "Guardar",
@@ -180,6 +180,12 @@
       "description": "Selecciona la moneda por defecto para costos y precios",
       "eur": "Euro (€)",
       "usd": "Dólar Estadounidense ($)"
+    },
+    "weightUnit": {
+      "title": "Unidad de Peso",
+      "description": "Selecciona la unidad para las mediciones de peso",
+      "kg": "Kilogramos (kg)",
+      "lb": "Libras (lb)"
     },
     "dateFormat": {
       "title": "Formato de Fecha",
@@ -303,7 +309,7 @@
     },
     "deleteWeight": {
       "title": "Eliminar Registro de Peso",
-      "message": "¿Estás seguro de que quieres eliminar el registro de peso de {weight} kg del {date}? Esta acción no se puede deshacer.",
+      "message": "¿Estás seguro de que quieres eliminar el registro de peso de {weight} {unit} del {date}? Esta acción no se puede deshacer.",
       "confirmText": "Eliminar"
     },
     "deleteMedication": {
@@ -518,7 +524,7 @@
       "newButton": "Nuevo",
       "newRecord": "Nuevo Registro",
       "editRecord": "Editar Registro",
-      "weightKg": "Peso (kg)",
+      "weightKg": "Peso",
       "measurementDate": "Fecha de Medición",
       "notes": "Notas",
       "addedBy": "Añadido por",
@@ -529,7 +535,7 @@
       "addFirstWeight": "Añade el primer registro de peso para comenzar a rastrear la evolución del peso de tu mascota",
       "weightEvolution": "Evolución del Peso",
       "progressText": "{count} mediciones",
-      "rangeText": "Rango: {min} - {max} kg",
+      "rangeText": "Rango: {min} - {max} {unit}",
       "average": "Promedio",
       "noWeightHistory": "Sin historial de peso",
       "addFirstWeightRecord": "Añade el primer registro de peso de tu mascota",
@@ -626,7 +632,7 @@
         "productLabel": "Producto/Medicamento *",
         "productPlaceholder": "ej: Stronghold, Nexgard, Bravecto, etc.",
         "treatmentDateLabel": "Fecha de tratamiento *",
-        "weightLabel": "Peso en el tratamiento (kg)",
+        "weightLabel": "Peso en el tratamiento",
         "weightPlaceholder": "ej: 25.5",
         "weightInfo": "Si ingresas un peso, se añadirá al historial cuando la desparasitación se complete",
         "nextDateLabel": "Próxima fecha",
@@ -997,7 +1003,7 @@
       "birthDateRequired": "Fecha de nacimiento *",
       "color": "Color",
       "colorPlaceholder": "Color del pelaje",
-      "weight": "Peso (kg)",
+      "weight": "Peso",
       "weightPlaceholder": "0.0",
       "species": "Especie",
       "speciesDog": "🐕 Perro",

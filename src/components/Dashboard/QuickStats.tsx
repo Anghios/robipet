@@ -23,7 +23,7 @@ export default function QuickStats({
   warningAlerts,
   t
 }: QuickStatsProps) {
-  const { getDateFormat } = useSettings();
+  const { getDateFormat, getWeightUnitLabel, formatWeight } = useSettings();
 
   const formatDate = (dateStr: string): string => {
     const date = new Date(dateStr);
@@ -48,7 +48,7 @@ export default function QuickStats({
     {
       icon: 'mdi:scale-balance',
       label: t('dashboard.stats.weight'),
-      value: currentWeight > 0 ? `${currentWeight} kg` : '-',
+      value: currentWeight > 0 ? `${formatWeight(currentWeight)} ${getWeightUnitLabel()}` : '-',
       subValue: totalWeightRecords > 0 ? t('dashboard.stats.records', { count: totalWeightRecords }) : undefined,
       color: 'text-purple-400',
       bgColor: 'bg-purple-500/20'

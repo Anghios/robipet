@@ -49,7 +49,7 @@ import '../styles/dogPortfolio.css';
 
 export default function DogPortfolio() {
   const { t, locale } = useTranslation();
-  const { getDateFormat } = useSettings();
+  const { getDateFormat, getWeightUnitLabel, formatWeight } = useSettings();
 
   // Toast notifications
   const { toast, showToast, hideToast } = useToast();
@@ -753,7 +753,7 @@ export default function DogPortfolio() {
 
         {/* Health & ID Card */}
         <CardSection icon="mdi:medical-bag" color="text-emerald-400" bgColor="bg-emerald-500/15" title={t('portfolio.info.healthId')}>
-          <InfoRow icon="mdi:weight" color="text-teal-400" label={t('home.physicalData.currentWeight')} value={`${getCurrentWeight()} kg`} />
+          <InfoRow icon="mdi:weight" color="text-teal-400" label={t('home.physicalData.currentWeight')} value={`${formatWeight(getCurrentWeight())} ${getWeightUnitLabel()}`} />
           <InfoRow icon="mdi:chip" color="text-indigo-400" label={t('home.physicalData.microchip')} value={dog_info?.microchip || t('portfolio.physicalData.noMicrochip')} isMono />
           <InfoRow icon="mdi:medical-bag" color="text-purple-400" label={t('common.neutered')} value={dog_info?.neutered ? t('common.yes') : t('common.no')} isBadge badgeColor={dog_info?.neutered ? 'green' : 'red'} />
         </CardSection>
@@ -807,7 +807,7 @@ export default function DogPortfolio() {
 
       {/* Confirmation Modal */}
       {activeModal && (() => {
-        const modalProps = getModalProps(activeModal, confirmActions, t, getDateFormat());
+        const modalProps = getModalProps(activeModal, confirmActions, t, getDateFormat(), getWeightUnitLabel(), formatWeight);
         if (!modalProps) return null;
 
         return (

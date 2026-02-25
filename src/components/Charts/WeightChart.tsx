@@ -33,14 +33,14 @@ interface ChartDataPoint {
 
 export default function WeightChart({ weightHistory, currentWeight }: WeightChartProps) {
   const { t, locale } = useTranslation();
-  const { getDateFormat } = useSettings();
+  const { getDateFormat, getWeightUnitLabel, formatWeight } = useSettings();
 
   const chartData: ChartDataPoint[] = [...weightHistory]
     .sort((a, b) => new Date(a.measurement_date).getTime() - new Date(b.measurement_date).getTime())
     .map((record) => ({
       date: record.measurement_date,
       displayDate: formatDateShort(record.measurement_date, getDateFormat()),
-      weight: record.weight_kg,
+      weight: parseFloat(formatWeight(record.weight_kg)),
       fullDate: formatDateObj(new Date(record.measurement_date), getDateFormat())
     }));
 
@@ -60,7 +60,7 @@ export default function WeightChart({ weightHistory, currentWeight }: WeightChar
         <div className="bg-slate-800 border border-slate-600 rounded-xl p-4 shadow-2xl">
           <p className="text-slate-400 text-sm mb-1">{data.fullDate}</p>
           <p className="text-2xl font-bold text-green-400">
-            {data.weight} <span className="text-base font-normal">kg</span>
+            {data.weight} <span className="text-base font-normal">{getWeightUnitLabel()}</span>
           </p>
         </div>
       );
@@ -100,7 +100,7 @@ export default function WeightChart({ weightHistory, currentWeight }: WeightChar
               fontSize={12}
               tickLine={false}
               axisLine={false}
-              tickFormatter={(value) => `${value}kg`}
+              tickFormatter={(value) => `${value}${getWeightUnitLabel()}`}
               width={50}
             />
             <Tooltip content={<CustomTooltip />} />
@@ -131,11 +131,11 @@ export default function WeightChart({ weightHistory, currentWeight }: WeightChar
             </span>
             <span className="flex items-center text-slate-400">
               <div className="w-3 h-0.5 bg-blue-400 mr-2" style={{ borderStyle: 'dashed' }}></div>
-              {t('portfolio.weight.average')}: {avgWeight.toFixed(1)} kg
+              {t('portfolio.weight.average')}: {avgWeight.toFixed(1)} {getWeightUnitLabel()}
             </span>
           </div>
           <span className="text-slate-400">
-            {t('portfolio.weight.rangeText', { min: minWeight.toFixed(1), max: maxWeight.toFixed(1) })}
+            {t('portfolio.weight.rangeText', { min: minWeight.toFixed(1), max: maxWeight.toFixed(1), unit: getWeightUnitLabel() })}
           </span>
         </div>
       </div>

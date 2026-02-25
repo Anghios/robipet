@@ -17,7 +17,7 @@ interface HomeViewProps {
 export default function HomeView({ portfolio, onNavigateToSection, t }: HomeViewProps) {
   const { dog_info, vaccines, medications, dewormings, medical_reviews, weight_history, documents } = portfolio || {};
   const [showPendingModal, setShowPendingModal] = useState(false);
-  const { getDateFormat } = useSettings();
+  const { getDateFormat, getWeightUnitLabel, formatWeight } = useSettings();
 
   // Calculate alerts
   const alerts = useMemo(() => {
@@ -197,7 +197,7 @@ export default function HomeView({ portfolio, onNavigateToSection, t }: HomeView
         </div>
         <div className="text-right">
           {currentWeight && (
-            <p className="text-2xl font-bold text-white">{currentWeight.weight_kg} <span className="text-sm text-slate-500">kg</span></p>
+            <p className="text-2xl font-bold text-white">{formatWeight(currentWeight.weight_kg)} <span className="text-sm text-slate-500">{getWeightUnitLabel()}</span></p>
           )}
           {dog_info?.birth_date && (() => {
             const now = new Date();
@@ -287,8 +287,8 @@ export default function HomeView({ portfolio, onNavigateToSection, t }: HomeView
           bgGradient="from-cyan-500/20 to-cyan-600/10"
           borderColor="border-cyan-500/20"
           title={t('home.cards.weightTrend')}
-          value={currentWeight?.weight_kg || 0}
-          valueUnit="kg"
+          value={currentWeight ? formatWeight(currentWeight.weight_kg) : 0}
+          valueUnit={getWeightUnitLabel()}
           subtitle={t('home.cards.currentWeight')}
           onClick={() => onNavigateToSection('health', 'weight')}
         />

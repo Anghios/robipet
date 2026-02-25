@@ -53,7 +53,9 @@ export const getModalProps = (
     confirmDeleteDocument: () => void;
   },
   translationFn?: any,
-  dateFormat?: string
+  dateFormat?: string,
+  weightUnit?: string,
+  formatWeightFn?: (v: any) => string
 ): ModalConfig | null => {
   if (!activeModal) return null;
 
@@ -86,8 +88,8 @@ export const getModalProps = (
       return {
         title: safeTranslate(translationFn, 'confirmationModal.deleteWeight.title', 'Eliminar Registro de Peso'),
         message: interpolate(
-          safeTranslate(translationFn, 'confirmationModal.deleteWeight.message', '¿Estás seguro de que quieres eliminar el registro de peso de {weight} kg del {date}? Esta acción no se puede deshacer.'),
-          { weight: activeModal.item?.weight_kg, date: activeModal.item ? formatDate(activeModal.item.measurement_date, 'en', dateFormat) : '' }
+          safeTranslate(translationFn, 'confirmationModal.deleteWeight.message', '¿Estás seguro de que quieres eliminar el registro de peso de {weight} {unit} del {date}? Esta acción no se puede deshacer.'),
+          { weight: formatWeightFn ? formatWeightFn(activeModal.item?.weight_kg) : activeModal.item?.weight_kg, unit: weightUnit || 'kg', date: activeModal.item ? formatDate(activeModal.item.measurement_date, 'en', dateFormat) : '' }
         ),
         confirmText: safeTranslate(translationFn, 'confirmationModal.deleteWeight.confirmText', 'Eliminar'),
         confirmColor: 'bg-red-600 hover:bg-red-500 focus:ring-red-400',

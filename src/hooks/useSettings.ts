@@ -66,5 +66,19 @@ export const useSettings = () => {
     return settings.dateFormat || 'dmySlash';
   };
 
-  return { settings, loading, updateSetting, getCurrencySymbol, getCurrencyIcon, getDateFormat };
+  const getWeightUnitLabel = () => {
+    return settings.weightUnit === 'lb' ? 'lb' : 'kg';
+  };
+
+  const formatWeight = (valueInKg: number | string | null | undefined): string => {
+    if (valueInKg == null || valueInKg === '') return '';
+    const num = typeof valueInKg === 'string' ? parseFloat(valueInKg) : valueInKg;
+    if (isNaN(num)) return '';
+    if (settings.weightUnit === 'lb') {
+      return (num * 2.20462).toFixed(1);
+    }
+    return num % 1 === 0 ? num.toString() : num.toFixed(1);
+  };
+
+  return { settings, loading, updateSetting, getCurrencySymbol, getCurrencyIcon, getDateFormat, getWeightUnitLabel, formatWeight };
 };

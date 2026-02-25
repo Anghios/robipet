@@ -1,5 +1,6 @@
 import { Icon } from '@iconify/react';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useSettings } from '../../hooks/useSettings';
 import WeightChart from '../Charts/WeightChart';
 
 interface WeightRecord {
@@ -26,13 +27,14 @@ export default function WeightCard({
   onDelete
 }: WeightCardProps) {
   const { t } = useTranslation();
+  const { getWeightUnitLabel, formatWeight } = useSettings();
 
   return (
     <>
       {/* Current Weight Display */}
       <div className="mb-8">
         <div className="bg-gradient-to-r from-green-600 to-emerald-600 p-8 rounded-2xl text-center text-white shadow-xl">
-          <span className="block text-5xl font-bold mb-2">{currentWeight} kg</span>
+          <span className="block text-5xl font-bold mb-2">{formatWeight(currentWeight)} {getWeightUnitLabel()}</span>
           <span className="text-xl opacity-90">{t('home.weight.currentWeight')}</span>
         </div>
       </div>
@@ -60,7 +62,7 @@ export default function WeightCard({
                   {formatDate(record.measurement_date)}
                 </div>
                 <div className="text-2xl font-bold text-green-400">
-                  {record.weight_kg} kg
+                  {formatWeight(record.weight_kg)} {getWeightUnitLabel()}
                 </div>
                 <div className="text-slate-300 italic text-sm">
                   {record.notes || t('home.weight.noObservations')}

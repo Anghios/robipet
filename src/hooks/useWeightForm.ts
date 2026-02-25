@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { petApi } from '../services/petApi';
+import { useSettings } from './useSettings';
 
 export interface WeightFormData {
   weight_kg: string;
@@ -13,6 +14,9 @@ export function useWeightForm(
   onError: (message: string) => void,
   onRefresh: () => Promise<void>
 ) {
+  const { settings } = useSettings();
+  const isLb = settings.weightUnit === 'lb';
+
   const [showWeightForm, setShowWeightForm] = useState(false);
   const [editingWeight, setEditingWeight] = useState<any>(null);
   const [weightForm, setWeightForm] = useState<WeightFormData>({
@@ -33,14 +37,17 @@ export function useWeightForm(
   }, []);
 
   const handleEditWeight = useCallback((weightRecord: any) => {
+    const displayWeight = isLb
+      ? (weightRecord.weight_kg * 2.20462).toFixed(1)
+      : weightRecord.weight_kg.toString();
     setWeightForm({
-      weight_kg: weightRecord.weight_kg.toString(),
+      weight_kg: displayWeight,
       measurement_date: weightRecord.measurement_date,
       notes: weightRecord.notes || ''
     });
     setEditingWeight(weightRecord);
     setShowWeightForm(true);
-  }, []);
+  }, [isLb]);
 
   const handleSaveWeight = useCallback(async () => {
     if (!weightForm.weight_kg || !weightForm.measurement_date) {
@@ -52,8 +59,11 @@ export function useWeightForm(
       setSavingWeight(true);
       const petId = getCurrentPetId();
 
+      const enteredWeight = parseFloat(weightForm.weight_kg);
+      const weightInKg = isLb ? enteredWeight / 2.20462 : enteredWeight;
+
       const weightData = {
-        weight_kg: parseFloat(weightForm.weight_kg),
+        weight_kg: parseFloat(weightInKg.toFixed(2)),
         measurement_date: weightForm.measurement_date,
         notes: weightForm.notes || null
       };
@@ -80,7 +90,7 @@ export function useWeightForm(
     } finally {
       setSavingWeight(false);
     }
-  }, [weightForm, editingWeight, getCurrentPetId, onSuccess, onError, onRefresh]);
+  }, [weightForm, editingWeight, getCurrentPetId, onSuccess, onError, onRefresh, isLb]);
 
   const cancelWeightForm = useCallback(() => {
     setShowWeightForm(false);

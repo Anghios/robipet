@@ -1,5 +1,6 @@
 import { Icon } from '@iconify/react';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useSettings } from '../../hooks/useSettings';
 import DocumentLinkSelector from './DocumentLinkSelector';
 
 interface DewormingFormData {
@@ -36,6 +37,7 @@ export default function DewormingForm({
   onLinkedDocsChange
 }: DewormingFormProps) {
   const { t } = useTranslation();
+  const { getWeightUnitLabel } = useSettings();
 
   const handleInputChange = (field: keyof DewormingFormData, value: string) => {
     onFormChange({ ...formData, [field]: value });
@@ -82,7 +84,7 @@ export default function DewormingForm({
         <div className="group">
           <label className="block text-slate-300 font-medium mb-2 text-sm flex items-center gap-2">
             <Icon icon="mdi:scale" className="w-4 h-4 text-orange-400" />
-            {t('portfolio.dewormings.form.weightLabel')}
+            {t('portfolio.dewormings.form.weightLabel')} ({getWeightUnitLabel()})
           </label>
           <div className="relative">
             <input
@@ -91,9 +93,10 @@ export default function DewormingForm({
               value={formData.weight_at_treatment}
               onChange={(e) => handleInputChange('weight_at_treatment', e.target.value)}
               placeholder={t('portfolio.dewormings.form.weightPlaceholder')}
-              className="w-full px-4 py-3 pl-11 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder:text-slate-400 focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400/50 transition-all"
+              className="w-full px-4 py-3 pl-11 pr-12 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder:text-slate-400 focus:ring-2 focus:ring-orange-400/50 focus:border-orange-400/50 transition-all"
             />
             <Icon icon="mdi:weight-kilogram" className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm font-medium">{getWeightUnitLabel()}</span>
           </div>
           <div className="flex items-center gap-2 mt-2 p-2 bg-blue-500/10 border border-blue-500/20 rounded-lg">
             <Icon icon="mdi:lightbulb" className="w-4 h-4 text-blue-400 flex-shrink-0" />

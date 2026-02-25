@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import type { Pet, NewPet } from '../types/Pet';
 import { INITIAL_PET_STATE } from '../types/Pet';
 import { validatePetData, validateImageFile } from '../components/PetList/helpers.ts';
+import { useSettings } from './useSettings';
 
 const API_BASE_URL = '';
 
@@ -18,6 +19,9 @@ const getAuthHeaders = (): HeadersInit => {
 };
 
 export function usePetListData(showToast: (message: string, type: 'success' | 'error' | 'warning') => void) {
+  const { getWeightUnitLabel } = useSettings();
+  const isLb = getWeightUnitLabel() === 'lb';
+
   // Estados principales
   const [pets, setPets] = useState<Pet[]>([]);
   const [loading, setLoading] = useState(true);
@@ -65,11 +69,12 @@ export function usePetListData(showToast: (message: string, type: 'success' | 'e
     try {
       setCreating(true);
       
+      const rawWeight = parseFloat(newPet.weight_kg) || 0;
       const petData = {
         ...newPet,
-        weight_kg: parseFloat(newPet.weight_kg) || 0
+        weight_kg: isLb ? parseFloat((rawWeight / 2.20462).toFixed(2)) : rawWeight
       };
-      
+
       const response = await fetch(`${API_BASE_URL}/api/pets`, {
         method: 'POST',
         headers: {
@@ -94,7 +99,7 @@ export function usePetListData(showToast: (message: string, type: 'success' | 'e
     } finally {
       setCreating(false);
     }
-  }, [newPet, showToast, fetchPets]);
+  }, [newPet, showToast, fetchPets, isLb]);
 
   // Update pet
   const handleUpdatePet = useCallback(async (e: React.FormEvent) => {
@@ -111,11 +116,12 @@ export function usePetListData(showToast: (message: string, type: 'success' | 'e
     try {
       setUpdating(true);
       
+      const rawWeight = parseFloat(editingPet.weight_kg.toString()) || 0;
       const petData = {
         ...editingPet,
-        weight_kg: parseFloat(editingPet.weight_kg.toString()) || 0
+        weight_kg: isLb ? parseFloat((rawWeight / 2.20462).toFixed(2)) : rawWeight
       };
-      
+
       const response = await fetch(`${API_BASE_URL}/api/pets/${editingPet.id}`, {
         method: 'PUT',
         headers: {
@@ -139,7 +145,7 @@ export function usePetListData(showToast: (message: string, type: 'success' | 'e
     } finally {
       setUpdating(false);
     }
-  }, [editingPet, showToast, fetchPets]);
+  }, [editingPet, showToast, fetchPets, isLb]);
 
   // Delete pet
   const confirmDeletePet = useCallback(async () => {
@@ -236,9 +242,13 @@ export function usePetListData(showToast: (message: string, type: 'success' | 'e
 
   // UI Handlers
   const handleEditPet = useCallback((pet: Pet) => {
-    setEditingPet(pet);
+    if (isLb) {
+      setEditingPet({ ...pet, weight_kg: parseFloat((pet.weight_kg * 2.20462).toFixed(1)) });
+    } else {
+      setEditingPet(pet);
+    }
     setError(null);
-  }, []);
+  }, [isLb]);
 
   const handleCancelEdit = useCallback(() => {
     setEditingPet(null);

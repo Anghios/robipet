@@ -2,6 +2,7 @@ import { Icon } from '@iconify/react';
 import type { Pet } from '../../types/Pet';
 import { calculateAgeWithTranslation, getSpeciesEmoji, getSizeText, calculateDogYears } from './helpers.ts';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useSettings } from '../../hooks/useSettings';
 
 interface PetCardProps {
   pet: Pet;
@@ -12,6 +13,7 @@ interface PetCardProps {
 
 export default function PetCard({ pet, onEdit, onDelete, onView }: PetCardProps) {
   const { t } = useTranslation();
+  const { getWeightUnitLabel, formatWeight } = useSettings();
   const dogYears = pet.species === 'dog' ? calculateDogYears(pet.birth_date) : null;
 
   return (
@@ -79,7 +81,7 @@ export default function PetCard({ pet, onEdit, onDelete, onView }: PetCardProps)
             )}
             <span className="flex items-center gap-1">
               <Icon icon="mdi:weight" className="w-3.5 h-3.5 text-teal-400" />
-              {pet.weight_kg} kg
+              {formatWeight(pet.weight_kg)} {getWeightUnitLabel()}
             </span>
             <span className="flex items-center gap-1">
               <Icon icon="mdi:ruler" className="w-3.5 h-3.5 text-purple-400" />

@@ -263,6 +263,55 @@ export default function ConfigContent() {
         </div>
       </div>
 
+      {/* Weight Unit */}
+      <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 p-4">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-orange-500 to-amber-600 flex items-center justify-center">
+            <Icon icon="mdi:weight" className="w-5 h-5 text-white" />
+          </div>
+          <div>
+            <h3 className="font-semibold text-white">{t('config.weightUnit.title')}</h3>
+            <p className="text-slate-400 text-sm">{t('config.weightUnit.description')}</p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button
+            onClick={() => updateSetting('weightUnit', 'kg')}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
+              settings.weightUnit !== 'lb'
+                ? 'border-orange-500 bg-orange-500/10'
+                : 'border-slate-700 hover:border-slate-600 bg-slate-800/50'
+            }`}
+          >
+            <Icon icon="mdi:weight-kilogram" className="w-6 h-6" />
+            <span className={`font-medium ${settings.weightUnit !== 'lb' ? 'text-orange-400' : 'text-white'}`}>
+              {t('config.weightUnit.kg')}
+            </span>
+            {settings.weightUnit !== 'lb' && (
+              <Icon icon="mdi:check-circle" className="w-5 h-5 text-orange-400 ml-auto" />
+            )}
+          </button>
+
+          <button
+            onClick={() => updateSetting('weightUnit', 'lb')}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
+              settings.weightUnit === 'lb'
+                ? 'border-orange-500 bg-orange-500/10'
+                : 'border-slate-700 hover:border-slate-600 bg-slate-800/50'
+            }`}
+          >
+            <Icon icon="mdi:weight-pound" className="w-6 h-6" />
+            <span className={`font-medium ${settings.weightUnit === 'lb' ? 'text-orange-400' : 'text-white'}`}>
+              {t('config.weightUnit.lb')}
+            </span>
+            {settings.weightUnit === 'lb' && (
+              <Icon icon="mdi:check-circle" className="w-5 h-5 text-orange-400 ml-auto" />
+            )}
+          </button>
+        </div>
+      </div>
+
       {/* Date Format */}
       <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 p-4">
         <div className="flex items-center gap-3 mb-4">

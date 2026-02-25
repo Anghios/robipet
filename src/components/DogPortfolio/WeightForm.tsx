@@ -1,5 +1,6 @@
 import { Icon } from '@iconify/react';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useSettings } from '../../hooks/useSettings';
 
 interface WeightFormData {
   weight_kg: string;
@@ -25,6 +26,7 @@ export default function WeightForm({
   onCancel
 }: WeightFormProps) {
   const { t } = useTranslation();
+  const { getWeightUnitLabel } = useSettings();
 
   const handleInputChange = (field: keyof WeightFormData, value: string) => {
     onFormChange({ ...formData, [field]: value });
@@ -36,7 +38,7 @@ export default function WeightForm({
         <div className="group">
           <label className="block text-slate-300 font-medium mb-2 text-sm flex items-center gap-2">
             <Icon icon="mdi:weight-kilogram" className="w-4 h-4 text-cyan-400" />
-            {t('home.weight.weightKg')}
+            {t('home.weight.weightKg')} ({getWeightUnitLabel()})
           </label>
           <div className="relative">
             <input
@@ -45,10 +47,11 @@ export default function WeightForm({
               value={formData.weight_kg}
               onChange={(e) => handleInputChange('weight_kg', e.target.value)}
               required
-              className="w-full px-4 py-3 pl-11 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder:text-slate-400 focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400/50 transition-all"
+              className="w-full px-4 py-3 pl-11 pr-12 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white placeholder:text-slate-400 focus:ring-2 focus:ring-cyan-400/50 focus:border-cyan-400/50 transition-all"
               placeholder={t('portfolio.weight.weightPlaceholder')}
             />
             <Icon icon="mdi:scale-balance" className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-slate-400 text-sm font-medium">{getWeightUnitLabel()}</span>
           </div>
         </div>
 

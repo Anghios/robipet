@@ -86,7 +86,7 @@ export default function MedicalTimeline({
   weightHistory,
   t
 }: MedicalTimelineProps) {
-  const { getCurrencySymbol } = useSettings();
+  const { getCurrencySymbol, getWeightUnitLabel, formatWeight } = useSettings();
   const [filter, setFilter] = useState<FilterType>('all');
   const [showCount, setShowCount] = useState(10);
 
@@ -135,9 +135,9 @@ export default function MedicalTimeline({
         type: 'deworming',
         date: d.treatment_date,
         title: d.product_name,
-        subtitle: d.weight_at_treatment ? `${d.weight_at_treatment} kg` : undefined,
+        subtitle: d.weight_at_treatment ? `${formatWeight(d.weight_at_treatment)} ${getWeightUnitLabel()}` : undefined,
         details: {
-          [t('timeline.details.weight')]: d.weight_at_treatment ? `${d.weight_at_treatment} kg` : '-',
+          [t('timeline.details.weight')]: d.weight_at_treatment ? `${formatWeight(d.weight_at_treatment)} ${getWeightUnitLabel()}` : '-',
           [t('timeline.details.nextDate')]: d.next_treatment_date || '-',
           [t('timeline.details.veterinarian')]: d.veterinarian || '-'
         },
@@ -176,7 +176,7 @@ export default function MedicalTimeline({
         id: `weight-${w.id}`,
         type: 'weight',
         date: w.measurement_date,
-        title: `${w.weight_kg} kg`,
+        title: `${formatWeight(w.weight_kg)} ${getWeightUnitLabel()}`,
         subtitle: w.notes,
         details: {
           [t('timeline.details.notes')]: w.notes || '-'

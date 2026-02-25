@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Icon } from '@iconify/react';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useSettings } from '../../hooks/useSettings';
 
 interface Deworming {
   id: number;
@@ -38,6 +39,7 @@ export default function DewormingRow({
   linkedDocuments
 }: DewormingRowProps) {
   const { t } = useTranslation();
+  const { getWeightUnitLabel, formatWeight } = useSettings();
   const [isExpanded, setIsExpanded] = useState(false);
   const status = deworming.status || 'pending';
   const isPending = status === 'pending';
@@ -65,7 +67,7 @@ export default function DewormingRow({
           <div className="flex items-center gap-2">
             <h4 className="font-semibold text-white truncate">{deworming.product_name}</h4>
             {deworming.weight_at_treatment && (
-              <span className="text-sm text-slate-400 hidden sm:inline">• {deworming.weight_at_treatment} kg</span>
+              <span className="text-sm text-slate-400 hidden sm:inline">• {formatWeight(deworming.weight_at_treatment)} {getWeightUnitLabel()}</span>
             )}
             <span className={`text-xs px-2 py-0.5 rounded-full ${isPending ? 'bg-orange-500/20 text-orange-400' : 'bg-green-500/20 text-green-400'} hidden sm:inline`}>
               {isPending ? t('portfolio.common.pending') : t('portfolio.common.completed')}
@@ -129,7 +131,7 @@ export default function DewormingRow({
               <div className="flex items-center gap-2 text-sm">
                 <Icon icon="mdi:scale" className="w-4 h-4 text-blue-400" />
                 <span className="text-slate-400">{t('portfolio.dewormings.weightAtTreatment')}:</span>
-                <span className="text-white">{deworming.weight_at_treatment} kg</span>
+                <span className="text-white">{formatWeight(deworming.weight_at_treatment)} {getWeightUnitLabel()}</span>
               </div>
             )}
             {deworming.next_treatment_date && (

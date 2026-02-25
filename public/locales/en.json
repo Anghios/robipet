@@ -133,7 +133,7 @@
       "measurements": "Measurement history",
       "newRecord": "New Weight Record",
       "editRecord": "Edit Weight Record",
-      "weightKg": "Weight (kg)",
+      "weightKg": "Weight",
       "date": "Date",
       "notes": "Notes (optional)",
       "save": "Save",
@@ -180,6 +180,12 @@
       "description": "Select default currency for costs and prices",
       "eur": "Euro (€)",
       "usd": "US Dollar ($)"
+    },
+    "weightUnit": {
+      "title": "Weight Unit",
+      "description": "Select the unit for weight measurements",
+      "kg": "Kilograms (kg)",
+      "lb": "Pounds (lb)"
     },
     "dateFormat": {
       "title": "Date Format",
@@ -303,7 +309,7 @@
     },
     "deleteWeight": {
       "title": "Delete Weight Record",
-      "message": "Are you sure you want to delete the weight record of {weight} kg from {date}? This action cannot be undone.",
+      "message": "Are you sure you want to delete the weight record of {weight} {unit} from {date}? This action cannot be undone.",
       "confirmText": "Delete"
     },
     "deleteMedication": {
@@ -518,7 +524,7 @@
       "newButton": "New",
       "newRecord": "New Record",
       "editRecord": "Edit Record",
-      "weightKg": "Weight (kg)",
+      "weightKg": "Weight",
       "measurementDate": "Measurement Date",
       "notes": "Notes",
       "addedBy": "Added by",
@@ -529,7 +535,7 @@
       "addFirstWeight": "Add the first weight record to start tracking your pet's weight evolution",
       "weightEvolution": "Weight Evolution",
       "progressText": "{count} measurements",
-      "rangeText": "Range: {min} - {max} kg",
+      "rangeText": "Range: {min} - {max} {unit}",
       "average": "Average",
       "noWeightHistory": "No weight records",
       "addFirstWeightRecord": "Add your pet's first weight record",
@@ -628,7 +634,7 @@
         "productLabel": "Product/Medication *",
         "productPlaceholder": "e.g.: Stronghold, Nexgard, Bravecto, etc.",
         "treatmentDateLabel": "Treatment date *",
-        "weightLabel": "Weight at treatment (kg)",
+        "weightLabel": "Weight at treatment",
         "weightPlaceholder": "e.g.: 25.5",
         "weightInfo": "If you enter a weight, it will be added to the history when the deworming is completed",
         "nextDateLabel": "Next date",
@@ -999,7 +1005,7 @@
       "birthDateRequired": "Birth date *",
       "color": "Color",
       "colorPlaceholder": "Coat color",
-      "weight": "Weight (kg)",
+      "weight": "Weight",
       "weightPlaceholder": "0.0",
       "species": "Species",
       "speciesDog": "🐕 Dog",
