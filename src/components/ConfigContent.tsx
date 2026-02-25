@@ -317,18 +317,18 @@ export default function ConfigContent() {
       <main className="max-w-4xl mx-auto px-4 sm:px-6 py-6">
         {/* Section Navigation */}
         <div className="mb-6">
-          <div className="flex gap-2 overflow-x-auto pb-2">
+          <div className="flex w-full bg-slate-800/60 rounded-xl p-1 border border-slate-700/50">
             {sections.map((section) => (
               <button
                 key={section.id}
                 onClick={() => handleSectionChange(section.id)}
-                className={`flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all whitespace-nowrap ${
+                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg font-medium transition-all duration-200 ${
                   currentSection === section.id
-                    ? 'bg-gradient-to-r from-blue-600 to-purple-600 text-white shadow-lg'
-                    : 'bg-slate-800/50 text-slate-300 hover:bg-slate-800 hover:text-white'
+                    ? 'bg-slate-700 text-white shadow-md'
+                    : 'text-slate-400 hover:text-slate-200 hover:bg-slate-700/40'
                 }`}
               >
-                <Icon icon={section.icon} className="w-5 h-5" />
+                <Icon icon={section.icon} className={`w-5 h-5 ${currentSection === section.id ? 'text-blue-400' : ''}`} />
                 <span>{section.label}</span>
               </button>
             ))}
