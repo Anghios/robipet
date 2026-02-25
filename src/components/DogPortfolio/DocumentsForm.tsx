@@ -1,3 +1,4 @@
+import { useState, useRef } from 'react';
 import { Icon } from '@iconify/react';
 import { useConfirmationModals } from '../../hooks/useConfirmationModals';
 import ConfirmationModal from '../Visuals/ConfirmationModal';
@@ -79,6 +80,8 @@ export default function DocumentsForm({
 }: DocumentsFormProps) {
   const { t } = useTranslation();
   const { getDateFormat } = useSettings();
+  const [isDragging, setIsDragging] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const {
     activeModal,
@@ -89,6 +92,16 @@ export default function DocumentsForm({
 
   const handleInputChange = (field: keyof DocumentsFormData, value: string) => {
     onFormChange({ ...formData, [field]: value });
+  };
+
+  const handleFiles = (fileList: FileList) => {
+    const newFiles = Array.from(fileList);
+    const currentFilesWithNames = formData.filesWithNames || [];
+    const newFilesWithNames = newFiles.map(file => ({
+      file,
+      displayName: file.name.replace(/\.[^/.]+$/, "")
+    }));
+    onFormChange({ ...formData, filesWithNames: [...currentFilesWithNames, ...newFilesWithNames] });
   };
 
   const confirmDeleteDocumentFile = () => {
@@ -203,33 +216,41 @@ export default function DocumentsForm({
             </div>
           </div>
 
-          <div className="group">
+          <div className="group md:col-span-2">
             <label className="block text-slate-300 font-medium mb-2 text-sm flex items-center gap-2">
               <Icon icon="mdi:file-upload" className="w-4 h-4 text-teal-400" />
               {t('portfolio.documents.form.fileLabel')}
             </label>
-            <div className="relative">
-              <input
-                type="file"
-                multiple
-                onChange={(e) => {
-                  const fileList = e.target.files;
-                  if (fileList && fileList.length > 0) {
-                    const newFiles = Array.from(fileList);
-                    const currentFilesWithNames = formData.filesWithNames || [];
-                    const newFilesWithNames = newFiles.map(file => ({
-                      file,
-                      displayName: file.name.replace(/\.[^/.]+$/, "")
-                    }));
-                    const allFilesWithNames = [...currentFilesWithNames, ...newFilesWithNames];
-                    onFormChange({ ...formData, filesWithNames: allFilesWithNames });
-                  } else {
-                    onFormChange({ ...formData, filesWithNames: [] });
-                  }
-                }}
-                className="w-full px-4 py-3 pl-11 bg-slate-700/50 border border-slate-600/50 rounded-xl text-white file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-teal-500/20 file:text-teal-400 hover:file:bg-teal-500/30 focus:ring-2 focus:ring-teal-400/50 focus:border-teal-400/50 transition-all"
-              />
-              <Icon icon="mdi:paperclip" className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
+            <input
+              ref={fileInputRef}
+              type="file"
+              multiple
+              className="hidden"
+              onChange={(e) => {
+                if (e.target.files && e.target.files.length > 0) {
+                  handleFiles(e.target.files);
+                }
+                e.target.value = '';
+              }}
+            />
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(true); }}
+              onDragLeave={(e) => { e.preventDefault(); e.stopPropagation(); setIsDragging(false); }}
+              onDrop={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                setIsDragging(false);
+                if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+                  handleFiles(e.dataTransfer.files);
+                }
+              }}
+              className={['flex flex-col items-center justify-center gap-2 p-6 rounded-xl border-2 border-dashed cursor-pointer transition-all', isDragging ? 'border-teal-400 bg-teal-500/10' : 'border-slate-600/50 bg-slate-700/30 hover:border-slate-500 hover:bg-slate-700/50'].join(' ')}
+            >
+              <Icon icon={isDragging ? 'mdi:file-download' : 'mdi:cloud-upload'} className={['w-8 h-8 transition-colors', isDragging ? 'text-teal-400' : 'text-slate-500'].join(' ')} />
+              <p className={['text-sm transition-colors', isDragging ? 'text-teal-300' : 'text-slate-400'].join(' ')}>
+                {isDragging ? t('portfolio.documents.form.dropzoneActive') : t('portfolio.documents.form.dropzoneText')}
+              </p>
             </div>
           </div>
         </div>

@@ -788,6 +788,8 @@
         "otherOption": "Other",
         "uploadDateLabel": "Upload date *",
         "fileLabel": "File",
+        "dropzoneText": "Drag files here or click to browse",
+        "dropzoneActive": "Drop files here",
         "veterinarianLabel": "Veterinarian/Clinic",
         "veterinarianPlaceholder": "Veterinarian or clinic name",
         "descriptionLabel": "Description",

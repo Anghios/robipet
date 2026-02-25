@@ -786,6 +786,8 @@
         "otherOption": "Otro",
         "uploadDateLabel": "Fecha de subida *",
         "fileLabel": "Archivo",
+        "dropzoneText": "Arrastra archivos aquí o haz clic para buscar",
+        "dropzoneActive": "Suelta los archivos aquí",
         "veterinarianLabel": "Veterinario/Clínica",
         "veterinarianPlaceholder": "Nombre del veterinario o clínica",
         "descriptionLabel": "Descripción",
