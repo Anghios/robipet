@@ -1,22 +1,59 @@
 import { Icon } from '@iconify/react';
 
 // Date formatting utility
-export const formatDate = (dateString: string, locale: string = 'en') => {
+export const formatDate = (dateString: string, locale: string = 'en', dateFormat: string = 'dmySlash') => {
   if (!dateString || dateString.trim() === '') {
     return locale === 'en' ? 'Date not specified' : 'Fecha no especificada';
   }
-  
+
   const date = new Date(dateString);
   if (isNaN(date.getTime())) {
     return locale === 'en' ? 'Invalid date' : 'Fecha inválida';
   }
-  
-  const localeCode = locale === 'en' ? 'en-US' : 'es-ES';
-  return date.toLocaleDateString(localeCode, {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric'
-  });
+
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+
+  switch (dateFormat) {
+    case 'mdySlash': return `${month}/${day}/${year}`;
+    case 'ymdDash': return `${year}-${month}-${day}`;
+    case 'dmyDot': return `${day}.${month}.${year}`;
+    case 'dmySlash':
+    default: return `${day}/${month}/${year}`;
+  }
+};
+
+// Format a Date object using the selected date format
+export const formatDateObj = (date: Date, dateFormat: string = 'dmySlash') => {
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const year = date.getFullYear();
+
+  switch (dateFormat) {
+    case 'mdySlash': return `${month}/${day}/${year}`;
+    case 'ymdDash': return `${year}-${month}-${day}`;
+    case 'dmyDot': return `${day}.${month}.${year}`;
+    case 'dmySlash':
+    default: return `${day}/${month}/${year}`;
+  }
+};
+
+// Short date format for charts/compact displays
+export const formatDateShort = (dateString: string, dateFormat: string = 'dmySlash') => {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) return dateString;
+
+  const day = String(date.getDate()).padStart(2, '0');
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+
+  switch (dateFormat) {
+    case 'mdySlash': return `${month}/${day}`;
+    case 'ymdDash': return `${month}-${day}`;
+    case 'dmyDot': return `${day}.${month}`;
+    case 'dmySlash':
+    default: return `${day}/${month}`;
+  }
 };
 
 // Size text conversion

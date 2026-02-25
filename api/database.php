@@ -1424,7 +1424,8 @@ class Database {
         try {
             $defaults = [
                 'currency' => 'eur',
-                'language' => 'en'
+                'language' => 'en',
+                'dateFormat' => 'dmySlash'
             ];
             foreach ($defaults as $key => $value) {
                 $stmt = $this->connection->prepare("INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)");

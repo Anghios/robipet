@@ -276,9 +276,9 @@ export default function ConfigContent() {
 
         <div className="relative">
           <select
-            className="w-full pl-10 pr-4 py-3 border border-slate-700 rounded-xl bg-slate-800/50 text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-            defaultValue="dmySlash"
-            disabled
+            className="w-full pl-10 pr-4 py-3 border border-slate-700 rounded-xl bg-slate-800/50 text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all duration-200 appearance-none cursor-pointer"
+            value={settings.dateFormat || 'dmySlash'}
+            onChange={(e) => updateSetting('dateFormat', e.target.value)}
           >
             <option value="dmySlash">{t('config.dateFormat.dmySlash')}</option>
             <option value="mdySlash">{t('config.dateFormat.mdySlash')}</option>

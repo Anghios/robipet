@@ -19,6 +19,7 @@ import MedicalTimeline from '../Timeline/MedicalTimeline';
 import type { DogPortfolio } from '../../types/Pet';
 import { formatDate, getVaccineStatusBadgeData, getSpeciesEmoji } from '../../utils/petUtils';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useSettings } from '../../hooks/useSettings';
 
 type TabType = 'summary' | 'info' | 'timeline' | 'medical_reviews' | 'vaccines' | 'weight' | 'medication' | 'deworming' | 'documents';
 
@@ -109,6 +110,7 @@ interface TabContentProps {
 
 export default function TabContent(props: TabContentProps) {
   const { t, locale } = useTranslation();
+  const { getDateFormat } = useSettings();
   const {
     activeTab,
     portfolio,
@@ -118,14 +120,14 @@ export default function TabContent(props: TabContentProps) {
     getVaccineStatusColor,
     getSizeText
   } = props;
-  
+
   const { dog_info, vaccines, weight_history } = portfolio || { dog_info: null, vaccines: [], weight_history: [] };
   const medications = portfolio?.medications || [];
   const dewormings = portfolio?.dewormings || [];
   const medicalReviews = portfolio?.medical_reviews || [];
-  
+
   // Create localized formatDate function
-  const formatDateLocalized = (dateString: string) => formatDate(dateString, locale);
+  const formatDateLocalized = (dateString: string) => formatDate(dateString, locale, getDateFormat());
   const documents = portfolio?.documents || [];
   
   const pendingVaccines = getPendingCount(vaccines, 'vaccines');

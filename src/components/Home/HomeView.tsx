@@ -5,6 +5,8 @@ import AlertBanner from './AlertBanner';
 import PendingItemsButton from './PendingItemsButton';
 import PendingItemsModal from './PendingItemsModal';
 import Modal from '../ui/Modal';
+import { useSettings } from '../../hooks/useSettings';
+import { formatDateObj } from '../../utils/petUtils';
 
 interface HomeViewProps {
   portfolio: any;
@@ -15,6 +17,7 @@ interface HomeViewProps {
 export default function HomeView({ portfolio, onNavigateToSection, t }: HomeViewProps) {
   const { dog_info, vaccines, medications, dewormings, medical_reviews, weight_history, documents } = portfolio || {};
   const [showPendingModal, setShowPendingModal] = useState(false);
+  const { getDateFormat } = useSettings();
 
   // Calculate alerts
   const alerts = useMemo(() => {
@@ -134,7 +137,7 @@ export default function HomeView({ portfolio, onNavigateToSection, t }: HomeView
   // Format date helper
   const formatDateLocal = (dateString: string) => {
     const date = new Date(dateString + 'T00:00:00');
-    return date.toLocaleDateString(undefined, { day: '2-digit', month: '2-digit', year: 'numeric' });
+    return formatDateObj(date, getDateFormat());
   };
 
   // Dog years calculation (only for dogs)

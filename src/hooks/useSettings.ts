@@ -62,5 +62,9 @@ export const useSettings = () => {
     return settings.currency === 'usd' ? 'mdi:currency-usd' : 'mdi:currency-eur';
   };
 
-  return { settings, loading, updateSetting, getCurrencySymbol, getCurrencyIcon };
+  const getDateFormat = () => {
+    return settings.dateFormat || 'dmySlash';
+  };
+
+  return { settings, loading, updateSetting, getCurrencySymbol, getCurrencyIcon, getDateFormat };
 };

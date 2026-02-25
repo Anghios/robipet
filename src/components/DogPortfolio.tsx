@@ -24,6 +24,7 @@ import { useConfirmationActions } from '../hooks/useConfirmationActions';
 import { useModalHandlers } from '../hooks/useModalHandlers';
 import { getModalProps } from '../utils/modalConfigs';
 import { getSizeText, getVaccineStatusColor, getVaccineStatusBadgeData, formatDate } from '../utils/petUtils';
+import { useSettings } from '../hooks/useSettings';
 
 // Card & Form components
 import BasicInfoCard from './DogPortfolio/BasicInfoCard';
@@ -48,6 +49,7 @@ import '../styles/dogPortfolio.css';
 
 export default function DogPortfolio() {
   const { t, locale } = useTranslation();
+  const { getDateFormat } = useSettings();
 
   // Toast notifications
   const { toast, showToast, hideToast } = useToast();
@@ -265,7 +267,7 @@ export default function DogPortfolio() {
   };
 
   // Localized date formatter
-  const formatDateLocalized = (dateString: string) => formatDate(dateString, locale);
+  const formatDateLocalized = (dateString: string) => formatDate(dateString, locale, getDateFormat());
 
   // Extract portfolio data
   const { dog_info, vaccines, weight_history } = portfolio || { dog_info: null, vaccines: [], weight_history: [] };
