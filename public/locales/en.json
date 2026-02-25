@@ -862,6 +862,7 @@
       "linkDocuments": "Link documents",
       "noDocumentsLinked": "No documents linked",
       "documentsLinked": "documents linked",
+      "entriesLinked": "entries linked",
       "selectDocuments": "Select documents",
       "linkedToOther": "Linked to"
     }

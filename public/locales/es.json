@@ -860,6 +860,7 @@
       "linkDocuments": "Vincular documentos",
       "noDocumentsLinked": "Sin documentos vinculados",
       "documentsLinked": "documentos vinculados",
+      "entriesLinked": "entradas vinculadas",
       "selectDocuments": "Seleccionar documentos",
       "linkedToOther": "Vinculado a"
     }

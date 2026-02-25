@@ -21,6 +21,11 @@ interface ExistingFileData {
   created_at: string;
 }
 
+interface DocumentLink {
+  linked_type: string;
+  linked_id: number;
+}
+
 interface DocumentsFormData {
   document_name: string;
   document_type: 'certificate' | 'medical' | 'insurance' | 'identification' | 'other';
@@ -35,8 +40,7 @@ interface DocumentsFormData {
   existingFiles?: ExistingFileData[];
   filesToDelete?: number[];
   filesUpdated?: ExistingFileData[];
-  linked_type?: string;
-  linked_id?: number | null;
+  links?: DocumentLink[];
 }
 
 interface LinkableItems {
@@ -95,26 +99,54 @@ export default function DocumentsForm({
   const [showLinkModal, setShowLinkModal] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const getLinkedLabel = () => {
-    if (!formData.linked_type || !formData.linked_id || !linkableItems) return '';
-    switch (formData.linked_type) {
+  const links = formData.links || [];
+
+  const isLinked = (type: string, id: number) => {
+    return links.some(l => l.linked_type === type && l.linked_id === id);
+  };
+
+  const toggleLink = (type: string, id: number) => {
+    if (isLinked(type, id)) {
+      onFormChange({ ...formData, links: links.filter(l => !(l.linked_type === type && l.linked_id === id)) });
+    } else {
+      onFormChange({ ...formData, links: [...links, { linked_type: type, linked_id: id }] });
+    }
+  };
+
+  const removeLink = (type: string, id: number) => {
+    onFormChange({ ...formData, links: links.filter(l => !(l.linked_type === type && l.linked_id === id)) });
+  };
+
+  const getLinkedItemLabel = (link: DocumentLink): string => {
+    if (!linkableItems) return '';
+    switch (link.linked_type) {
       case 'vaccine': {
-        const v = linkableItems.vaccines.find(v => v.id === formData.linked_id);
-        return v ? `${v.vaccine_name} - ${formatDateObj(new Date(v.vaccine_date + 'T00:00:00'), getDateFormat())}` : '';
+        const v = linkableItems.vaccines.find(v => v.id === link.linked_id);
+        return v ? `${v.vaccine_name}` : '';
       }
       case 'medication': {
-        const m = linkableItems.medications.find(m => m.id === formData.linked_id);
-        return m ? `${m.medication_name} - ${formatDateObj(new Date(m.start_date + 'T00:00:00'), getDateFormat())}` : '';
+        const m = linkableItems.medications.find(m => m.id === link.linked_id);
+        return m ? `${m.medication_name}` : '';
       }
       case 'deworming': {
-        const d = linkableItems.dewormings.find(d => d.id === formData.linked_id);
-        return d ? `${d.product_name} - ${formatDateObj(new Date(d.treatment_date + 'T00:00:00'), getDateFormat())}` : '';
+        const d = linkableItems.dewormings.find(d => d.id === link.linked_id);
+        return d ? `${d.product_name}` : '';
       }
       case 'review': {
-        const r = linkableItems.medicalReviews.find(r => r.id === formData.linked_id);
-        return r ? `${r.reason || r.visit_type} - ${formatDateObj(new Date(r.visit_date + 'T00:00:00'), getDateFormat())}` : '';
+        const r = linkableItems.medicalReviews.find(r => r.id === link.linked_id);
+        return r ? `${r.reason || r.visit_type}` : '';
       }
       default: return '';
+    }
+  };
+
+  const getLinkIcon = (type: string) => {
+    switch (type) {
+      case 'vaccine': return 'mdi:needle';
+      case 'medication': return 'mdi:pill';
+      case 'deworming': return 'mdi:bug-outline';
+      case 'review': return 'mdi:stethoscope';
+      default: return 'mdi:link-variant';
     }
   };
 
@@ -261,14 +293,34 @@ export default function DocumentsForm({
               onClick={() => setShowLinkModal(true)}
               className="w-full px-4 py-3 pl-11 bg-slate-700/50 border border-slate-600/50 rounded-xl text-left transition-all hover:border-slate-500 relative"
             >
-              {formData.linked_type && formData.linked_id ? (
-                <span className="text-teal-300">{getLinkedLabel()}</span>
+              {links.length > 0 ? (
+                <span className="text-teal-300">{links.length} {t('portfolio.common.entriesLinked')}</span>
               ) : (
                 <span className="text-slate-400">{t('portfolio.documents.form.linkNone')}</span>
               )}
               <Icon icon="mdi:link-variant" className="absolute left-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
               <Icon icon="mdi:chevron-right" className="absolute right-4 top-1/2 transform -translate-y-1/2 w-4 h-4 text-slate-400" />
             </button>
+            {links.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-2">
+                {links.map((link, idx) => (
+                  <span
+                    key={`${link.linked_type}-${link.linked_id}-${idx}`}
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-teal-500/10 text-teal-300 text-xs"
+                  >
+                    <Icon icon={getLinkIcon(link.linked_type)} className="w-3.5 h-3.5" />
+                    {getLinkedItemLabel(link)}
+                    <button
+                      type="button"
+                      onClick={() => removeLink(link.linked_type, link.linked_id)}
+                      className="ml-0.5 hover:text-red-400 transition-colors"
+                    >
+                      <Icon icon="mdi:close" className="w-3 h-3" />
+                    </button>
+                  </span>
+                ))}
+              </div>
+            )}
           </div>
 
           <div className="group md:col-span-2">
@@ -525,23 +577,6 @@ export default function DocumentsForm({
             </div>
 
             <div className="overflow-y-auto flex-1 p-3 space-y-2 styled-scrollbar">
-              {/* None option */}
-              <button
-                type="button"
-                onClick={() => {
-                  onFormChange({ ...formData, linked_type: '', linked_id: null });
-                  setShowLinkModal(false);
-                }}
-                className={`w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-all text-left ${
-                  !formData.linked_type || !formData.linked_id
-                    ? 'bg-teal-500/15 border border-teal-500/30 text-teal-300'
-                    : 'bg-slate-700/30 border border-transparent hover:bg-slate-700/50 text-slate-300'
-                }`}
-              >
-                <Icon icon="mdi:link-variant-off" className="w-5 h-5 text-slate-400 flex-shrink-0" />
-                <span className="font-medium">{t('portfolio.documents.form.linkNone')}</span>
-              </button>
-
               {/* Vaccines */}
               {linkableItems.vaccines.length > 0 && (
                 <div>
@@ -549,30 +584,31 @@ export default function DocumentsForm({
                     <Icon icon="mdi:needle" className="w-3.5 h-3.5" />
                     {t('portfolio.documents.form.linkVaccines')}
                   </p>
-                  {linkableItems.vaccines.map((v) => (
-                    <button
-                      key={`vaccine-${v.id}`}
-                      type="button"
-                      onClick={() => {
-                        onFormChange({ ...formData, linked_type: 'vaccine', linked_id: v.id });
-                        setShowLinkModal(false);
-                      }}
-                      className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all text-left ${
-                        formData.linked_type === 'vaccine' && formData.linked_id === v.id
-                          ? 'bg-teal-500/15 border border-teal-500/30 text-teal-300'
-                          : 'bg-slate-700/30 border border-transparent hover:bg-slate-700/50 text-slate-300'
-                      }`}
-                    >
-                      <Icon icon="mdi:needle" className="w-4 h-4 text-purple-400 flex-shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm truncate">{v.vaccine_name}</p>
-                        <p className="text-xs text-slate-500">{formatDateObj(new Date(v.vaccine_date + 'T00:00:00'), getDateFormat())}</p>
-                      </div>
-                      {formData.linked_type === 'vaccine' && formData.linked_id === v.id && (
-                        <Icon icon="mdi:check-circle" className="w-4 h-4 text-teal-400 flex-shrink-0" />
-                      )}
-                    </button>
-                  ))}
+                  {linkableItems.vaccines.map((v) => {
+                    const selected = isLinked('vaccine', v.id);
+                    return (
+                      <button
+                        key={`vaccine-${v.id}`}
+                        type="button"
+                        onClick={() => toggleLink('vaccine', v.id)}
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all text-left ${
+                          selected
+                            ? 'bg-teal-500/15 border border-teal-500/30 text-teal-300'
+                            : 'bg-slate-700/30 border border-transparent hover:bg-slate-700/50 text-slate-300'
+                        }`}
+                      >
+                        <Icon
+                          icon={selected ? 'mdi:checkbox-marked' : 'mdi:checkbox-blank-outline'}
+                          className={`w-5 h-5 flex-shrink-0 ${selected ? 'text-teal-400' : 'text-slate-500'}`}
+                        />
+                        <Icon icon="mdi:needle" className="w-4 h-4 text-purple-400 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm truncate">{v.vaccine_name}</p>
+                          <p className="text-xs text-slate-500">{formatDateObj(new Date(v.vaccine_date + 'T00:00:00'), getDateFormat())}</p>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               )}
 
@@ -583,30 +619,31 @@ export default function DocumentsForm({
                     <Icon icon="mdi:pill" className="w-3.5 h-3.5" />
                     {t('portfolio.documents.form.linkMedications')}
                   </p>
-                  {linkableItems.medications.map((m) => (
-                    <button
-                      key={`medication-${m.id}`}
-                      type="button"
-                      onClick={() => {
-                        onFormChange({ ...formData, linked_type: 'medication', linked_id: m.id });
-                        setShowLinkModal(false);
-                      }}
-                      className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all text-left ${
-                        formData.linked_type === 'medication' && formData.linked_id === m.id
-                          ? 'bg-teal-500/15 border border-teal-500/30 text-teal-300'
-                          : 'bg-slate-700/30 border border-transparent hover:bg-slate-700/50 text-slate-300'
-                      }`}
-                    >
-                      <Icon icon="mdi:pill" className="w-4 h-4 text-blue-400 flex-shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm truncate">{m.medication_name}</p>
-                        <p className="text-xs text-slate-500">{formatDateObj(new Date(m.start_date + 'T00:00:00'), getDateFormat())}</p>
-                      </div>
-                      {formData.linked_type === 'medication' && formData.linked_id === m.id && (
-                        <Icon icon="mdi:check-circle" className="w-4 h-4 text-teal-400 flex-shrink-0" />
-                      )}
-                    </button>
-                  ))}
+                  {linkableItems.medications.map((m) => {
+                    const selected = isLinked('medication', m.id);
+                    return (
+                      <button
+                        key={`medication-${m.id}`}
+                        type="button"
+                        onClick={() => toggleLink('medication', m.id)}
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all text-left ${
+                          selected
+                            ? 'bg-teal-500/15 border border-teal-500/30 text-teal-300'
+                            : 'bg-slate-700/30 border border-transparent hover:bg-slate-700/50 text-slate-300'
+                        }`}
+                      >
+                        <Icon
+                          icon={selected ? 'mdi:checkbox-marked' : 'mdi:checkbox-blank-outline'}
+                          className={`w-5 h-5 flex-shrink-0 ${selected ? 'text-teal-400' : 'text-slate-500'}`}
+                        />
+                        <Icon icon="mdi:pill" className="w-4 h-4 text-blue-400 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm truncate">{m.medication_name}</p>
+                          <p className="text-xs text-slate-500">{formatDateObj(new Date(m.start_date + 'T00:00:00'), getDateFormat())}</p>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               )}
 
@@ -617,30 +654,31 @@ export default function DocumentsForm({
                     <Icon icon="mdi:bug-outline" className="w-3.5 h-3.5" />
                     {t('portfolio.documents.form.linkDewormings')}
                   </p>
-                  {linkableItems.dewormings.map((d) => (
-                    <button
-                      key={`deworming-${d.id}`}
-                      type="button"
-                      onClick={() => {
-                        onFormChange({ ...formData, linked_type: 'deworming', linked_id: d.id });
-                        setShowLinkModal(false);
-                      }}
-                      className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all text-left ${
-                        formData.linked_type === 'deworming' && formData.linked_id === d.id
-                          ? 'bg-teal-500/15 border border-teal-500/30 text-teal-300'
-                          : 'bg-slate-700/30 border border-transparent hover:bg-slate-700/50 text-slate-300'
-                      }`}
-                    >
-                      <Icon icon="mdi:bug-outline" className="w-4 h-4 text-orange-400 flex-shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm truncate">{d.product_name}</p>
-                        <p className="text-xs text-slate-500">{formatDateObj(new Date(d.treatment_date + 'T00:00:00'), getDateFormat())}</p>
-                      </div>
-                      {formData.linked_type === 'deworming' && formData.linked_id === d.id && (
-                        <Icon icon="mdi:check-circle" className="w-4 h-4 text-teal-400 flex-shrink-0" />
-                      )}
-                    </button>
-                  ))}
+                  {linkableItems.dewormings.map((d) => {
+                    const selected = isLinked('deworming', d.id);
+                    return (
+                      <button
+                        key={`deworming-${d.id}`}
+                        type="button"
+                        onClick={() => toggleLink('deworming', d.id)}
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all text-left ${
+                          selected
+                            ? 'bg-teal-500/15 border border-teal-500/30 text-teal-300'
+                            : 'bg-slate-700/30 border border-transparent hover:bg-slate-700/50 text-slate-300'
+                        }`}
+                      >
+                        <Icon
+                          icon={selected ? 'mdi:checkbox-marked' : 'mdi:checkbox-blank-outline'}
+                          className={`w-5 h-5 flex-shrink-0 ${selected ? 'text-teal-400' : 'text-slate-500'}`}
+                        />
+                        <Icon icon="mdi:bug-outline" className="w-4 h-4 text-orange-400 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm truncate">{d.product_name}</p>
+                          <p className="text-xs text-slate-500">{formatDateObj(new Date(d.treatment_date + 'T00:00:00'), getDateFormat())}</p>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               )}
 
@@ -651,32 +689,47 @@ export default function DocumentsForm({
                     <Icon icon="mdi:stethoscope" className="w-3.5 h-3.5" />
                     {t('portfolio.documents.form.linkReviews')}
                   </p>
-                  {linkableItems.medicalReviews.map((r) => (
-                    <button
-                      key={`review-${r.id}`}
-                      type="button"
-                      onClick={() => {
-                        onFormChange({ ...formData, linked_type: 'review', linked_id: r.id });
-                        setShowLinkModal(false);
-                      }}
-                      className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all text-left ${
-                        formData.linked_type === 'review' && formData.linked_id === r.id
-                          ? 'bg-teal-500/15 border border-teal-500/30 text-teal-300'
-                          : 'bg-slate-700/30 border border-transparent hover:bg-slate-700/50 text-slate-300'
-                      }`}
-                    >
-                      <Icon icon="mdi:stethoscope" className="w-4 h-4 text-emerald-400 flex-shrink-0" />
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm truncate">{r.reason || r.visit_type}</p>
-                        <p className="text-xs text-slate-500">{formatDateObj(new Date(r.visit_date + 'T00:00:00'), getDateFormat())}</p>
-                      </div>
-                      {formData.linked_type === 'review' && formData.linked_id === r.id && (
-                        <Icon icon="mdi:check-circle" className="w-4 h-4 text-teal-400 flex-shrink-0" />
-                      )}
-                    </button>
-                  ))}
+                  {linkableItems.medicalReviews.map((r) => {
+                    const selected = isLinked('review', r.id);
+                    return (
+                      <button
+                        key={`review-${r.id}`}
+                        type="button"
+                        onClick={() => toggleLink('review', r.id)}
+                        className={`w-full flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all text-left ${
+                          selected
+                            ? 'bg-teal-500/15 border border-teal-500/30 text-teal-300'
+                            : 'bg-slate-700/30 border border-transparent hover:bg-slate-700/50 text-slate-300'
+                        }`}
+                      >
+                        <Icon
+                          icon={selected ? 'mdi:checkbox-marked' : 'mdi:checkbox-blank-outline'}
+                          className={`w-5 h-5 flex-shrink-0 ${selected ? 'text-teal-400' : 'text-slate-500'}`}
+                        />
+                        <Icon icon="mdi:stethoscope" className="w-4 h-4 text-emerald-400 flex-shrink-0" />
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm truncate">{r.reason || r.visit_type}</p>
+                          <p className="text-xs text-slate-500">{formatDateObj(new Date(r.visit_date + 'T00:00:00'), getDateFormat())}</p>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               )}
+            </div>
+
+            {/* Footer */}
+            <div className="p-3 border-t border-slate-700/50">
+              <button
+                type="button"
+                onClick={() => setShowLinkModal(false)}
+                className="w-full px-4 py-2.5 bg-teal-500/20 text-teal-300 hover:bg-teal-500/30 rounded-xl transition-colors font-medium text-sm"
+              >
+                {links.length > 0
+                  ? `${links.length} ${t('portfolio.common.entriesLinked')}`
+                  : t('portfolio.documents.form.linkNone')
+                }
+              </button>
             </div>
           </div>
         </div>

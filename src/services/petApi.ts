@@ -312,6 +312,31 @@ class PetApiService {
     });
   }
 
+  // Document Links (many-to-many)
+  async setDocumentLinks(petId: string, documentId: number, links: Array<{ linked_type: string; linked_id: number }>) {
+    return this.fetchWithErrorHandler(`${this.baseUrl}/api/pets/${petId}/documents/${documentId}/links`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ links })
+    });
+  }
+
+  async addDocumentLink(petId: string, documentId: number, linkedType: string, linkedId: number) {
+    return this.fetchWithErrorHandler(`${this.baseUrl}/api/pets/${petId}/documents/${documentId}/links`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ linked_type: linkedType, linked_id: linkedId })
+    });
+  }
+
+  async removeDocumentLink(petId: string, documentId: number, linkedType: string, linkedId: number) {
+    return this.fetchWithErrorHandler(`${this.baseUrl}/api/pets/${petId}/documents/${documentId}/links`, {
+      method: 'DELETE',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ linked_type: linkedType, linked_id: linkedId })
+    });
+  }
+
   // Renombrar archivo específico
   async renameDocumentFile(petId: string, documentId: number, fileId: number, newName: string) {
     return this.fetchWithErrorHandler(`${this.baseUrl}/api/pets/${petId}/documents/${documentId}/files/${fileId}/rename`, {

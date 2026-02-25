@@ -302,6 +302,34 @@ class Database {
             // La columna ya existe
         }
 
+        // Crear tabla document_links (many-to-many entre documents y entries)
+        $documentLinksSql = "CREATE TABLE IF NOT EXISTS document_links (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            document_id INTEGER NOT NULL,
+            linked_type TEXT NOT NULL,
+            linked_id INTEGER NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE
+        )";
+        $this->connection->exec($documentLinksSql);
+
+        // Migración: mover datos de documents.linked_type/linked_id a document_links
+        try {
+            $migrateStmt = $this->connection->prepare("SELECT id, linked_type, linked_id FROM documents WHERE linked_type IS NOT NULL AND linked_type != '' AND linked_id IS NOT NULL");
+            $migrateStmt->execute();
+            $toMigrate = $migrateStmt->fetchAll(PDO::FETCH_ASSOC);
+            if (!empty($toMigrate)) {
+                $insertLink = $this->connection->prepare("INSERT OR IGNORE INTO document_links (document_id, linked_type, linked_id) VALUES (?, ?, ?)");
+                foreach ($toMigrate as $row) {
+                    $insertLink->execute([$row['id'], $row['linked_type'], $row['linked_id']]);
+                }
+                // Limpiar columnas antiguas
+                $this->connection->exec("UPDATE documents SET linked_type = NULL, linked_id = NULL WHERE linked_type IS NOT NULL");
+            }
+        } catch (PDOException $e) {
+            // Migración ya ejecutada o error no crítico
+        }
+
         // Crear tabla settings
         $settingsSql = "CREATE TABLE IF NOT EXISTS settings (
             key TEXT PRIMARY KEY,
@@ -1134,14 +1162,16 @@ class Database {
             $stmt->execute([$petId]);
             $documents = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
-            // Para cada documento, obtener sus archivos asociados
+            // Para cada documento, obtener sus archivos asociados y links
             $fileStmt = $this->connection->prepare("SELECT * FROM document_files WHERE document_id = ? ORDER BY created_at ASC");
+            $linkStmt = $this->connection->prepare("SELECT linked_type, linked_id FROM document_links WHERE document_id = ?");
             foreach ($documents as &$document) {
                 $fileStmt->execute([$document['id']]);
-                $files = $fileStmt->fetchAll(PDO::FETCH_ASSOC);
-                $document['files'] = $files;
+                $document['files'] = $fileStmt->fetchAll(PDO::FETCH_ASSOC);
+                $linkStmt->execute([$document['id']]);
+                $document['links'] = $linkStmt->fetchAll(PDO::FETCH_ASSOC);
             }
-            
+
             return $documents;
         } catch (PDOException $e) {
             return [];
@@ -1252,6 +1282,45 @@ class Database {
             $stmt->execute($params);
             
             return ['success' => true, 'message' => 'Documento actualizado'];
+        } catch (PDOException $e) {
+            return $this->handleDbError($e, 'database operation');
+        }
+    }
+
+    // Document Links (many-to-many)
+    public function setDocumentLinks($documentId, $links) {
+        try {
+            $this->connection->beginTransaction();
+            $this->connection->prepare("DELETE FROM document_links WHERE document_id = ?")->execute([$documentId]);
+            if (!empty($links)) {
+                $stmt = $this->connection->prepare("INSERT OR IGNORE INTO document_links (document_id, linked_type, linked_id) VALUES (?, ?, ?)");
+                foreach ($links as $link) {
+                    $stmt->execute([$documentId, $link['linked_type'], $link['linked_id']]);
+                }
+            }
+            $this->connection->commit();
+            return ['success' => true, 'message' => 'Links actualizados'];
+        } catch (PDOException $e) {
+            $this->connection->rollBack();
+            return $this->handleDbError($e, 'database operation');
+        }
+    }
+
+    public function addDocumentLink($documentId, $linkedType, $linkedId) {
+        try {
+            $stmt = $this->connection->prepare("INSERT OR IGNORE INTO document_links (document_id, linked_type, linked_id) VALUES (?, ?, ?)");
+            $stmt->execute([$documentId, $linkedType, $linkedId]);
+            return ['success' => true, 'message' => 'Link añadido'];
+        } catch (PDOException $e) {
+            return $this->handleDbError($e, 'database operation');
+        }
+    }
+
+    public function removeDocumentLink($documentId, $linkedType, $linkedId) {
+        try {
+            $stmt = $this->connection->prepare("DELETE FROM document_links WHERE document_id = ? AND linked_type = ? AND linked_id = ?");
+            $stmt->execute([$documentId, $linkedType, $linkedId]);
+            return ['success' => true, 'message' => 'Link eliminado'];
         } catch (PDOException $e) {
             return $this->handleDbError($e, 'database operation');
         }

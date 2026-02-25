@@ -64,7 +64,7 @@ export function useMedicationForm(
     });
     setEditingMedication(medication);
     const docs = getDocuments();
-    const linked = docs.filter((d: any) => d.linked_type === 'medication' && Number(d.linked_id) === medication.id);
+    const linked = docs.filter((d: any) => d.links?.some((l: any) => l.linked_type === 'medication' && Number(l.linked_id) === medication.id));
     setLinkedDocumentIds(linked.map((d: any) => d.id));
     setShowMedicationForm(true);
   }, [getDocuments]);
@@ -95,20 +95,20 @@ export function useMedicationForm(
         : await petApi.createMedication(petId, medicationData);
 
       if (result.success) {
-        const entryId = editingMedication ? editingMedication.id : result.id;
+        const entryId = editingMedication ? editingMedication.id : result.data?.id;
         const docs = getDocuments();
         const previouslyLinked = docs
-          .filter((d: any) => d.linked_type === 'medication' && Number(d.linked_id) === entryId)
+          .filter((d: any) => d.links?.some((l: any) => l.linked_type === 'medication' && Number(l.linked_id) === entryId))
           .map((d: any) => d.id);
 
         const toLink = linkedDocumentIds.filter(id => !previouslyLinked.includes(id));
         const toUnlink = previouslyLinked.filter((id: number) => !linkedDocumentIds.includes(id));
 
         for (const docId of toLink) {
-          await petApi.updateDocument(docId, { linked_type: 'medication', linked_id: entryId, pet_id: petId });
+          await petApi.addDocumentLink(petId, docId, 'medication', entryId);
         }
         for (const docId of toUnlink) {
-          await petApi.updateDocument(docId, { linked_type: null, linked_id: null, pet_id: petId });
+          await petApi.removeDocumentLink(petId, docId, 'medication', entryId);
         }
 
         await onRefresh();

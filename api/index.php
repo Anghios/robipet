@@ -222,6 +222,32 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
         $dewormings = $database->getPetDewormings($petId);
         echo json_encode($dewormings);
     }
+} elseif (preg_match('/^pets\/(\d+)\/documents\/(\d+)\/links$/', $path, $matches)) {
+    $petId = $matches[1];
+    $documentId = $matches[2];
+    $input = json_decode(file_get_contents('php://input'), true);
+
+    if ($method === 'PUT') {
+        $links = $input['links'] ?? [];
+        $result = $database->setDocumentLinks($documentId, $links);
+        echo json_encode($result);
+    } elseif ($method === 'POST') {
+        if (isset($input['linked_type']) && isset($input['linked_id'])) {
+            $result = $database->addDocumentLink($documentId, $input['linked_type'], $input['linked_id']);
+            echo json_encode($result);
+        } else {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'linked_type and linked_id are required']);
+        }
+    } elseif ($method === 'DELETE') {
+        if (isset($input['linked_type']) && isset($input['linked_id'])) {
+            $result = $database->removeDocumentLink($documentId, $input['linked_type'], $input['linked_id']);
+            echo json_encode($result);
+        } else {
+            http_response_code(400);
+            echo json_encode(['success' => false, 'message' => 'linked_type and linked_id are required']);
+        }
+    }
 } elseif (preg_match('/^pets\/(\d+)\/documents\/(\d+)\/files\/(\d+)\/rename$/', $path, $matches)) {
     $petId = $matches[1];
     $documentId = $matches[2];

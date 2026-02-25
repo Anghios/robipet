@@ -31,14 +31,15 @@ export default function DocumentLinkSelector({
   };
 
   const getLinkedLabel = (doc: any) => {
-    if (!doc.linked_type || !doc.linked_id) return null;
+    if (!doc.links || doc.links.length === 0) return null;
     const typeLabels: Record<string, string> = {
       vaccine: t('portfolio.documents.form.linkVaccines'),
       medication: t('portfolio.documents.form.linkMedications'),
       deworming: t('portfolio.documents.form.linkDewormings'),
       review: t('portfolio.documents.form.linkReviews')
     };
-    return typeLabels[doc.linked_type] || doc.linked_type;
+    const types = [...new Set(doc.links.map((l: any) => l.linked_type))];
+    return types.map((t: string) => typeLabels[t] || t).join(', ');
   };
 
   if (documents.length === 0) return null;

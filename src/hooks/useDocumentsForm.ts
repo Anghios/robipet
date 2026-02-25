@@ -15,6 +15,11 @@ export interface ExistingFileData {
   created_at: string;
 }
 
+export interface DocumentLink {
+  linked_type: string;
+  linked_id: number;
+}
+
 export interface DocumentsFormData {
   document_name: string;
   document_type: 'certificate' | 'medical' | 'insurance' | 'identification' | 'other';
@@ -29,6 +34,7 @@ export interface DocumentsFormData {
   existingFiles?: ExistingFileData[];
   filesToDelete?: number[]; // IDs de archivos a eliminar
   filesUpdated?: ExistingFileData[]; // Archivos con nombres actualizados
+  links?: DocumentLink[];
 }
 
 export function useDocumentsForm(
@@ -52,8 +58,7 @@ export function useDocumentsForm(
     existingFiles: [],
     filesToDelete: [],
     filesUpdated: [],
-    linked_type: '',
-    linked_id: null
+    links: []
   });
   const [savingDocument, setSavingDocument] = useState(false);
 
@@ -71,8 +76,7 @@ export function useDocumentsForm(
       existingFiles: [],
       filesToDelete: [],
       filesUpdated: [],
-      linked_type: '',
-      linked_id: null
+      links: []
     });
     setEditingDocument(null);
     setShowDocumentsForm(true);
@@ -106,8 +110,7 @@ export function useDocumentsForm(
       existingFiles: existingFiles,
       filesToDelete: [],
       filesUpdated: [],
-      linked_type: document.linked_type || '',
-      linked_id: document.linked_id || null
+      links: document.links || []
     });
     setEditingDocument(document);
     setShowDocumentsForm(true);
@@ -184,8 +187,6 @@ export function useDocumentsForm(
           description: documentsForm.description,
           veterinarian: documentsForm.veterinarian,
           notes: documentsForm.notes,
-          linked_type: documentsForm.linked_type || null,
-          linked_id: documentsForm.linked_id || null,
           pet_id: petId
         };
 
@@ -193,6 +194,9 @@ export function useDocumentsForm(
         if (!updateResult.success) {
           throw new Error(updateResult.message || 'Error al actualizar el documento');
         }
+
+        // Actualizar links many-to-many
+        await petApi.setDocumentLinks(petId, editingDocument.id, documentsForm.links || []);
 
         // 2. Procesar archivos a eliminar
         if (documentsForm.filesToDelete && documentsForm.filesToDelete.length > 0) {
@@ -253,7 +257,13 @@ export function useDocumentsForm(
 
         const result = await petApi.addDocument(documentData);
         if (result.success) {
-          const message = totalFiles === 0 
+          // Guardar links many-to-many si hay un ID de documento devuelto
+          const newDocId = result.data?.id;
+          if (newDocId && documentsForm.links && documentsForm.links.length > 0) {
+            await petApi.setDocumentLinks(petId, newDocId, documentsForm.links);
+          }
+
+          const message = totalFiles === 0
             ? 'Documento creado correctamente'
             : `Documento con ${totalFiles} archivo${totalFiles > 1 ? 's' : ''} añadido correctamente`;
           onSuccess(message);

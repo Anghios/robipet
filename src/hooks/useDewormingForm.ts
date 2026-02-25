@@ -61,7 +61,7 @@ export function useDewormingForm(
     });
     setEditingDeworming(deworming);
     const docs = getDocuments();
-    const linked = docs.filter((d: any) => d.linked_type === 'deworming' && Number(d.linked_id) === deworming.id);
+    const linked = docs.filter((d: any) => d.links?.some((l: any) => l.linked_type === 'deworming' && Number(l.linked_id) === deworming.id));
     setLinkedDocumentIds(linked.map((d: any) => d.id));
     setShowDewormingForm(true);
   }, [getDocuments]);
@@ -98,20 +98,20 @@ export function useDewormingForm(
           await addWeightRecord(petId, parseFloat(dewormingForm.weight_at_treatment), dewormingForm.treatment_date, `Peso registrado durante desparasitación con ${dewormingForm.product_name}`);
         }
 
-        const entryId = editingDeworming ? editingDeworming.id : result.id;
+        const entryId = editingDeworming ? editingDeworming.id : result.data?.id;
         const docs = getDocuments();
         const previouslyLinked = docs
-          .filter((d: any) => d.linked_type === 'deworming' && Number(d.linked_id) === entryId)
+          .filter((d: any) => d.links?.some((l: any) => l.linked_type === 'deworming' && Number(l.linked_id) === entryId))
           .map((d: any) => d.id);
 
         const toLink = linkedDocumentIds.filter(id => !previouslyLinked.includes(id));
         const toUnlink = previouslyLinked.filter((id: number) => !linkedDocumentIds.includes(id));
 
         for (const docId of toLink) {
-          await petApi.updateDocument(docId, { linked_type: 'deworming', linked_id: entryId, pet_id: petId });
+          await petApi.addDocumentLink(petId, docId, 'deworming', entryId);
         }
         for (const docId of toUnlink) {
-          await petApi.updateDocument(docId, { linked_type: null, linked_id: null, pet_id: petId });
+          await petApi.removeDocumentLink(petId, docId, 'deworming', entryId);
         }
 
         await onRefresh();
