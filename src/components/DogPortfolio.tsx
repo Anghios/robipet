@@ -697,8 +697,16 @@ export default function DogPortfolio() {
               const birth = new Date(dog_info.birth_date);
               const now = new Date();
               const ageInYears = Math.floor(Math.abs(now.getTime() - birth.getTime()) / (1000 * 60 * 60 * 24)) / 365.25;
-              const dogYears = ageInYears >= 1 ? 15 + ((ageInYears - 1) * 4) : ageInYears * 15;
-              return `${Math.round(dogYears * 10) / 10} ${t('home.humanYears')}`;
+              const totalDogYears = ageInYears >= 1 ? 15 + ((ageInYears - 1) * 4) : ageInYears * 15;
+              const dogYears = Math.floor(totalDogYears);
+              const dogMonths = Math.floor((totalDogYears - dogYears) * 12);
+              const dogDays = Math.floor(((totalDogYears - dogYears) * 12 - dogMonths) * 30);
+              const parts: string[] = [];
+              if (dogYears > 0) parts.push(`${dogYears} ${dogYears === 1 ? t('home.year') : t('home.years')}`);
+              if (dogMonths > 0) parts.push(`${dogMonths} ${dogMonths === 1 ? t('home.month') : t('home.months')}`);
+              parts.push(`${dogDays} ${dogDays === 1 ? t('home.day') : t('home.days')}`);
+              if (parts.length <= 1) return parts[0];
+              return parts.slice(0, -1).join(', ') + ` ${t('home.and')} ` + parts[parts.length - 1];
             })()} />
           )}
         </CardSection>
