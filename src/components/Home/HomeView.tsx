@@ -142,18 +142,18 @@ export default function HomeView({ portfolio, onNavigateToSection, t }: HomeView
     if (!dog_info?.birth_date || dog_info?.species !== 'dog') return null;
     const birth = new Date(dog_info.birth_date);
     const now = new Date();
-    const diffTime = Math.abs(now.getTime() - birth.getTime());
-    const totalDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-    const ageInYears = totalDays / 365.25;
-
-    let years = 0;
-    if (ageInYears >= 1) {
-      years = 15 + ((ageInYears - 1) * 4);
-    } else {
-      years = ageInYears * 15;
-    }
-    return Math.round(years * 10) / 10;
-  }, [dog_info?.birth_date, dog_info?.species]);
+    const ageInYears = Math.floor(Math.abs(now.getTime() - birth.getTime()) / (1000 * 60 * 60 * 24)) / 365.25;
+    const totalDogYears = ageInYears >= 1 ? 15 + ((ageInYears - 1) * 4) : ageInYears * 15;
+    const yrs = Math.floor(totalDogYears);
+    const mos = Math.floor((totalDogYears - yrs) * 12);
+    const dys = Math.floor(((totalDogYears - yrs) * 12 - mos) * 30);
+    const parts: string[] = [];
+    if (yrs > 0) parts.push(`${yrs} ${yrs === 1 ? t('home.year') : t('home.years')}`);
+    if (mos > 0) parts.push(`${mos} ${mos === 1 ? t('home.month') : t('home.months')}`);
+    parts.push(`${dys} ${dys === 1 ? t('home.day') : t('home.days')}`);
+    if (parts.length <= 1) return parts[0];
+    return parts.slice(0, -1).join(', ') + ` ${t('home.and')} ` + parts[parts.length - 1];
+  }, [dog_info?.birth_date, dog_info?.species, t]);
 
   return (
     <div className="space-y-6">
