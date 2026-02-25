@@ -159,7 +159,7 @@ export default function SharedHeader() {
           <div className="flex items-center gap-3">
             {/* Logo */}
             <a href="/" className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center overflow-hidden">
+              <div className="w-8 h-8 rounded-lg bg-slate-700/60 flex items-center justify-center overflow-hidden">
                 <img src="/logo.png" alt="Robipet" className="w-6 h-6 object-contain" />
               </div>
               <span className="text-lg font-semibold text-white hidden sm:block">Robipet</span>
