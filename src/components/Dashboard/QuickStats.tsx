@@ -1,4 +1,6 @@
 import { Icon } from '@iconify/react';
+import { useSettings } from '../../hooks/useSettings';
+import { formatDateObj } from '../../utils/petUtils';
 
 interface QuickStatsProps {
   totalVaccines: number;
@@ -21,6 +23,8 @@ export default function QuickStats({
   warningAlerts,
   t
 }: QuickStatsProps) {
+  const { getDateFormat } = useSettings();
+
   const formatDate = (dateStr: string): string => {
     const date = new Date(dateStr);
     const now = new Date();
@@ -30,7 +34,7 @@ export default function QuickStats({
     if (diffDays === 1) return t('dashboard.stats.yesterday');
     if (diffDays < 7) return t('dashboard.stats.daysAgo', { days: diffDays });
     if (diffDays < 30) return t('dashboard.stats.weeksAgo', { weeks: Math.floor(diffDays / 7) });
-    return date.toLocaleDateString();
+    return formatDateObj(date, getDateFormat());
   };
 
   const stats = [

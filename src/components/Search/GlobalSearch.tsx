@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { Icon } from '@iconify/react';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useSettings } from '../../hooks/useSettings';
+import { formatDateObj } from '../../utils/petUtils';
 import { petApi } from '../../services/petApi';
 
 interface SearchResult {
@@ -29,6 +31,7 @@ const typeConfig: Record<string, { icon: string; color: string; bgColor: string 
 
 export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
   const { t } = useTranslation();
+  const { getDateFormat } = useSettings();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
@@ -206,7 +209,9 @@ export default function GlobalSearch({ isOpen, onClose }: GlobalSearchProps) {
 
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return '';
-    return new Date(dateStr).toLocaleDateString();
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return '';
+    return formatDateObj(d, getDateFormat());
   };
 
   if (!isOpen) return null;

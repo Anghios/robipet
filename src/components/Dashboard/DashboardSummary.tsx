@@ -1,6 +1,8 @@
 import { Icon } from '@iconify/react';
 import AlertCard from './AlertCard';
 import QuickStats from './QuickStats';
+import { useSettings } from '../../hooks/useSettings';
+import { formatDateObj } from '../../utils/petUtils';
 
 interface Vaccine {
   id: number;
@@ -77,6 +79,7 @@ export default function DashboardSummary({
   onNavigateToTab,
   t
 }: DashboardSummaryProps) {
+  const { getDateFormat } = useSettings();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
@@ -97,7 +100,9 @@ export default function DashboardSummary({
   };
 
   const formatDate = (dateStr: string): string => {
-    return new Date(dateStr).toLocaleDateString();
+    const d = new Date(dateStr);
+    if (isNaN(d.getTime())) return dateStr;
+    return formatDateObj(d, getDateFormat());
   };
 
   // Generate alerts

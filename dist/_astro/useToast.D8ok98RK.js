@@ -1,1 +1,0 @@
-import{r as t}from"./index.DYwCuWnG.js";function l(){const[a,s]=t.useState(null),e=t.useCallback((o,n="error")=>{const u=Date.now();s({message:o,type:n,id:u})},[]),r=t.useCallback(o=>{s(null)},[]);return{toast:a,showToast:e,hideToast:r}}export{l as u};

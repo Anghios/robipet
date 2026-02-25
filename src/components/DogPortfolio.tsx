@@ -776,7 +776,7 @@ export default function DogPortfolio() {
 
       {/* Confirmation Modal */}
       {activeModal && (() => {
-        const modalProps = getModalProps(activeModal, confirmActions, t);
+        const modalProps = getModalProps(activeModal, confirmActions, t, getDateFormat());
         if (!modalProps) return null;
 
         return (

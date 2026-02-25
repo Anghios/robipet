@@ -52,7 +52,8 @@ export const getModalProps = (
     confirmDeleteSelectedFile: () => void;
     confirmDeleteDocument: () => void;
   },
-  translationFn?: any
+  translationFn?: any,
+  dateFormat?: string
 ): ModalConfig | null => {
   if (!activeModal) return null;
 
@@ -86,7 +87,7 @@ export const getModalProps = (
         title: safeTranslate(translationFn, 'confirmationModal.deleteWeight.title', 'Eliminar Registro de Peso'),
         message: interpolate(
           safeTranslate(translationFn, 'confirmationModal.deleteWeight.message', '¿Estás seguro de que quieres eliminar el registro de peso de {weight} kg del {date}? Esta acción no se puede deshacer.'),
-          { weight: activeModal.item?.weight_kg, date: activeModal.item ? formatDate(activeModal.item.measurement_date) : '' }
+          { weight: activeModal.item?.weight_kg, date: activeModal.item ? formatDate(activeModal.item.measurement_date, 'en', dateFormat) : '' }
         ),
         confirmText: safeTranslate(translationFn, 'confirmationModal.deleteWeight.confirmText', 'Eliminar'),
         confirmColor: 'bg-red-600 hover:bg-red-500 focus:ring-red-400',
@@ -146,7 +147,7 @@ export const getModalProps = (
         title: safeTranslate(translationFn, 'confirmationModal.deleteMedicalReview.title', 'Eliminar Revisión Médica'),
         message: interpolate(
           safeTranslate(translationFn, 'confirmationModal.deleteMedicalReview.message', '¿Estás seguro de que quieres eliminar la revisión médica del {date}? Esta acción no se puede deshacer.'),
-          { date: activeModal.item ? formatDate(activeModal.item.visit_date) : '' }
+          { date: activeModal.item ? formatDate(activeModal.item.visit_date, 'en', dateFormat) : '' }
         ),
         confirmText: safeTranslate(translationFn, 'confirmationModal.deleteMedicalReview.confirmText', 'Eliminar'),
         confirmColor: 'bg-red-600 hover:bg-red-500 focus:ring-red-400',

@@ -3,6 +3,8 @@ import { useConfirmationModals } from '../../hooks/useConfirmationModals';
 import ConfirmationModal from '../Visuals/ConfirmationModal';
 import { getModalProps } from '../../utils/modalConfigs';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useSettings } from '../../hooks/useSettings';
+import { formatDateObj } from '../../utils/petUtils';
 
 interface FileWithName {
   file: File;
@@ -76,6 +78,7 @@ export default function DocumentsForm({
   onCancel
 }: DocumentsFormProps) {
   const { t } = useTranslation();
+  const { getDateFormat } = useSettings();
 
   const {
     activeModal,
@@ -129,7 +132,7 @@ export default function DocumentsForm({
     confirmDeleteMedicalReview: () => {},
     confirmDeleteDocumentFile: confirmDeleteDocumentFile,
     confirmDeleteSelectedFile: confirmDeleteSelectedFile
-  }, t);
+  }, t, getDateFormat());
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -289,7 +292,7 @@ export default function DocumentsForm({
                   })()}
                   <div className="flex-1 min-w-0">
                     <p className="text-sm text-slate-300 truncate">{fileData.original_name}</p>
-                    <p className="text-xs text-slate-500">{new Date(fileData.created_at).toLocaleDateString()}</p>
+                    <p className="text-xs text-slate-500">{formatDateObj(new Date(fileData.created_at), getDateFormat())}</p>
                   </div>
                   <input
                     type="text"

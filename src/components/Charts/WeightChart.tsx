@@ -9,6 +9,8 @@ import {
   ReferenceLine
 } from 'recharts';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useSettings } from '../../hooks/useSettings';
+import { formatDateObj, formatDateShort } from '../../utils/petUtils';
 
 interface WeightRecord {
   id: number;
@@ -31,20 +33,15 @@ interface ChartDataPoint {
 
 export default function WeightChart({ weightHistory, currentWeight }: WeightChartProps) {
   const { t, locale } = useTranslation();
+  const { getDateFormat } = useSettings();
 
   const chartData: ChartDataPoint[] = [...weightHistory]
     .sort((a, b) => new Date(a.measurement_date).getTime() - new Date(b.measurement_date).getTime())
     .map((record) => ({
       date: record.measurement_date,
-      displayDate: new Date(record.measurement_date).toLocaleDateString(
-        locale === 'es' ? 'es-ES' : 'en-US',
-        { month: 'short', day: 'numeric' }
-      ),
+      displayDate: formatDateShort(record.measurement_date, getDateFormat()),
       weight: record.weight_kg,
-      fullDate: new Date(record.measurement_date).toLocaleDateString(
-        locale === 'es' ? 'es-ES' : 'en-US',
-        { year: 'numeric', month: 'long', day: 'numeric' }
-      )
+      fullDate: formatDateObj(new Date(record.measurement_date), getDateFormat())
     }));
 
   const minWeight = Math.min(...chartData.map(d => d.weight));

@@ -1,5 +1,7 @@
 import { Icon } from '@iconify/react';
 import { useState } from 'react';
+import { useSettings } from '../../hooks/useSettings';
+import { formatDateObj } from '../../utils/petUtils';
 
 export type TimelineType = 'vaccine' | 'medication' | 'deworming' | 'medical_review' | 'weight';
 
@@ -63,15 +65,13 @@ export default function TimelineEntry({
   t
 }: TimelineEntryProps) {
   const [isExpanded, setIsExpanded] = useState(false);
+  const { getDateFormat } = useSettings();
   const config = typeConfig[type];
 
   const formatDate = (dateStr: string): string => {
     const d = new Date(dateStr);
-    return d.toLocaleDateString(undefined, {
-      day: 'numeric',
-      month: 'short',
-      year: 'numeric'
-    });
+    if (isNaN(d.getTime())) return dateStr;
+    return formatDateObj(d, getDateFormat());
   };
 
   const getStatusBadge = () => {
