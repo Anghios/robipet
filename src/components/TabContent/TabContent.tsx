@@ -231,6 +231,7 @@ export default function TabContent(props: TabContentProps) {
                 formatDate={formatDateLocalized}
                 onEdit={props.handleEditMedicalReview}
                 onDelete={props.handleDeleteMedicalReview}
+                linkedDocuments={documents.filter(d => d.linked_type === 'review' && Number(d.linked_id) === review.id)}
               />
             ))
           }
@@ -293,6 +294,7 @@ export default function TabContent(props: TabContentProps) {
                 onEdit={props.handleEditVaccine}
                 onDelete={props.handleDeleteVaccine}
                 onComplete={props.handleMarkVaccineCompleted}
+                linkedDocuments={documents.filter(d => d.linked_type === 'vaccine' && Number(d.linked_id) === vaccine.id)}
               />
             ))
           }
@@ -353,6 +355,7 @@ export default function TabContent(props: TabContentProps) {
                 onEdit={props.handleEditMedication}
                 onDelete={props.handleDeleteMedication}
                 onComplete={props.handleMarkMedicationCompleted}
+                linkedDocuments={documents.filter(d => d.linked_type === 'medication' && Number(d.linked_id) === medication.id)}
               />
             ))
           }
@@ -413,6 +416,7 @@ export default function TabContent(props: TabContentProps) {
                 onEdit={props.handleEditDeworming}
                 onDelete={props.handleDeleteDeworming}
                 onComplete={props.handleMarkDewormingCompleted}
+                linkedDocuments={documents.filter(d => d.linked_type === 'deworming' && Number(d.linked_id) === deworming.id)}
               />
             ))
           }

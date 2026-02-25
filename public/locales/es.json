@@ -855,7 +855,8 @@
       "completed": "Completado",
       "expired": "Vencido",
       "active": "Activo",
-      "inactive": "Inactivo"
+      "inactive": "Inactivo",
+      "linkedDocuments": "Documentos vinculados"
     }
   },
   "timeline": {

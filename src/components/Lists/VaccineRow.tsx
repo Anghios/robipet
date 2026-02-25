@@ -12,12 +12,20 @@ interface Vaccine {
   status?: 'pending' | 'completed' | 'overdue';
 }
 
+interface LinkedDocument {
+  id: number;
+  document_name: string;
+  document_type: string;
+  files?: Array<{ file_name: string; file_path: string; original_name?: string }>;
+}
+
 interface VaccineRowProps {
   vaccine: Vaccine;
   formatDate: (date: string) => string;
   onEdit: (vaccine: Vaccine) => void;
   onComplete: (vaccine: Vaccine) => void;
   onDelete: (vaccine: Vaccine) => void;
+  linkedDocuments?: LinkedDocument[];
 }
 
 export default function VaccineRow({
@@ -25,7 +33,8 @@ export default function VaccineRow({
   formatDate,
   onEdit,
   onComplete,
-  onDelete
+  onDelete,
+  linkedDocuments
 }: VaccineRowProps) {
   const { t } = useTranslation();
   const [isExpanded, setIsExpanded] = useState(false);
@@ -39,7 +48,8 @@ export default function VaccineRow({
 
   const config = statusConfig[status] || statusConfig.pending;
 
-  const hasDetails = vaccine.veterinarian || vaccine.notes || vaccine.next_due_date;
+  const hasLinkedDocs = linkedDocuments && linkedDocuments.length > 0;
+  const hasDetails = vaccine.veterinarian || vaccine.notes || vaccine.next_due_date || hasLinkedDocs;
 
   return (
     <div className={`rounded-xl ${config.bg} border border-slate-700/50 hover:border-slate-600 transition-all overflow-hidden`}>
@@ -134,6 +144,38 @@ export default function VaccineRow({
                 <Icon icon="mdi:note-text" className="w-4 h-4 text-amber-400 mt-0.5" />
                 <span className="text-slate-400">{t('portfolio.vaccines.notes')}:</span>
                 <span className="text-slate-300 italic">{vaccine.notes}</span>
+              </div>
+            )}
+            {hasLinkedDocs && (
+              <div className="col-span-full flex items-start gap-2 text-sm">
+                <Icon icon="mdi:file-document" className="w-4 h-4 text-teal-400 mt-0.5" />
+                <div>
+                  <span className="text-slate-400">{t('portfolio.common.linkedDocuments')}:</span>
+                  <div className="flex flex-col gap-2 mt-1">
+                    {linkedDocuments!.map((doc) => (
+                      <div key={doc.id}>
+                        <span className="inline-flex items-center gap-1 text-teal-300 text-xs">
+                          <Icon icon="mdi:link-variant" className="w-3 h-3" />
+                          {doc.document_name}
+                        </span>
+                        {doc.files && doc.files.length > 0 && (
+                          <div className="flex flex-wrap gap-1.5 mt-1 ml-4">
+                            {doc.files.map((file, idx) => (
+                              <button
+                                key={idx}
+                                onClick={(e) => { e.stopPropagation(); window.open(`/api/${file.file_path}`, '_blank'); }}
+                                className="inline-flex items-center gap-1 px-2 py-0.5 rounded-lg bg-slate-700/50 text-slate-300 hover:bg-slate-600 hover:text-white text-xs transition-colors cursor-pointer"
+                              >
+                                <Icon icon="mdi:file-outline" className="w-3 h-3" />
+                                {file.file_name}
+                              </button>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             )}
           </div>

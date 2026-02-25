@@ -384,6 +384,7 @@ export default function DogPortfolio() {
                     onEdit={handleEditVaccine}
                     onDelete={handleDeleteVaccine}
                     onComplete={handleMarkVaccineCompleted}
+                    linkedDocuments={documents.filter((d: any) => d.linked_type === 'vaccine' && Number(d.linked_id) === vaccine.id)}
                   />
                 ))}
             </div>
@@ -428,6 +429,7 @@ export default function DogPortfolio() {
                     onEdit={handleEditMedication}
                     onDelete={handleDeleteMedication}
                     onComplete={handleMarkMedicationCompleted}
+                    linkedDocuments={documents.filter((d: any) => d.linked_type === 'medication' && Number(d.linked_id) === medication.id)}
                   />
                 ))}
             </div>
@@ -472,6 +474,7 @@ export default function DogPortfolio() {
                     onEdit={handleEditDeworming}
                     onDelete={handleDeleteDeworming}
                     onComplete={handleMarkDewormingCompleted}
+                    linkedDocuments={documents.filter((d: any) => d.linked_type === 'deworming' && Number(d.linked_id) === deworming.id)}
                   />
                 ))}
             </div>
@@ -521,6 +524,7 @@ export default function DogPortfolio() {
                     onEdit={handleEditMedicalReview}
                     onComplete={handleMarkMedicalReviewCompleted}
                     onDelete={handleDeleteMedicalReview}
+                    linkedDocuments={documents.filter((d: any) => d.linked_type === 'review' && Number(d.linked_id) === review.id)}
                   />
                 ))}
             </div>
