@@ -4,11 +4,13 @@ import Toast from './Visuals/Toast';
 import { useTranslation } from '../hooks/useTranslation';
 import { useConfigNavigation } from '../hooks/useConfigNavigation.ts';
 import { useToast } from '../hooks/useToast';
+import { useSettings } from '../hooks/useSettings';
 
 export default function ConfigContent() {
   const { t, locale, changeLanguage, loading } = useTranslation();
   const { currentSection, handleSectionChange } = useConfigNavigation();
   const { toast, showToast, hideToast } = useToast();
+  const { settings, updateSetting, getCurrencyIcon } = useSettings();
 
   const sections = [
     { id: 'general', icon: 'mdi:cog', label: t('config.general') },
@@ -223,17 +225,40 @@ export default function ConfigContent() {
           </div>
         </div>
 
-        <div className="relative">
-          <select
-            className="w-full pl-10 pr-4 py-3 border border-slate-700 rounded-xl bg-slate-800/50 text-white focus:ring-2 focus:ring-green-500 focus:border-green-500 transition-all duration-200 appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-            defaultValue="eur"
-            disabled
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <button
+            onClick={() => updateSetting('currency', 'eur')}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
+              settings.currency === 'eur'
+                ? 'border-green-500 bg-green-500/10'
+                : 'border-slate-700 hover:border-slate-600 bg-slate-800/50'
+            }`}
           >
-            <option value="eur">{t('config.currency.eur')}</option>
-            <option value="usd">{t('config.currency.usd')}</option>
-          </select>
-          <Icon icon="mdi:currency-eur" className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
-          <Icon icon="mdi:chevron-down" className="absolute right-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400 pointer-events-none" />
+            <Icon icon="mdi:currency-eur" className="w-6 h-6" />
+            <span className={`font-medium ${settings.currency === 'eur' ? 'text-green-400' : 'text-white'}`}>
+              {t('config.currency.eur')}
+            </span>
+            {settings.currency === 'eur' && (
+              <Icon icon="mdi:check-circle" className="w-5 h-5 text-green-400 ml-auto" />
+            )}
+          </button>
+
+          <button
+            onClick={() => updateSetting('currency', 'usd')}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
+              settings.currency === 'usd'
+                ? 'border-green-500 bg-green-500/10'
+                : 'border-slate-700 hover:border-slate-600 bg-slate-800/50'
+            }`}
+          >
+            <Icon icon="mdi:currency-usd" className="w-6 h-6" />
+            <span className={`font-medium ${settings.currency === 'usd' ? 'text-green-400' : 'text-white'}`}>
+              {t('config.currency.usd')}
+            </span>
+            {settings.currency === 'usd' && (
+              <Icon icon="mdi:check-circle" className="w-5 h-5 text-green-400 ml-auto" />
+            )}
+          </button>
         </div>
       </div>
 
