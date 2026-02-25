@@ -291,6 +291,11 @@ export default function HomeView({ portfolio, onNavigateToSection, t }: HomeView
           valueUnit={getWeightUnitLabel()}
           subtitle={t('home.cards.currentWeight')}
           onClick={() => onNavigateToSection('health', 'weight')}
+          showChart
+          chartData={weight_history?.slice(-10).map((w: any) => ({
+            date: w.measurement_date,
+            value: parseFloat(formatWeight(w.weight_kg))
+          })) || []}
         />
       </div>
 
