@@ -238,6 +238,17 @@ export default function HomeView({ portfolio, onNavigateToSection, t }: HomeView
         />
 
         <HealthCard
+          icon="mdi:bug-outline"
+          iconColor="text-orange-400"
+          bgGradient="from-orange-500/20 to-orange-600/10"
+          borderColor="border-orange-500/20"
+          title={t('home.cards.dewormings')}
+          value={dewormings?.length || 0}
+          subtitle={t('home.cards.total')}
+          onClick={() => onNavigateToSection('health', 'dewormings')}
+        />
+
+        <HealthCard
           icon="mdi:pill"
           iconColor="text-blue-400"
           bgGradient="from-blue-500/20 to-blue-600/10"
@@ -269,10 +280,7 @@ export default function HomeView({ portfolio, onNavigateToSection, t }: HomeView
           subtitle={t('home.cards.files')}
           onClick={() => onNavigateToSection('documents')}
         />
-      </div>
 
-      {/* Weight Trend Card */}
-      {weight_history && weight_history.length > 0 && (
         <HealthCard
           icon="mdi:chart-line"
           iconColor="text-cyan-400"
@@ -283,14 +291,8 @@ export default function HomeView({ portfolio, onNavigateToSection, t }: HomeView
           valueUnit="kg"
           subtitle={t('home.cards.currentWeight')}
           onClick={() => onNavigateToSection('health', 'weight')}
-          fullWidth
-          showChart
-          chartData={weight_history.slice(-10).map((w: any) => ({
-            date: w.measurement_date,
-            value: w.weight_kg
-          }))}
         />
-      )}
+      </div>
 
       {/* Timeline Preview */}
       <div

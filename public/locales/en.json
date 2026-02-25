@@ -55,6 +55,7 @@
     "daysUntilBirthday": "{days} days until birthday",
     "cards": {
       "vaccines": "Vaccines",
+      "dewormings": "Dewormings",
       "medications": "Medications",
       "reviews": "Reviews",
       "documents": "Documents",
