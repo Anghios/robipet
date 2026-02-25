@@ -820,6 +820,22 @@ if (preg_match('/^pets\/(\d+)\/complete$/', $path, $matches)) {
             }
             break;
             
+        case 'settings':
+            if ($method === 'GET') {
+                $settings = $database->getSettings();
+                echo json_encode($settings);
+            } elseif ($method === 'PUT') {
+                $input = json_decode(file_get_contents('php://input'), true);
+                if (isset($input['key']) && isset($input['value'])) {
+                    $result = $database->setSetting($input['key'], $input['value']);
+                    echo json_encode($result);
+                } else {
+                    http_response_code(400);
+                    echo json_encode(['error' => 'Key and value are required']);
+                }
+            }
+            break;
+
         case 'users':
             if ($method === 'GET') {
                 $users = $database->getAllUsers();

@@ -290,8 +290,19 @@ class Database {
             // La columna ya existe, no hacer nada
         }
         
+        // Crear tabla settings
+        $settingsSql = "CREATE TABLE IF NOT EXISTS settings (
+            key TEXT PRIMARY KEY,
+            value TEXT NOT NULL,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )";
+        $this->connection->exec($settingsSql);
+
         // Crear admin por defecto solo si no hay usuarios
         $this->createDefaultAdmin();
+
+        // Crear settings por defecto
+        $this->createDefaultSettings();
     }
     
     public function getDogInfo() {
@@ -1378,6 +1389,49 @@ class Database {
     
     public function getConnection() {
         return $this->connection;
+    }
+
+    // ========== SETTINGS METHODS ==========
+
+    public function getSettings() {
+        $stmt = $this->connection->query("SELECT key, value FROM settings");
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $settings = [];
+        foreach ($rows as $row) {
+            $settings[$row['key']] = $row['value'];
+        }
+        return $settings;
+    }
+
+    public function getSetting($key) {
+        $stmt = $this->connection->prepare("SELECT value FROM settings WHERE key = ?");
+        $stmt->execute([$key]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? $row['value'] : null;
+    }
+
+    public function setSetting($key, $value) {
+        try {
+            $stmt = $this->connection->prepare("INSERT INTO settings (key, value, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP) ON CONFLICT(key) DO UPDATE SET value = ?, updated_at = CURRENT_TIMESTAMP");
+            $stmt->execute([$key, $value, $value]);
+            return ['success' => true, 'message' => 'Setting updated'];
+        } catch (PDOException $e) {
+            return $this->handleDbError($e, 'settings update');
+        }
+    }
+
+    private function createDefaultSettings() {
+        try {
+            $stmt = $this->connection->prepare("SELECT COUNT(*) FROM settings");
+            $stmt->execute();
+            $total = $stmt->fetchColumn();
+
+            if ($total == 0) {
+                $this->connection->exec("INSERT INTO settings (key, value) VALUES ('currency', 'eur')");
+            }
+        } catch (PDOException $e) {
+            error_log("Error creating default settings: " . $e->getMessage());
+        }
     }
 
     private function createDefaultAdmin() {
