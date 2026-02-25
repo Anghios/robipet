@@ -153,6 +153,8 @@
     "pageTitle": "RobiPet - Configuración",
     "general": "General",
     "users": "Usuarios",
+    "notifications": "Notificaciones",
+    "notificationsPlaceholder": "Los ajustes de notificaciones estarán disponibles próximamente. Aquí podrás configurar recordatorios y alertas para tus mascotas.",
     "database": {
       "title": "Base de Datos",
       "description": "Gestiona y respalda tu base de datos",
@@ -258,12 +260,6 @@
       "description": "Personaliza la apariencia de la aplicación",
       "darkMode": "Modo oscuro automático",
       "reducedAnimations": "Animaciones reducidas"
-    },
-    "notifications": {
-      "title": "Notificaciones",
-      "description": "Configura las notificaciones del sistema",
-      "medicalReminders": "Recordatorios médicos",
-      "systemUpdates": "Actualizaciones del sistema"
     }
   },
   "common": {

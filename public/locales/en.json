@@ -153,6 +153,8 @@
     "pageTitle": "RobiPet - Settings",
     "general": "General",
     "users": "Users",
+    "notifications": "Notifications",
+    "notificationsPlaceholder": "Notification settings will be available soon. Here you will be able to configure reminders and alerts for your pets.",
     "database": {
       "title": "Database",
       "description": "Manage and backup your database",
@@ -258,12 +260,6 @@
       "description": "Customize the application appearance",
       "darkMode": "Automatic dark mode",
       "reducedAnimations": "Reduced animations"
-    },
-    "notifications": {
-      "title": "Notifications",
-      "description": "Configure system notifications",
-      "medicalReminders": "Medical reminders",
-      "systemUpdates": "System updates"
     }
   },
   "common": {

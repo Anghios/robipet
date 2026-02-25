@@ -15,6 +15,7 @@ export default function ConfigContent() {
   const sections = [
     { id: 'general', icon: 'mdi:cog', label: t('config.general') },
     { id: 'usuarios', icon: 'mdi:account-group', label: t('config.users') },
+    { id: 'notificaciones', icon: 'mdi:bell', label: t('config.notifications') },
   ];
 
   const handleExportDatabase = async () => {
@@ -296,12 +297,28 @@ export default function ConfigContent() {
     <UsersList />
   );
 
+  const renderNotificationsContent = () => (
+    <div className="space-y-4">
+      <div className="bg-slate-800/30 rounded-xl border border-slate-700/50 p-8">
+        <div className="flex flex-col items-center justify-center text-center py-8">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-600 flex items-center justify-center mb-4">
+            <Icon icon="mdi:bell-outline" className="w-8 h-8 text-white" />
+          </div>
+          <h3 className="text-lg font-semibold text-white mb-2">{t('config.notifications')}</h3>
+          <p className="text-slate-400 text-sm max-w-md">{t('config.notificationsPlaceholder')}</p>
+        </div>
+      </div>
+    </div>
+  );
+
   const renderContent = () => {
     switch (currentSection) {
       case 'general':
         return renderGeneralContent();
       case 'usuarios':
         return renderUsersContent();
+      case 'notificaciones':
+        return renderNotificationsContent();
       default:
         return (
           <div className="text-center py-12">
