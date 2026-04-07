@@ -12,6 +12,8 @@ services:
     volumes:
       # Persistir la base de datos SQLite
       - sqlite_data:/var/www/html/db
+      # Persistir imágenes de mascotas y documentos subidos
+      - uploads_data:/var/www/html/api/uploads
       # En desarrollo, montar código para hot reload (comentar en producción)
       # - ./api:/var/www/html/api
       # - ./dist:/var/www/html
@@ -27,3 +29,4 @@ services:
 
 volumes:
   sqlite_data:
+  uploads_data:
