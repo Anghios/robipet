@@ -192,7 +192,7 @@ export default function HomeView({ portfolio, onNavigateToSection, t }: HomeView
         )}
         <div className="flex-1 min-w-0">
           <h2 className="text-xl font-bold text-white truncate">{dog_info?.name}</h2>
-          <p className="text-slate-400 text-sm flex items-center gap-1.5"><Icon icon="mdi:dog" className="w-3.5 h-3.5 text-emerald-400" />{dog_info?.breed}</p>
+          {dog_info?.breed && <p className="text-slate-400 text-sm flex items-center gap-1.5"><Icon icon="mdi:dog" className="w-3.5 h-3.5 text-emerald-400" />{dog_info.breed}</p>}
           {petAge && <p className="text-slate-400 text-sm flex items-center gap-1.5"><Icon icon="mdi:clock" className="w-3.5 h-3.5 text-orange-400" />{petAge}</p>}
           {humanYears !== null && <p className="text-slate-400 text-sm flex items-center gap-1.5"><Icon icon={dog_info?.species === 'cat' ? 'mdi:cat' : 'mdi:dog'} className="w-3.5 h-3.5 text-cyan-400" />{humanYears} ({t('home.humanYears')})</p>}
         </div>

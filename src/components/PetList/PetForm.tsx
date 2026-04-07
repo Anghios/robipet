@@ -81,12 +81,11 @@ export default function PetForm({
           </div>
           
           <div>
-            <label className="block text-dark-primary font-medium mb-2 text-sm">{t('petList.form.breedRequired')}</label>
+            <label className="block text-dark-primary font-medium mb-2 text-sm">{t('petList.form.breed')}</label>
             <input
               type="text"
               value={pet.breed}
               onChange={(e) => onChange({ breed: e.target.value })}
-              required
               className="w-full px-4 py-3 bg-dark-card border border-dark-hover rounded-xl text-dark-primary placeholder:text-dark-secondary focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
               placeholder={t('petList.form.breedPlaceholder')}
             />

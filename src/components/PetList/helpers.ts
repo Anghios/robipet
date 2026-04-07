@@ -120,10 +120,6 @@ export const validatePetData = (pet: NewPet | Pet): { isValid: boolean; error?: 
     return { isValid: false, error: 'El nombre es requerido' };
   }
   
-  if (!pet.breed.trim()) {
-    return { isValid: false, error: 'La raza es requerida' };
-  }
-  
   if (!pet.birth_date) {
     return { isValid: false, error: 'La fecha de nacimiento es requerida' };
   }

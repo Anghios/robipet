@@ -46,8 +46,8 @@ export default function usePets() {
   }, []);
 
   const createPet = useCallback(async (newPet: NewPet) => {
-    if (!newPet.name.trim() || !newPet.breed.trim() || !newPet.birth_date) {
-      showToast('Nombre, raza y fecha de nacimiento son requeridos', 'error');
+    if (!newPet.name.trim() || !newPet.birth_date) {
+      showToast('Nombre y fecha de nacimiento son requeridos', 'error');
       return false;
     }
 
@@ -87,8 +87,8 @@ export default function usePets() {
   }, [fetchPets, showToast]);
 
   const updatePet = useCallback(async (pet: Pet) => {
-    if (!pet.name.trim() || !pet.breed.trim() || !pet.birth_date) {
-      showToast('Nombre, raza y fecha de nacimiento son requeridos', 'error');
+    if (!pet.name.trim() || !pet.birth_date) {
+      showToast('Nombre y fecha de nacimiento son requeridos', 'error');
       return false;
     }
 
