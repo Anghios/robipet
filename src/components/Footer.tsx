@@ -22,7 +22,7 @@ export default function Footer() {
             <a href="mailto:nestor@banshee.pro" className="text-slate-500 hover:text-slate-300 transition-colors p-1.5 hover:bg-slate-700/50 rounded-lg" title={t('footer.contactEmail')}>
               <Icon icon="mdi:email-outline" className="w-4 h-4" />
             </a>
-            <a href="https://robipet.anghios.es/" target="_blank" className="text-slate-500 hover:text-slate-300 transition-colors p-1.5 hover:bg-slate-700/50 rounded-lg" title={t('footer.website')}>
+            <a href="https://robi.pet/" target="_blank" className="text-slate-500 hover:text-slate-300 transition-colors p-1.5 hover:bg-slate-700/50 rounded-lg" title={t('footer.website')}>
               <Icon icon="mdi:web" className="w-4 h-4" />
             </a>
             <a href="https://github.com/Anghios/robipet" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-slate-300 transition-colors p-1.5 hover:bg-slate-700/50 rounded-lg" title={t('footer.viewCode')}>
@@ -31,7 +31,7 @@ export default function Footer() {
             <a href="https://discord.com/invite/mrBTb9pNqm" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-slate-300 transition-colors p-1.5 hover:bg-slate-700/50 rounded-lg" title={t('footer.joinDiscord')}>
               <Icon icon="mdi:discord" className="w-4 h-4" />
             </a>
-            <a href="https://robipet.anghios.es/donate" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-slate-300 transition-colors p-1.5 hover:bg-slate-700/50 rounded-lg" title={t('footer.supportProject')}>
+            <a href="https://robi.pet/donate" target="_blank" rel="noopener noreferrer" className="text-slate-500 hover:text-slate-300 transition-colors p-1.5 hover:bg-slate-700/50 rounded-lg" title={t('footer.supportProject')}>
               <Icon icon="mdi:heart-outline" className="w-4 h-4" />
             </a>
           </div>

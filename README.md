@@ -12,7 +12,7 @@
 
 **The all-in-one digital health portfolio for your beloved pets** 🏥
 
-[Demo](https://robipet.anghios.es/) • [Documentation](https://robipet.anghios.es/docs) • [Report Bug](https://github.com/anghios/robipet/issues) • [Request Feature](https://github.com/anghios/robipet/issues)
+[Demo](https://robi.pet/) • [Documentation](https://robi.pet/docs) • [Report Bug](https://github.com/anghios/robipet/issues) • [Request Feature](https://github.com/anghios/robipet/issues)
 
 </div>
 
@@ -220,9 +220,9 @@ Need help? We're here for you!
 
 - 📧 Email: nestor@banshee.pro
 - 💬 Discord: [Join our community](https://discord.gg/mrBTb9pNqm)
-- 📚 Documentation: [robipet.anghios.es/docs](https://robipet.anghios.es/docs)
+- 📚 Documentation: [robi.pet/docs](https://robi.pet/docs)
 - 🐛 Issues: [GitHub Issues](https://github.com/anghios/robipet/issues)
-- ❤️ Donations: [robipet.anghios.es/donate/](https://robipet.anghios.es/donate/)
+- ❤️ Donations: [robi.pet/donate/](https://robi.pet/donate/)
 
 ---
 
