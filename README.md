@@ -33,7 +33,7 @@ Managing your pet's health shouldn't be complicated. **RobiPet** transforms the 
 - **💉 Smart Vaccination Tracking** - Never miss a vaccine with intelligent alerts
 - **📊 Weight & Growth Monitoring** - Track your pet's development over time
 - **📄 Document Management** - Store certificates, medical reports, and insurance
-- **🔔 Automated Reminders** - Get notified for upcoming appointments and vaccines
+- **🔔 Automated Reminders** - Get notified for upcoming appointments and vaccines *(coming soon)*
 - **🌐 Multi-Language Support** - Available in English, Spanish, and more
 - **📱 Mobile-First Design** - Perfect on any device, anywhere
 
@@ -56,7 +56,8 @@ Get RobiPet running in seconds!
 docker run -d \
   --name robipet \
   -p 29724:8081 \
-  -v robipet_sqlite_data:/db \
+  -v robipet_sqlite_data:/var/www/html/db \
+  -v robipet_uploads_data:/var/www/html/api/uploads \
   -e APACHE_RUN_USER=www-data \
   -e APACHE_RUN_GROUP=www-data \
   -e JWT_SECRET=your_secure_random_key_here \
@@ -98,7 +99,8 @@ Or via Docker run command:
 docker run -d \
   --name robipet \
   -p 29724:8081 \
-  -v robipet_sqlite_data:/db \
+  -v robipet_sqlite_data:/var/www/html/db \
+  -v robipet_uploads_data:/var/www/html/api/uploads \
   -e JWT_SECRET=your_generated_secure_key_here \
   bansheetech/robipet:latest
 ```
@@ -191,9 +193,7 @@ RobiPet seamlessly integrates with your daily routine:
 
 1. **📝 Add Your Pet** - Quick setup with essential information
 2. **📸 Upload Documents** - Snap photos of vaccination cards, certificates
-3. **📅 Get Reminders** - Automatic notifications for important dates (UNDER CONSTRUCTION)
-4. **📊 Track Progress** - Monitor health trends over time
-5. **🔄 Share with Vets** - Export reports for veterinary visits (UNDER CONSTRUCTION)
+3. **📊 Track Progress** - Monitor health trends over time
 
 ## 📊 Roadmap
 
@@ -207,8 +207,9 @@ RobiPet seamlessly integrates with your daily routine:
 - [ ] Social features (share pet profiles)
 - [ ] AI-powered health insights
 - [ ] Export to PDF reports
+- [ ] Share with vets - Export reports for veterinary visits
 - [ ] Calendar integration
-- [ ] Notifications via email or another app like ntfy.sh...
+- [ ] Notifications via email or another app like ntfy.sh
 ## 📝 License
 
 This project is licensed under the PolyForm Noncommercial License 1.0.0 - see the [LICENSE](LICENSE) file for details.
