@@ -5,7 +5,7 @@ node_modules
 ejemplos
 dist/
 
-# Environment variables (keep .env.example)
+# Environment variables
 .env
 
 # Astro build output
