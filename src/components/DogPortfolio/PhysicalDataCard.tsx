@@ -1,5 +1,6 @@
 import { Icon } from '@iconify/react';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useSettings } from '../../hooks/useSettings';
 
 interface PhysicalDataCardProps {
   dog_info: {
@@ -14,6 +15,7 @@ interface PhysicalDataCardProps {
 
 export default function PhysicalDataCard({ dog_info, getSizeText, getCurrentWeight }: PhysicalDataCardProps) {
   const { t } = useTranslation();
+  const { getWeightUnitLabel, formatWeight } = useSettings();
 
   return (
     <div className="group bg-gradient-to-br from-slate-800/50 to-slate-900/50 backdrop-blur-sm rounded-2xl shadow-lg border border-slate-700/50 p-6 hover:shadow-2xl hover:shadow-purple-500/10 hover:border-purple-400/30 hover:scale-[1.02] transition-all duration-500 ease-out cursor-pointer">
@@ -69,7 +71,7 @@ export default function PhysicalDataCard({ dog_info, getSizeText, getCurrentWeig
             {t('home.physicalData.currentWeight')}
           </span>
           <span className="text-white font-semibold group-hover/item:text-teal-100 transition-colors duration-200">
-            {getCurrentWeight()} kg
+            {formatWeight(getCurrentWeight())} {getWeightUnitLabel()}
           </span>
         </div>
 

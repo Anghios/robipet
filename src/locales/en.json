@@ -1,4 +1,7 @@
 {
+  "header": {
+    "search": "Search..."
+  },
   "navigation": {
     "home": "Home",
     "pets": "My Pets",
@@ -16,6 +19,12 @@
     "title": "Your pet's information",
     "subtitle": "Check all medical information and data about your companion",
     "pageTitle": "RobiPet - Home",
+    "year": "year",
+    "years": "years",
+    "month": "month",
+    "months": "months",
+    "and": "and",
+    "humanYears": "human years",
     "tabs": {
       "info": "Information",
       "medicalReviews": "Medical Reviews",
@@ -30,6 +39,7 @@
       "birthDate": "Birth date",
       "age": "Age",
       "dogAge": "Dog age",
+      "catAge": "Cat age",
       "breed": "Breed",
       "color": "Color"
     },
@@ -55,7 +65,7 @@
       "measurements": "Measurement history",
       "newRecord": "New Weight Record",
       "editRecord": "Edit Weight Record",
-      "weightKg": "Weight (kg)",
+      "weightKg": "Weight",
       "date": "Date",
       "notes": "Notes (optional)",
       "save": "Save",
@@ -211,7 +221,8 @@
     "selectPet": "Select pet:",
     "loading": "Loading...",
     "yearsOld": "years old",
-    "dogYears": "dog years"
+    "dogYears": "dog years",
+    "catYears": "cat years"
   },
   "confirmationModal": {
     "cancel": "Cancel",
@@ -431,7 +442,7 @@
       "newButton": "New",
       "newRecord": "New Record",
       "editRecord": "Edit Record",
-      "weightKg": "Weight (kg)",
+      "weightKg": "Weight",
       "measurementDate": "Measurement Date",
       "notes": "Notes",
       "addedBy": "Added by",
@@ -442,6 +453,7 @@
       "addFirstWeight": "Add the first weight record to start tracking your pet's weight evolution",
       "weightEvolution": "Weight Evolution",
       "progressText": "Progress: {count} measurements",
+      "average": "Average: {avg}kg",
       "rangeText": "Range: {min}kg - {max}kg",
       "noWeightHistory": "No weight records",
       "addFirstWeightRecord": "Add your pet's first weight record",
@@ -540,7 +552,7 @@
         "productLabel": "Product/Medication *",
         "productPlaceholder": "e.g.: Stronghold, Nexgard, Bravecto, etc.",
         "treatmentDateLabel": "Treatment date *",
-        "weightLabel": "Weight at treatment (kg)",
+        "weightLabel": "Weight at treatment",
         "weightPlaceholder": "e.g.: 25.5",
         "weightInfo": "If you enter a weight, it will be added to the history when the deworming is completed",
         "nextDateLabel": "Next date",
@@ -782,6 +794,7 @@
       "female": "♀️ Female",
       "yes": "Yes",
       "no": "No",
+      "humanYears": "human years",
       "viewButton": "View",
       "editButton": "Edit",
       "deleteButton": "Delete",
@@ -807,7 +820,7 @@
       "birthDateRequired": "Birth date *",
       "color": "Color",
       "colorPlaceholder": "Coat color",
-      "weight": "Weight (kg)",
+      "weight": "Weight",
       "weightPlaceholder": "0.0",
       "species": "Species",
       "speciesDog": "🐕 Dog",

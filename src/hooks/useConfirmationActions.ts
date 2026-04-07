@@ -90,14 +90,14 @@ export function useConfirmationActions(
 
     try {
       const petId = getCurrentPetId();
-      
+
       const response = await fetch(`/api/pets/${petId}/medical-reviews/${medicalReviewToDelete.id}`, {
         method: 'DELETE',
         headers: getAuthHeaders()
       });
 
       const result = await response.json();
-      
+
       if (result.success) {
         await fetchDogPortfolio();
         showToast('Revisión médica eliminada correctamente', 'success');
@@ -106,6 +106,42 @@ export function useConfirmationActions(
       }
     } catch (err) {
       showToast(err instanceof Error ? err.message : 'Error al eliminar revisión médica', 'error');
+    } finally {
+      closeModal();
+    }
+  }, [activeModal, getCurrentPetId, fetchDogPortfolio, showToast, closeModal]);
+
+  const confirmCompleteMedicalReview = useCallback(async () => {
+    if (!activeModal || activeModal.type !== 'completeMedicalReview') return;
+    const reviewToComplete = activeModal.item;
+
+    try {
+      const petId = getCurrentPetId();
+
+      const response = await fetch(`/api/pets/${petId}/medical-reviews/${reviewToComplete.id}`, {
+        method: 'PUT',
+        headers: {
+          ...getAuthHeaders(),
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          ...reviewToComplete,
+          status: 'completed',
+          visit_date: reviewToComplete.visit_date || new Date().toISOString().split('T')[0]
+        })
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        showToast('Revisión médica marcada como completada', 'success');
+        fetchDogPortfolio();
+      } else {
+        throw new Error(result.message || 'Error al actualizar revisión médica');
+      }
+
+    } catch (err) {
+      showToast(err instanceof Error ? err.message : 'Error al marcar revisión médica como completada', 'error');
     } finally {
       closeModal();
     }
@@ -316,6 +352,7 @@ export function useConfirmationActions(
     confirmDeleteDeworming,
     confirmCompleteDeworming,
     confirmDeleteMedicalReview,
+    confirmCompleteMedicalReview,
     confirmDeleteDocument,
     confirmDeleteDocumentFile,
     confirmDeleteSelectedFile

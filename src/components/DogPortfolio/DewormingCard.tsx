@@ -1,6 +1,7 @@
 import { Icon } from '@iconify/react';
 import { useEffect } from 'react';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useSettings } from '../../hooks/useSettings';
 
 interface Deworming {
   id: number;
@@ -13,12 +14,20 @@ interface Deworming {
   status?: 'pending' | 'completed';
 }
 
+interface LinkedDocument {
+  id: number;
+  document_name: string;
+  document_type: string;
+  files?: Array<{ file_name: string; file_path: string; original_name?: string }>;
+}
+
 interface DewormingCardProps {
   deworming: Deworming;
   formatDate: (date: string) => string;
   onEdit: (deworming: Deworming) => void;
   onComplete: (deworming: Deworming) => void;
   onDelete: (deworming: Deworming) => void;
+  linkedDocuments?: LinkedDocument[];
 }
 
 export default function DewormingCard({
@@ -26,9 +35,11 @@ export default function DewormingCard({
   formatDate,
   onEdit,
   onComplete,
-  onDelete
+  onDelete,
+  linkedDocuments
 }: DewormingCardProps) {
   const { t } = useTranslation();
+  const { getWeightUnitLabel, formatWeight } = useSettings();
   // Add shake animation CSS once
   useEffect(() => {
     if (!document.getElementById('shake-animation')) {
@@ -89,7 +100,7 @@ export default function DewormingCard({
               <Icon icon="mdi:scale" className="w-4 h-4 text-purple-400 group-hover/item:text-purple-300 group-hover/item:scale-110 transition-all duration-200" />
               {t('portfolio.dewormings.card.weightLabel')}
             </span>
-            <span className="text-white font-medium group-hover/item:text-emerald-100 transition-colors duration-200">{deworming.weight_at_treatment} kg</span>
+            <span className="text-white font-medium group-hover/item:text-emerald-100 transition-colors duration-200">{formatWeight(deworming.weight_at_treatment)} {getWeightUnitLabel()}</span>
           </div>
         )}
         
@@ -120,6 +131,26 @@ export default function DewormingCard({
               {t('portfolio.dewormings.card.notesLabel')}
             </span>
             <span className="text-white text-sm italic group-hover/notes:text-slate-100 transition-colors duration-200">{deworming.notes}</span>
+          </div>
+        )}
+
+        {linkedDocuments && linkedDocuments.length > 0 && (
+          <div className="bg-slate-700/30 p-4 rounded-xl border border-slate-600/50 hover:bg-slate-700/50 hover:border-slate-500/50 transition-all duration-300 group/docs">
+            <span className="text-slate-300 text-sm font-medium block mb-2 group-hover/docs:text-slate-200 transition-colors duration-200 flex items-center gap-2">
+              <Icon icon="mdi:file-document" className="w-4 h-4 text-teal-400 group-hover/docs:text-teal-300 group-hover/docs:scale-110 transition-all duration-200" />
+              {t('portfolio.common.linkedDocuments')}:
+            </span>
+            <div className="space-y-1.5">
+              {linkedDocuments.map((doc) => (
+                <div key={doc.id} className="flex items-center gap-2 text-sm">
+                  <Icon icon="mdi:link-variant" className="w-3.5 h-3.5 text-teal-400/70 flex-shrink-0" />
+                  <span className="text-teal-300 truncate">{doc.document_name}</span>
+                  {doc.files && doc.files.length > 0 && (
+                    <span className="text-slate-500 text-xs">({doc.files.length} {doc.files.length === 1 ? 'file' : 'files'})</span>
+                  )}
+                </div>
+              ))}
+            </div>
           </div>
         )}
       </div>

@@ -1,6 +1,6 @@
 export default function NotFoundState() {
   return (
-    <div className="min-h-screen bg-slate-900 p-6 flex items-center justify-center">
+    <div className="flex-1 bg-slate-900 p-6 flex items-center justify-center">
       <div className="bg-slate-800 border border-slate-700 text-slate-300 p-8 rounded-2xl text-center max-w-md">
         <div className="text-6xl mb-4">🐾</div>
         <h3 className="text-2xl font-bold mb-3">No se encontró ninguna mascota</h3>

@@ -33,7 +33,7 @@ Managing your pet's health shouldn't be complicated. **RobiPet** transforms the 
 - **💉 Smart Vaccination Tracking** - Never miss a vaccine with intelligent alerts
 - **📊 Weight & Growth Monitoring** - Track your pet's development over time
 - **📄 Document Management** - Store certificates, medical reports, and insurance
-- **🔔 Automated Reminders** - Get notified for upcoming appointments and vaccines
+- **🔔 Automated Reminders** - Get notified for upcoming appointments and vaccines *(coming soon)*
 - **🌐 Multi-Language Support** - Available in English, Spanish, and more
 - **📱 Mobile-First Design** - Perfect on any device, anywhere
 
@@ -191,9 +191,7 @@ RobiPet seamlessly integrates with your daily routine:
 
 1. **📝 Add Your Pet** - Quick setup with essential information
 2. **📸 Upload Documents** - Snap photos of vaccination cards, certificates
-3. **📅 Get Reminders** - Automatic notifications for important dates (UNDER CONSTRUCTION)
-4. **📊 Track Progress** - Monitor health trends over time
-5. **🔄 Share with Vets** - Export reports for veterinary visits (UNDER CONSTRUCTION)
+3. **📊 Track Progress** - Monitor health trends over time
 
 ## 📊 Roadmap
 
@@ -207,8 +205,9 @@ RobiPet seamlessly integrates with your daily routine:
 - [ ] Social features (share pet profiles)
 - [ ] AI-powered health insights
 - [ ] Export to PDF reports
+- [ ] Share with vets - Export reports for veterinary visits
 - [ ] Calendar integration
-- [ ] Notifications via email or another app like ntfy.sh...
+- [ ] Notifications via email or another app like ntfy.sh
 ## 📝 License
 
 This project is licensed under the PolyForm Noncommercial License 1.0.0 - see the [LICENSE](LICENSE) file for details.

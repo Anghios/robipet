@@ -1,4 +1,7 @@
 {
+  "header": {
+    "search": "Buscar..."
+  },
   "navigation": {
     "home": "Inicio",
     "pets": "Mis Mascotas",
@@ -16,6 +19,12 @@
     "title": "Información de tu mascota",
     "subtitle": "Consulta toda la información médica y datos de tu compañero",
     "pageTitle": "RobiPet - Inicio",
+    "year": "año",
+    "years": "años",
+    "month": "mes",
+    "months": "meses",
+    "and": "y",
+    "humanYears": "años humanos",
     "tabs": {
       "info": "Información",
       "medicalReviews": "Revisiones Médicas",
@@ -30,6 +39,7 @@
       "birthDate": "Nació el",
       "age": "Edad",
       "dogAge": "Edad canina",
+      "catAge": "Edad felina",
       "breed": "Raza",
       "color": "Color"
     },
@@ -55,7 +65,7 @@
       "measurements": "Historial de mediciones",
       "newRecord": "Nuevo Registro de Peso",
       "editRecord": "Editar Registro de Peso",
-      "weightKg": "Peso (kg)",
+      "weightKg": "Peso",
       "date": "Fecha",
       "notes": "Observaciones (opcional)",
       "save": "Guardar",
@@ -211,7 +221,8 @@
     "selectPet": "Seleccionar mascota:",
     "loading": "Cargando...",
     "yearsOld": "años",
-    "dogYears": "años caninos"
+    "dogYears": "años caninos",
+    "catYears": "años felinos"
   },
   "confirmationModal": {
     "cancel": "Cancelar",
@@ -431,7 +442,7 @@
       "newButton": "Nuevo",
       "newRecord": "Nuevo Registro",
       "editRecord": "Editar Registro",
-      "weightKg": "Peso (kg)",
+      "weightKg": "Peso",
       "measurementDate": "Fecha de Medición",
       "notes": "Notas",
       "addedBy": "Añadido por",
@@ -442,6 +453,7 @@
       "addFirstWeight": "Añade el primer registro de peso para comenzar a rastrear la evolución del peso de tu mascota",
       "weightEvolution": "Evolución del Peso",
       "progressText": "Progreso: {count} mediciones",
+      "average": "Promedio: {avg}kg",
       "rangeText": "Rango: {min}kg - {max}kg",
       "noWeightHistory": "Sin historial de peso",
       "addFirstWeightRecord": "Añade el primer registro de peso de tu mascota",
@@ -538,7 +550,7 @@
         "productLabel": "Producto/Medicamento *",
         "productPlaceholder": "ej: Stronghold, Nexgard, Bravecto, etc.",
         "treatmentDateLabel": "Fecha de tratamiento *",
-        "weightLabel": "Peso en el tratamiento (kg)",
+        "weightLabel": "Peso en el tratamiento",
         "weightPlaceholder": "ej: 25.5",
         "weightInfo": "Si ingresas un peso, se añadirá al historial cuando la desparasitación se complete",
         "nextDateLabel": "Próxima fecha",
@@ -780,6 +792,7 @@
       "female": "♀️ Hembra",
       "yes": "Sí",
       "no": "No",
+      "humanYears": "años humanos",
       "viewButton": "Ver",
       "editButton": "Editar",
       "deleteButton": "Eliminar",
@@ -805,7 +818,7 @@
       "birthDateRequired": "Fecha de nacimiento *",
       "color": "Color",
       "colorPlaceholder": "Color del pelaje",
-      "weight": "Peso (kg)",
+      "weight": "Peso",
       "weightPlaceholder": "0.0",
       "species": "Especie",
       "speciesDog": "🐕 Perro",

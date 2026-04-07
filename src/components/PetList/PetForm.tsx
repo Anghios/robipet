@@ -3,6 +3,7 @@ import { Icon } from '@iconify/react';
 import type { Pet, NewPet } from '../../types/Pet';
 import { getSpeciesEmoji } from './helpers.ts';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useSettings } from '../../hooks/useSettings';
 
 interface PetFormProps {
   mode: 'create' | 'edit';
@@ -28,6 +29,7 @@ export default function PetForm({
   error 
 }: PetFormProps) {
   const { t } = useTranslation();
+  const { getWeightUnitLabel } = useSettings();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const handleImageInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,7 +115,7 @@ export default function PetForm({
           </div>
           
           <div>
-            <label className="block text-dark-primary font-medium mb-2 text-sm">{t('petList.form.weight')}</label>
+            <label className="block text-dark-primary font-medium mb-2 text-sm">{t('petList.form.weight')} ({getWeightUnitLabel()})</label>
             <input
               type="number"
               step="0.1"

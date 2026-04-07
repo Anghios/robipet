@@ -71,7 +71,7 @@ export function usePetData() {
 
       // Fetch pet data
       const result = await petApi.getPetComplete(petId);
-      
+
       if (result.success && result.data) {
         setPortfolio(result.data);
       } else {
@@ -130,6 +130,18 @@ export function usePetData() {
     fetchDogPortfolio();
     fetchAvailablePets();
   }, [fetchDogPortfolio, fetchAvailablePets]);
+
+  // Listen for pet changes from SharedHeader
+  useEffect(() => {
+    const handlePetChanged = (event: CustomEvent<{ petId: string }>) => {
+      fetchDogPortfolio();
+    };
+
+    window.addEventListener('petChanged', handlePetChanged as EventListener);
+    return () => {
+      window.removeEventListener('petChanged', handlePetChanged as EventListener);
+    };
+  }, [fetchDogPortfolio]);
 
   return {
     // Data

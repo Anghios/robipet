@@ -47,11 +47,15 @@ export const getModalProps = (
     confirmDeleteDeworming: () => void;
     confirmCompleteDeworming: () => void;
     confirmDeleteMedicalReview: () => void;
+    confirmCompleteMedicalReview: () => void;
     confirmDeleteDocumentFile: () => void;
     confirmDeleteSelectedFile: () => void;
     confirmDeleteDocument: () => void;
   },
-  translationFn?: any
+  translationFn?: any,
+  dateFormat?: string,
+  weightUnit?: string,
+  formatWeightFn?: (v: any) => string
 ): ModalConfig | null => {
   if (!activeModal) return null;
 
@@ -84,8 +88,8 @@ export const getModalProps = (
       return {
         title: safeTranslate(translationFn, 'confirmationModal.deleteWeight.title', 'Eliminar Registro de Peso'),
         message: interpolate(
-          safeTranslate(translationFn, 'confirmationModal.deleteWeight.message', '¿Estás seguro de que quieres eliminar el registro de peso de {weight} kg del {date}? Esta acción no se puede deshacer.'),
-          { weight: activeModal.item?.weight_kg, date: activeModal.item ? formatDate(activeModal.item.measurement_date) : '' }
+          safeTranslate(translationFn, 'confirmationModal.deleteWeight.message', '¿Estás seguro de que quieres eliminar el registro de peso de {weight} {unit} del {date}? Esta acción no se puede deshacer.'),
+          { weight: formatWeightFn ? formatWeightFn(activeModal.item?.weight_kg) : activeModal.item?.weight_kg, unit: weightUnit || 'kg', date: activeModal.item ? formatDate(activeModal.item.measurement_date, 'en', dateFormat) : '' }
         ),
         confirmText: safeTranslate(translationFn, 'confirmationModal.deleteWeight.confirmText', 'Eliminar'),
         confirmColor: 'bg-red-600 hover:bg-red-500 focus:ring-red-400',
@@ -145,12 +149,24 @@ export const getModalProps = (
         title: safeTranslate(translationFn, 'confirmationModal.deleteMedicalReview.title', 'Eliminar Revisión Médica'),
         message: interpolate(
           safeTranslate(translationFn, 'confirmationModal.deleteMedicalReview.message', '¿Estás seguro de que quieres eliminar la revisión médica del {date}? Esta acción no se puede deshacer.'),
-          { date: activeModal.item ? formatDate(activeModal.item.visit_date) : '' }
+          { date: activeModal.item ? formatDate(activeModal.item.visit_date, 'en', dateFormat) : '' }
         ),
         confirmText: safeTranslate(translationFn, 'confirmationModal.deleteMedicalReview.confirmText', 'Eliminar'),
         confirmColor: 'bg-red-600 hover:bg-red-500 focus:ring-red-400',
         icon: 'mdi:delete',
         onConfirm: confirmActions.confirmDeleteMedicalReview
+      };
+    case 'completeMedicalReview':
+      return {
+        title: safeTranslate(translationFn, 'confirmationModal.completeMedicalReview.title', 'Completar Revisión Médica'),
+        message: interpolate(
+          safeTranslate(translationFn, 'confirmationModal.completeMedicalReview.message', '¿Confirmas que la revisión médica "{reason}" ha sido completada?'),
+          { reason: activeModal.item?.reason || safeTranslate(translationFn, 'portfolio.medicalReviews.card.visitType' + (activeModal.item?.visit_type?.charAt(0).toUpperCase() + activeModal.item?.visit_type?.slice(1)), activeModal.item?.visit_type) }
+        ),
+        confirmText: safeTranslate(translationFn, 'confirmationModal.completeMedicalReview.confirmText', 'Completar'),
+        confirmColor: 'bg-green-600 hover:bg-green-500 focus:ring-green-400',
+        icon: 'mdi:check',
+        onConfirm: confirmActions.confirmCompleteMedicalReview
       };
     case 'deleteDocumentFile':
       return {

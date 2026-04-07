@@ -37,6 +37,7 @@ export interface DogInfo extends Pet {
   age_months: number;
   age_days: number;
   dog_years: number;
+  human_years?: number;
 }
 
 // Tipos médicos para perros

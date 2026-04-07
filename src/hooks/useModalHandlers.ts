@@ -7,6 +7,7 @@ interface ModalHandlers {
   openDeleteDewormingModal: (deworming: any) => void;
   openCompleteDewormingModal: (deworming: any) => void;
   openDeleteMedicalReviewModal: (review: any) => void;
+  openCompleteMedicalReviewModal: (review: any) => void;
   openDeleteDocumentModal: (document: any) => void;
 }
 
@@ -17,6 +18,10 @@ export function useModalHandlers(modals: ModalHandlers) {
 
   const handleDeleteMedicalReview = async (review: any) => {
     modals.openDeleteMedicalReviewModal(review);
+  };
+
+  const handleMarkMedicalReviewCompleted = async (review: any) => {
+    modals.openCompleteMedicalReviewModal(review);
   };
 
   const handleDeleteVaccine = async (vaccine: any) => {
@@ -50,6 +55,7 @@ export function useModalHandlers(modals: ModalHandlers) {
   return {
     handleMarkVaccineCompleted,
     handleDeleteMedicalReview,
+    handleMarkMedicalReviewCompleted,
     handleDeleteVaccine,
     handleDeleteDeworming,
     handleMarkDewormingCompleted,

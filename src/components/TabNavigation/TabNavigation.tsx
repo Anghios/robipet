@@ -1,7 +1,7 @@
 import { Icon } from '@iconify/react';
 import NotificationBadge from '../Visuals/NotificationBadge';
 
-type TabType = 'info' | 'medical_reviews' | 'vaccines' | 'weight' | 'medication' | 'deworming' | 'documents';
+type TabType = 'summary' | 'info' | 'timeline' | 'medical_reviews' | 'vaccines' | 'weight' | 'medication' | 'deworming' | 'documents';
 
 interface TabNavigationProps {
   activeTab: TabType;
@@ -30,11 +30,25 @@ export default function TabNavigation({
     ? `${baseNavClasses} max-lg:order-2 max-lg:hidden`
     : `${baseNavClasses} mb-8 lg:hidden`;
 
+  const totalPending = pendingVaccines + pendingMedications + pendingDewormings;
+
   const tabs = [
+    {
+      id: 'summary' as TabType,
+      icon: 'mdi:view-dashboard',
+      label: t('home.tabs.summary'),
+      count: totalPending
+    },
     {
       id: 'info' as TabType,
       icon: 'mdi:clipboard-text-outline',
       label: t('home.tabs.info'),
+      count: 0
+    },
+    {
+      id: 'timeline' as TabType,
+      icon: 'mdi:timeline',
+      label: t('home.tabs.timeline'),
       count: 0
     },
     {

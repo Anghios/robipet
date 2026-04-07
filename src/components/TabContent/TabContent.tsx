@@ -14,11 +14,14 @@ import WeightForm from '../DogPortfolio/WeightForm';
 import DocumentsCard from '../DogPortfolio/DocumentsCard';
 import DocumentsForm from '../DogPortfolio/DocumentsForm';
 import NotificationBadge from '../Visuals/NotificationBadge';
+import DashboardSummary from '../Dashboard/DashboardSummary';
+import MedicalTimeline from '../Timeline/MedicalTimeline';
 import type { DogPortfolio } from '../../types/Pet';
 import { formatDate, getVaccineStatusBadgeData, getSpeciesEmoji } from '../../utils/petUtils';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useSettings } from '../../hooks/useSettings';
 
-type TabType = 'info' | 'medical_reviews' | 'vaccines' | 'weight' | 'medication' | 'deworming' | 'documents';
+type TabType = 'summary' | 'info' | 'timeline' | 'medical_reviews' | 'vaccines' | 'weight' | 'medication' | 'deworming' | 'documents';
 
 interface TabContentProps {
   activeTab: TabType;
@@ -100,10 +103,14 @@ interface TabContentProps {
   getVaccineStatusBadge: (status: string) => JSX.Element;
   getVaccineStatusColor: (status: string) => string;
   getSizeText: (size: string) => string;
+
+  // Navigation
+  onNavigateToTab: (tab: TabType) => void;
 }
 
 export default function TabContent(props: TabContentProps) {
   const { t, locale } = useTranslation();
+  const { getDateFormat } = useSettings();
   const {
     activeTab,
     portfolio,
@@ -113,31 +120,70 @@ export default function TabContent(props: TabContentProps) {
     getVaccineStatusColor,
     getSizeText
   } = props;
-  
+
   const { dog_info, vaccines, weight_history } = portfolio || { dog_info: null, vaccines: [], weight_history: [] };
   const medications = portfolio?.medications || [];
   const dewormings = portfolio?.dewormings || [];
   const medicalReviews = portfolio?.medical_reviews || [];
-  
+
   // Create localized formatDate function
-  const formatDateLocalized = (dateString: string) => formatDate(dateString, locale);
+  const formatDateLocalized = (dateString: string) => formatDate(dateString, locale, getDateFormat());
   const documents = portfolio?.documents || [];
   
   const pendingVaccines = getPendingCount(vaccines, 'vaccines');
   const pendingMedications = getPendingCount(medications, 'medications');
   const pendingDewormings = getPendingCount(dewormings, 'dewormings');
 
+  if (activeTab === 'summary') {
+    return (
+      <DashboardSummary
+        vaccines={vaccines}
+        medications={medications}
+        dewormings={dewormings}
+        medicalReviews={medicalReviews}
+        weightHistory={weight_history}
+        currentWeight={getCurrentWeight()}
+        petName={dog_info?.name || ''}
+        onNavigateToTab={props.onNavigateToTab}
+        t={t}
+      />
+    );
+  }
+
   if (activeTab === 'info') {
     return (
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <BasicInfoCard 
-          dog_info={dog_info} 
+        <BasicInfoCard
+          dog_info={dog_info}
           formatDate={formatDateLocalized}
         />
-        <PhysicalDataCard 
+        <PhysicalDataCard
           dog_info={dog_info}
           getSizeText={getSizeText}
           getCurrentWeight={getCurrentWeight}
+        />
+      </div>
+    );
+  }
+
+  if (activeTab === 'timeline') {
+    return (
+      <div>
+        <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 md:gap-0 mb-8">
+          <h3 className="text-xl font-bold text-white flex items-center">
+            <Icon icon="mdi:timeline" className="mr-4 w-8 h-8 text-indigo-400" />
+            <span className="bg-gradient-to-r from-indigo-400 to-purple-400 bg-clip-text text-transparent">
+              {t('home.tabs.timeline')}
+            </span>
+          </h3>
+        </div>
+        <MedicalTimeline
+          vaccines={vaccines}
+          medications={medications}
+          dewormings={dewormings}
+          medicalReviews={medicalReviews}
+          weightHistory={weight_history}
+          t={t}
         />
       </div>
     );
@@ -185,6 +231,7 @@ export default function TabContent(props: TabContentProps) {
                 formatDate={formatDateLocalized}
                 onEdit={props.handleEditMedicalReview}
                 onDelete={props.handleDeleteMedicalReview}
+                linkedDocuments={documents.filter(d => d.links?.some((l: any) => l.linked_type === 'review' && Number(l.linked_id) === review.id))}
               />
             ))
           }
@@ -247,6 +294,7 @@ export default function TabContent(props: TabContentProps) {
                 onEdit={props.handleEditVaccine}
                 onDelete={props.handleDeleteVaccine}
                 onComplete={props.handleMarkVaccineCompleted}
+                linkedDocuments={documents.filter(d => d.links?.some((l: any) => l.linked_type === 'vaccine' && Number(l.linked_id) === vaccine.id))}
               />
             ))
           }
@@ -307,6 +355,7 @@ export default function TabContent(props: TabContentProps) {
                 onEdit={props.handleEditMedication}
                 onDelete={props.handleDeleteMedication}
                 onComplete={props.handleMarkMedicationCompleted}
+                linkedDocuments={documents.filter(d => d.links?.some((l: any) => l.linked_type === 'medication' && Number(l.linked_id) === medication.id))}
               />
             ))
           }
@@ -367,6 +416,7 @@ export default function TabContent(props: TabContentProps) {
                 onEdit={props.handleEditDeworming}
                 onDelete={props.handleDeleteDeworming}
                 onComplete={props.handleMarkDewormingCompleted}
+                linkedDocuments={documents.filter(d => d.links?.some((l: any) => l.linked_type === 'deworming' && Number(l.linked_id) === deworming.id))}
               />
             ))
           }

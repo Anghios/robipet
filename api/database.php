@@ -124,19 +124,19 @@ class Database {
         
         // Migrar weight_history de dog_id a pet_id si es necesario
         try {
-            // Verificar si hay registros con dog_id en weight_history
             $result = $this->connection->query("PRAGMA table_info(weight_history)");
             $columns = $result->fetchAll(PDO::FETCH_ASSOC);
-            $hasDogId = false;
-            foreach ($columns as $column) {
-                if ($column['name'] === 'dog_id') {
-                    $hasDogId = true;
-                    break;
-                }
+            $columnNames = array_column($columns, 'name');
+            $hasDogId = in_array('dog_id', $columnNames);
+            $hasPetId = in_array('pet_id', $columnNames);
+
+            // Add pet_id column if it doesn't exist
+            if (!$hasPetId) {
+                $this->connection->exec("ALTER TABLE weight_history ADD COLUMN pet_id INTEGER");
             }
-            
+
+            // Copy dog_id values to pet_id
             if ($hasDogId) {
-                // Copiar datos de dog_id a pet_id si pet_id está NULL
                 $this->connection->exec("UPDATE weight_history SET pet_id = dog_id WHERE pet_id IS NULL");
             }
         } catch (PDOException $e) {
@@ -289,9 +289,60 @@ class Database {
         } catch (PDOException $e) {
             // La columna ya existe, no hacer nada
         }
-        
+
+        // Migración: Añadir columnas linked_type y linked_id a documents
+        try {
+            $this->connection->exec("ALTER TABLE documents ADD COLUMN linked_type TEXT DEFAULT NULL");
+        } catch (PDOException $e) {
+            // La columna ya existe
+        }
+        try {
+            $this->connection->exec("ALTER TABLE documents ADD COLUMN linked_id INTEGER DEFAULT NULL");
+        } catch (PDOException $e) {
+            // La columna ya existe
+        }
+
+        // Crear tabla document_links (many-to-many entre documents y entries)
+        $documentLinksSql = "CREATE TABLE IF NOT EXISTS document_links (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            document_id INTEGER NOT NULL,
+            linked_type TEXT NOT NULL,
+            linked_id INTEGER NOT NULL,
+            created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+            FOREIGN KEY (document_id) REFERENCES documents(id) ON DELETE CASCADE
+        )";
+        $this->connection->exec($documentLinksSql);
+
+        // Migración: mover datos de documents.linked_type/linked_id a document_links
+        try {
+            $migrateStmt = $this->connection->prepare("SELECT id, linked_type, linked_id FROM documents WHERE linked_type IS NOT NULL AND linked_type != '' AND linked_id IS NOT NULL");
+            $migrateStmt->execute();
+            $toMigrate = $migrateStmt->fetchAll(PDO::FETCH_ASSOC);
+            if (!empty($toMigrate)) {
+                $insertLink = $this->connection->prepare("INSERT OR IGNORE INTO document_links (document_id, linked_type, linked_id) VALUES (?, ?, ?)");
+                foreach ($toMigrate as $row) {
+                    $insertLink->execute([$row['id'], $row['linked_type'], $row['linked_id']]);
+                }
+                // Limpiar columnas antiguas
+                $this->connection->exec("UPDATE documents SET linked_type = NULL, linked_id = NULL WHERE linked_type IS NOT NULL");
+            }
+        } catch (PDOException $e) {
+            // Migración ya ejecutada o error no crítico
+        }
+
+        // Crear tabla settings
+        $settingsSql = "CREATE TABLE IF NOT EXISTS settings (
+            key TEXT PRIMARY KEY,
+            value TEXT NOT NULL,
+            updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+        )";
+        $this->connection->exec($settingsSql);
+
         // Crear admin por defecto solo si no hay usuarios
         $this->createDefaultAdmin();
+
+        // Crear settings por defecto
+        $this->createDefaultSettings();
     }
     
     public function getDogInfo() {
@@ -454,16 +505,31 @@ class Database {
     }
     
     public function getPetWeightHistory($petId) {
-        // Primero intentar con pet_id, si falla usar dog_id
+        $columnName = $this->getWeightHistoryPetColumn();
+
         try {
-            $stmt = $this->connection->prepare("SELECT * FROM weight_history WHERE pet_id = ? ORDER BY measurement_date DESC");
+            $stmt = $this->connection->prepare("SELECT * FROM weight_history WHERE $columnName = ? ORDER BY measurement_date DESC");
             $stmt->execute([$petId]);
             return $stmt->fetchAll(PDO::FETCH_ASSOC);
         } catch (PDOException $e) {
-            // Si falla con pet_id, intentar con dog_id
-            $stmt = $this->connection->prepare("SELECT * FROM weight_history WHERE dog_id = ? ORDER BY measurement_date DESC");
-            $stmt->execute([$petId]);
-            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+            error_log("[getPetWeightHistory] Error: " . $e->getMessage());
+            return [];
+        }
+    }
+
+    // Helper to detect which column name to use for pet ID in weight_history
+    private function getWeightHistoryPetColumn() {
+        try {
+            $result = $this->connection->query("PRAGMA table_info(weight_history)");
+            $columns = $result->fetchAll(PDO::FETCH_ASSOC);
+            $columnNames = array_column($columns, 'name');
+
+            if (in_array('pet_id', $columnNames)) {
+                return 'pet_id';
+            }
+            return 'dog_id'; // Fallback to legacy column
+        } catch (PDOException $e) {
+            return 'dog_id';
         }
     }
     
@@ -560,26 +626,38 @@ class Database {
     // Métodos para gestión de peso
     public function addWeightRecord($petId, $data) {
         try {
-            // Intentar primero con pet_id, si falla usar dog_id para compatibilidad
-            try {
-                $stmt = $this->connection->prepare("INSERT INTO weight_history (pet_id, weight_kg, measurement_date, notes, added_by_user) VALUES (?, ?, ?, ?, ?)");
-            } catch (PDOException $e) {
-                // Si falla, intentar con dog_id
-                $stmt = $this->connection->prepare("INSERT INTO weight_history (dog_id, weight_kg, measurement_date, notes, added_by_user) VALUES (?, ?, ?, ?, ?)");
+            $columnName = $this->getWeightHistoryPetColumn();
+
+            // Check if added_by_user column exists
+            $tableInfo = $this->connection->query("PRAGMA table_info(weight_history)")->fetchAll(PDO::FETCH_ASSOC);
+            $columnNames = array_column($tableInfo, 'name');
+            $hasAddedByUser = in_array('added_by_user', $columnNames);
+
+            if ($hasAddedByUser) {
+                $stmt = $this->connection->prepare("INSERT INTO weight_history ($columnName, weight_kg, measurement_date, notes, added_by_user) VALUES (?, ?, ?, ?, ?)");
+                $stmt->execute([
+                    $petId,
+                    $data['weight_kg'],
+                    $data['measurement_date'],
+                    $data['notes'] ?? null,
+                    $data['added_by_user'] ?? 'Usuario'
+                ]);
+            } else {
+                $stmt = $this->connection->prepare("INSERT INTO weight_history ($columnName, weight_kg, measurement_date, notes) VALUES (?, ?, ?, ?)");
+                $stmt->execute([
+                    $petId,
+                    $data['weight_kg'],
+                    $data['measurement_date'],
+                    $data['notes'] ?? null
+                ]);
             }
 
-            $stmt->execute([
-                $petId,
-                $data['weight_kg'],
-                $data['measurement_date'],
-                $data['notes'] ?? null,
-                $data['added_by_user'] ?? 'Usuario'
-            ]);
+            $lastId = $this->connection->lastInsertId();
 
             // Actualizar el peso actual en la tabla pets con el registro más reciente por fecha
             $this->updateCurrentWeight($petId);
 
-            return ['success' => true, 'message' => 'Registro de peso añadido', 'id' => $this->connection->lastInsertId()];
+            return ['success' => true, 'message' => 'Registro de peso añadido', 'id' => $lastId];
         } catch (PDOException $e) {
             return $this->handleDbError($e, 'database operation');
         }
@@ -587,12 +665,9 @@ class Database {
     
     public function updateWeightRecord($petId, $weightId, $data) {
         try {
-            // Intentar primero con pet_id, si falla usar dog_id
-            try {
-                $stmt = $this->connection->prepare("UPDATE weight_history SET weight_kg = ?, measurement_date = ?, notes = ? WHERE id = ? AND pet_id = ?");
-            } catch (PDOException $e) {
-                $stmt = $this->connection->prepare("UPDATE weight_history SET weight_kg = ?, measurement_date = ?, notes = ? WHERE id = ? AND dog_id = ?");
-            }
+            $columnName = $this->getWeightHistoryPetColumn();
+
+            $stmt = $this->connection->prepare("UPDATE weight_history SET weight_kg = ?, measurement_date = ?, notes = ? WHERE id = ? AND $columnName = ?");
 
             $stmt->execute([
                 $data['weight_kg'],
@@ -607,25 +682,24 @@ class Database {
 
             return ['success' => true, 'message' => 'Registro de peso actualizado'];
         } catch (PDOException $e) {
+            error_log("[updateWeightRecord] Error: " . $e->getMessage());
             return $this->handleDbError($e, 'database operation');
         }
     }
 
     public function deleteWeightRecord($petId, $weightId) {
         try {
-            // Intentar primero con pet_id, si falla usar dog_id
-            try {
-                $stmt = $this->connection->prepare("DELETE FROM weight_history WHERE id = ? AND pet_id = ?");
-            } catch (PDOException $e) {
-                $stmt = $this->connection->prepare("DELETE FROM weight_history WHERE id = ? AND dog_id = ?");
-            }
+            $columnName = $this->getWeightHistoryPetColumn();
+
+            $stmt = $this->connection->prepare("DELETE FROM weight_history WHERE id = ? AND $columnName = ?");
             $stmt->execute([$weightId, $petId]);
-            
+
             // Actualizar el peso actual con el registro más reciente por fecha
             $this->updateCurrentWeight($petId);
-            
+
             return ['success' => true, 'message' => 'Registro de peso eliminado'];
         } catch (PDOException $e) {
+            error_log("[deleteWeightRecord] Error: " . $e->getMessage());
             return $this->handleDbError($e, 'database operation');
         }
     }
@@ -633,13 +707,10 @@ class Database {
     // Método para actualizar el peso actual basado en el registro más reciente por fecha
     private function updateCurrentWeight($petId) {
         try {
+            $columnName = $this->getWeightHistoryPetColumn();
+
             // Buscar el peso más reciente por fecha (no por ID)
-            // Intentar primero con pet_id, si falla usar dog_id
-            try {
-                $latestStmt = $this->connection->prepare("SELECT weight_kg FROM weight_history WHERE pet_id = ? ORDER BY measurement_date DESC, created_at DESC, id DESC LIMIT 1");
-            } catch (PDOException $e) {
-                $latestStmt = $this->connection->prepare("SELECT weight_kg FROM weight_history WHERE dog_id = ? ORDER BY measurement_date DESC, created_at DESC, id DESC LIMIT 1");
-            }
+            $latestStmt = $this->connection->prepare("SELECT weight_kg FROM weight_history WHERE $columnName = ? ORDER BY measurement_date DESC, created_at DESC, id DESC LIMIT 1");
             $latestStmt->execute([$petId]);
             $latestWeight = $latestStmt->fetchColumn();
 
@@ -1091,14 +1162,16 @@ class Database {
             $stmt->execute([$petId]);
             $documents = $stmt->fetchAll(PDO::FETCH_ASSOC);
             
-            // Para cada documento, obtener sus archivos asociados
+            // Para cada documento, obtener sus archivos asociados y links
             $fileStmt = $this->connection->prepare("SELECT * FROM document_files WHERE document_id = ? ORDER BY created_at ASC");
+            $linkStmt = $this->connection->prepare("SELECT linked_type, linked_id FROM document_links WHERE document_id = ?");
             foreach ($documents as &$document) {
                 $fileStmt->execute([$document['id']]);
-                $files = $fileStmt->fetchAll(PDO::FETCH_ASSOC);
-                $document['files'] = $files;
+                $document['files'] = $fileStmt->fetchAll(PDO::FETCH_ASSOC);
+                $linkStmt->execute([$document['id']]);
+                $document['links'] = $linkStmt->fetchAll(PDO::FETCH_ASSOC);
             }
-            
+
             return $documents;
         } catch (PDOException $e) {
             return [];
@@ -1111,17 +1184,19 @@ class Database {
             $this->connection->beginTransaction();
             
             // Insertar el documento principal
-            $stmt = $this->connection->prepare("INSERT INTO documents (pet_id, document_name, document_type, upload_date, file_path, description, expiry_date, veterinarian, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
+            $stmt = $this->connection->prepare("INSERT INTO documents (pet_id, document_name, document_type, upload_date, file_path, description, expiry_date, veterinarian, notes, linked_type, linked_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
             $stmt->execute([
                 $petId,
                 $data['document_name'],
                 $data['document_type'],
                 $data['upload_date'],
-                $data['file_path'] ?? null, // Mantener compatibilidad con archivos únicos
+                $data['file_path'] ?? null,
                 $data['description'] ?? '',
                 $data['expiry_date'] ?? null,
                 $data['veterinarian'] ?? '',
-                $data['notes'] ?? ''
+                $data['notes'] ?? '',
+                $data['linked_type'] ?? null,
+                $data['linked_id'] ?? null
             ]);
             
             $documentId = $this->connection->lastInsertId();
@@ -1183,11 +1258,19 @@ class Database {
                 $setClauses[] = "notes = ?";
                 $params[] = $data['notes'];
             }
-            
+            if (array_key_exists('linked_type', $data)) {
+                $setClauses[] = "linked_type = ?";
+                $params[] = $data['linked_type'];
+            }
+            if (array_key_exists('linked_id', $data)) {
+                $setClauses[] = "linked_id = ?";
+                $params[] = $data['linked_id'];
+            }
+
             if (empty($setClauses)) {
                 return ['success' => false, 'message' => 'No data to update'];
             }
-            
+
             $setClauses[] = "updated_at = CURRENT_TIMESTAMP";
             $params[] = $documentId;
             $params[] = $petId;
@@ -1199,6 +1282,45 @@ class Database {
             $stmt->execute($params);
             
             return ['success' => true, 'message' => 'Documento actualizado'];
+        } catch (PDOException $e) {
+            return $this->handleDbError($e, 'database operation');
+        }
+    }
+
+    // Document Links (many-to-many)
+    public function setDocumentLinks($documentId, $links) {
+        try {
+            $this->connection->beginTransaction();
+            $this->connection->prepare("DELETE FROM document_links WHERE document_id = ?")->execute([$documentId]);
+            if (!empty($links)) {
+                $stmt = $this->connection->prepare("INSERT OR IGNORE INTO document_links (document_id, linked_type, linked_id) VALUES (?, ?, ?)");
+                foreach ($links as $link) {
+                    $stmt->execute([$documentId, $link['linked_type'], $link['linked_id']]);
+                }
+            }
+            $this->connection->commit();
+            return ['success' => true, 'message' => 'Links actualizados'];
+        } catch (PDOException $e) {
+            $this->connection->rollBack();
+            return $this->handleDbError($e, 'database operation');
+        }
+    }
+
+    public function addDocumentLink($documentId, $linkedType, $linkedId) {
+        try {
+            $stmt = $this->connection->prepare("INSERT OR IGNORE INTO document_links (document_id, linked_type, linked_id) VALUES (?, ?, ?)");
+            $stmt->execute([$documentId, $linkedType, $linkedId]);
+            return ['success' => true, 'message' => 'Link añadido'];
+        } catch (PDOException $e) {
+            return $this->handleDbError($e, 'database operation');
+        }
+    }
+
+    public function removeDocumentLink($documentId, $linkedType, $linkedId) {
+        try {
+            $stmt = $this->connection->prepare("DELETE FROM document_links WHERE document_id = ? AND linked_type = ? AND linked_id = ?");
+            $stmt->execute([$documentId, $linkedType, $linkedId]);
+            return ['success' => true, 'message' => 'Link eliminado'];
         } catch (PDOException $e) {
             return $this->handleDbError($e, 'database operation');
         }
@@ -1358,6 +1480,52 @@ class Database {
     
     public function getConnection() {
         return $this->connection;
+    }
+
+    // ========== SETTINGS METHODS ==========
+
+    public function getSettings() {
+        $stmt = $this->connection->query("SELECT key, value FROM settings");
+        $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        $settings = [];
+        foreach ($rows as $row) {
+            $settings[$row['key']] = $row['value'];
+        }
+        return $settings;
+    }
+
+    public function getSetting($key) {
+        $stmt = $this->connection->prepare("SELECT value FROM settings WHERE key = ?");
+        $stmt->execute([$key]);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $row ? $row['value'] : null;
+    }
+
+    public function setSetting($key, $value) {
+        try {
+            $stmt = $this->connection->prepare("INSERT INTO settings (key, value, updated_at) VALUES (?, ?, CURRENT_TIMESTAMP) ON CONFLICT(key) DO UPDATE SET value = ?, updated_at = CURRENT_TIMESTAMP");
+            $stmt->execute([$key, $value, $value]);
+            return ['success' => true, 'message' => 'Setting updated'];
+        } catch (PDOException $e) {
+            return $this->handleDbError($e, 'settings update');
+        }
+    }
+
+    private function createDefaultSettings() {
+        try {
+            $defaults = [
+                'currency' => 'eur',
+                'language' => 'en',
+                'dateFormat' => 'dmySlash',
+                'weightUnit' => 'kg'
+            ];
+            foreach ($defaults as $key => $value) {
+                $stmt = $this->connection->prepare("INSERT OR IGNORE INTO settings (key, value) VALUES (?, ?)");
+                $stmt->execute([$key, $value]);
+            }
+        } catch (PDOException $e) {
+            error_log("Error creating default settings: " . $e->getMessage());
+        }
     }
 
     private function createDefaultAdmin() {

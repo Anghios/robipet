@@ -1,12 +1,8 @@
 ---
-import ProtectedLayout from '../layouts/ProtectedLayout.astro';
+import HomeLayout from '../layouts/HomeLayout.astro';
 import PetsList from '../components/PetsList';
-import PageTitle from '../components/PageTitle';
 ---
 
-<ProtectedLayout title="RobiPet">
-	<PageTitle client:only="react" titleKey="petList.page.title" fallback="RobiPet - Pets" />
-	<main class="max-w-7xl mx-auto px-4 py-6 min-h-screen">
-		<PetsList client:load />
-	</main>
-</ProtectedLayout>
+<HomeLayout title="RobiPet">
+	<PetsList client:load />
+</HomeLayout>

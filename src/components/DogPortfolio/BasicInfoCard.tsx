@@ -9,6 +9,7 @@ interface BasicInfoCardProps {
     age_months?: number;
     species?: string;
     dog_years?: number;
+    human_years?: number;
   } | null;
   formatDate: (date: string) => string;
 }
@@ -68,14 +69,14 @@ export default function BasicInfoCard({ dog_info, formatDate }: BasicInfoCardPro
           </span>
         </div>
 
-        {dog_info?.species === 'dog' && (
+        {(dog_info?.species === 'dog' || dog_info?.species === 'cat') && (
           <div className="flex items-center justify-between py-3 px-2 rounded-lg hover:bg-slate-700/30 transition-colors duration-200 group/item">
             <span className="text-slate-300 group-hover:text-slate-200 font-medium flex items-center gap-2 transition-colors duration-200">
-              <Icon icon="ph:dog-fill" className="w-4 h-4 text-cyan-400 group-hover/item:text-cyan-300 group-hover/item:scale-110 transition-all duration-200" />
-              {t('home.basicInfo.dogAge')}
+              <Icon icon={dog_info?.species === 'cat' ? 'ph:cat' : 'ph:dog-fill'} className="w-4 h-4 text-cyan-400 group-hover/item:text-cyan-300 group-hover/item:scale-110 transition-all duration-200" />
+              {dog_info?.species === 'cat' ? t('home.basicInfo.catAge') : t('home.basicInfo.dogAge')}
             </span>
             <span className="text-white font-semibold group-hover/item:text-cyan-100 transition-colors duration-200">
-              {dog_info?.dog_years || 0} {t('common.years')}
+              {dog_info?.human_years || dog_info?.dog_years || 0} {t('common.years')}
             </span>
           </div>
         )}

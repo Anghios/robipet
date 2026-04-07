@@ -7,6 +7,33 @@
     "login": "Login",
     "logout": "Logout"
   },
+  "header": {
+    "switchPet": "Switch pet",
+    "managePets": "Manage pets",
+    "search": "Search"
+  },
+  "sections": {
+    "summary": "Summary",
+    "health": "Health",
+    "documents": "Documents",
+    "settings": "Info"
+  },
+  "health": {
+    "timeline": "Timeline",
+    "vaccines": "Vaccines",
+    "medications": "Medications",
+    "dewormings": "Dewormings",
+    "reviews": "Reviews",
+    "weight": "Weight"
+  },
+  "search": {
+    "placeholder": "Search vaccines, medications, documents...",
+    "typeToSearch": "Type at least 2 characters to search",
+    "noResults": "No results found",
+    "toSelect": "Select",
+    "toClose": "Close",
+    "resultsCount": "{count} results"
+  },
   "no_pets": {
     "title": "No pets added",
     "subtitle": "Add your first pet to start managing their medical information and tracking.",
@@ -16,7 +43,58 @@
     "title": "Your pet's information",
     "subtitle": "Check all medical information and data about your companion",
     "pageTitle": "RobiPet - Home",
+    "year": "year",
+    "years": "years",
+    "month": "month",
+    "months": "months",
+    "day": "day",
+    "days": "days",
+    "and": "and",
+    "humanYears": "human years",
+    "birthdayToday": "Today is their birthday!",
+    "daysUntilBirthday": "{days} days until birthday",
+    "cards": {
+      "vaccines": "Vaccines",
+      "dewormings": "Dewormings",
+      "medications": "Medications",
+      "reviews": "Reviews",
+      "documents": "Documents",
+      "weightTrend": "Weight",
+      "recentActivity": "Recent Activity",
+      "total": "Total",
+      "active": "Active",
+      "visits": "Visits",
+      "files": "Files",
+      "currentWeight": "Current weight",
+      "last30Days": "{count} events in 30 days"
+    },
+    "alerts": {
+      "overdueVaccines": "Overdue vaccines",
+      "overdueVaccinesDesc": "{count} vaccines need attention",
+      "activeMedications": "Active medications",
+      "activeMedicationsDesc": "{count} ongoing treatments",
+      "upcomingVaccines": "Upcoming vaccines",
+      "upcomingVaccinesDesc": "{count} vaccines in the next 7 days",
+      "viewDetails": "View details"
+    },
+    "pending": {
+      "title": "Pending tasks",
+      "allClear": "All clear",
+      "allClearDesc": "No pending tasks for your pet",
+      "pendingItems": "{count} pending",
+      "viewAll": "View all pending",
+      "vaccines": "Pending vaccines",
+      "medications": "Active medications",
+      "dewormings": "Pending dewormings",
+      "reviews": "Pending reviews",
+      "dueDateLabel": "Due: {date}",
+      "sinceLabel": "Since: {date}",
+      "scheduledLabel": "Scheduled: {date}",
+      "noDate": "No date"
+    },
     "tabs": {
+      "summary": "Summary",
+      "timeline": "Timeline",
       "info": "Information",
       "medicalReviews": "Medical Reviews",
       "vaccines": "Vaccines",
@@ -30,6 +108,7 @@
       "birthDate": "Birth date",
       "age": "Age",
       "dogAge": "Dog age",
+      "catAge": "Cat age",
       "breed": "Breed",
       "color": "Color"
     },
@@ -55,7 +134,7 @@
       "measurements": "Measurement history",
       "newRecord": "New Weight Record",
       "editRecord": "Edit Weight Record",
-      "weightKg": "Weight (kg)",
+      "weightKg": "Weight",
       "date": "Date",
       "notes": "Notes (optional)",
       "save": "Save",
@@ -75,6 +154,8 @@
     "pageTitle": "RobiPet - Settings",
     "general": "General",
     "users": "Users",
+    "notifications": "Notifications",
+    "notificationsPlaceholder": "Notification settings will be available soon. Here you will be able to configure reminders and alerts for your pets.",
     "database": {
       "title": "Database",
       "description": "Manage and backup your database",
@@ -100,6 +181,12 @@
       "description": "Select default currency for costs and prices",
       "eur": "Euro (€)",
       "usd": "US Dollar ($)"
+    },
+    "weightUnit": {
+      "title": "Weight Unit",
+      "description": "Select the unit for weight measurements",
+      "kg": "Kilograms (kg)",
+      "lb": "Pounds (lb)"
     },
     "dateFormat": {
       "title": "Date Format",
@@ -180,12 +267,6 @@
       "description": "Customize the application appearance",
       "darkMode": "Automatic dark mode",
       "reducedAnimations": "Reduced animations"
-    },
-    "notifications": {
-      "title": "Notifications",
-      "description": "Configure system notifications",
-      "medicalReminders": "Medical reminders",
-      "systemUpdates": "System updates"
     }
   },
   "common": {
@@ -197,6 +278,7 @@
     "user": "User",
     "cancel": "Cancel",
     "save": "Save",
+    "new": "New",
     "edit": "Edit",
     "delete": "Delete",
     "search": "Search",
@@ -211,7 +293,8 @@
     "selectPet": "Select pet:",
     "loading": "Loading...",
     "yearsOld": "years old",
-    "dogYears": "dog years"
+    "dogYears": "dog years",
+    "catYears": "cat years"
   },
   "confirmationModal": {
     "cancel": "Cancel",
@@ -228,7 +311,7 @@
     },
     "deleteWeight": {
       "title": "Delete Weight Record",
-      "message": "Are you sure you want to delete the weight record of {weight} kg from {date}? This action cannot be undone.",
+      "message": "Are you sure you want to delete the weight record of {weight} {unit} from {date}? This action cannot be undone.",
       "confirmText": "Delete"
     },
     "deleteMedication": {
@@ -255,6 +338,11 @@
       "title": "Delete Medical Review",
       "message": "Are you sure you want to delete the medical review from {date}? This action cannot be undone.",
       "confirmText": "Delete"
+    },
+    "completeMedicalReview": {
+      "title": "Complete Medical Review",
+      "message": "Do you confirm that the medical review \"{reason}\" has been completed?",
+      "confirmText": "Complete"
     },
     "deleteDocumentFile": {
       "title": "Delete File",
@@ -374,6 +462,11 @@
     "support": "Support"
   },
   "portfolio": {
+    "info": {
+      "identity": "Identity",
+      "appearance": "Appearance",
+      "healthId": "Health & ID"
+    },
     "basicInfo": {
       "title": "Basic Information",
       "age": "Age",
@@ -428,10 +521,12 @@
     },
     "weight": {
       "title": "Weight History",
+      "newWeight": "New Weight",
+      "editWeight": "Edit Weight",
       "newButton": "New",
       "newRecord": "New Record",
       "editRecord": "Edit Record",
-      "weightKg": "Weight (kg)",
+      "weightKg": "Weight",
       "measurementDate": "Measurement Date",
       "notes": "Notes",
       "addedBy": "Added by",
@@ -441,8 +536,9 @@
       "noWeightRecords": "No weight records yet",
       "addFirstWeight": "Add the first weight record to start tracking your pet's weight evolution",
       "weightEvolution": "Weight Evolution",
-      "progressText": "Progress: {count} measurements",
-      "rangeText": "Range: {min}kg - {max}kg",
+      "progressText": "{count} measurements",
+      "rangeText": "Range: {min} - {max} {unit}",
+      "average": "Average",
       "noWeightHistory": "No weight records",
       "addFirstWeightRecord": "Add your pet's first weight record",
       "editRecordTitle": "Edit record",
@@ -540,7 +636,7 @@
         "productLabel": "Product/Medication *",
         "productPlaceholder": "e.g.: Stronghold, Nexgard, Bravecto, etc.",
         "treatmentDateLabel": "Treatment date *",
-        "weightLabel": "Weight at treatment (kg)",
+        "weightLabel": "Weight at treatment",
         "weightPlaceholder": "e.g.: 25.5",
         "weightInfo": "If you enter a weight, it will be added to the history when the deworming is completed",
         "nextDateLabel": "Next date",
@@ -591,6 +687,8 @@
       "deleteReviewTitle": "Delete review",
       "noReviews": "No medical reviews recorded",
       "addFirstReview": "Add your pet's first medical review",
+      "noDateYet": "No date yet",
+      "markCompleted": "Mark as completed",
       "routine": "Routine",
       "emergency": "Emergency",
       "followup": "Follow-up",
@@ -615,7 +713,7 @@
         "clinicPlaceholder": "Clinic name",
         "reasonLabel": "Reason for visit",
         "reasonPlaceholder": "e.g.: Annual checkup, vomiting, limping...",
-        "costLabel": "Cost (€)",
+        "costLabel": "Cost",
         "costPlaceholder": "45.50",
         "diagnosisLabel": "Diagnosis",
         "diagnosisPlaceholder": "Veterinarian's diagnosis...",
@@ -628,11 +726,12 @@
         "updateButton": "Update",
         "savingText": "Saving...",
         "updatingText": "Updating...",
-        "cancelButton": "Cancel"
+        "cancelButton": "Cancel",
+        "dateOptionalHint": "Date is optional for pending reviews"
       },
       "card": {
         "visitTypeRoutine": "Routine",
-        "visitTypeIllness": "Illness", 
+        "visitTypeIllness": "Illness",
         "visitTypeEmergency": "Emergency",
         "visitTypeFollowUp": "Follow-up",
         "dateLabel": "Date:",
@@ -693,6 +792,14 @@
         "otherOption": "Other",
         "uploadDateLabel": "Upload date *",
         "fileLabel": "File",
+        "dropzoneText": "Drag files here or click to browse",
+        "dropzoneActive": "Drop files here",
+        "linkLabel": "Link to entry",
+        "linkNone": "None",
+        "linkVaccines": "Vaccines",
+        "linkMedications": "Medications",
+        "linkDewormings": "Dewormings",
+        "linkReviews": "Reviews",
         "veterinarianLabel": "Veterinarian/Clinic",
         "veterinarianPlaceholder": "Veterinarian or clinic name",
         "descriptionLabel": "Description",
@@ -754,7 +861,99 @@
       "completed": "Completed",
       "expired": "Expired",
       "active": "Active",
-      "inactive": "Inactive"
+      "inactive": "Inactive",
+      "linkedDocuments": "Linked documents",
+      "linkDocuments": "Link documents",
+      "noDocumentsLinked": "No documents linked",
+      "documentsLinked": "documents linked",
+      "entriesLinked": "entries linked",
+      "selectDocuments": "Select documents",
+      "linkedToOther": "Linked to"
+    }
+  },
+  "timeline": {
+    "status": {
+      "pending": "Pending",
+      "completed": "Completed",
+      "expired": "Expired"
+    },
+    "filters": {
+      "all": "All",
+      "vaccines": "Vaccines",
+      "medications": "Medications",
+      "dewormings": "Dewormings",
+      "reviews": "Reviews",
+      "weight": "Weight"
+    },
+    "details": {
+      "nextDate": "Next date",
+      "veterinarian": "Veterinarian",
+      "notes": "Notes",
+      "dosage": "Dosage",
+      "frequency": "Frequency",
+      "every": "Every",
+      "endDate": "End date",
+      "weight": "Weight",
+      "type": "Type",
+      "diagnosis": "Diagnosis",
+      "treatment": "Treatment",
+      "cost": "Cost"
+    },
+    "visitType": {
+      "routine": "Routine checkup",
+      "illness": "Illness",
+      "emergency": "Emergency",
+      "followUp": "Follow-up"
+    },
+    "empty": {
+      "title": "No history",
+      "description": "No medical records to show in the timeline yet"
+    },
+    "loadMore": "Load more ({count} remaining)",
+    "stats": {
+      "total": "{count} total events",
+      "vaccines": "{count} vaccines",
+      "reviews": "{count} reviews"
+    }
+  },
+  "dashboard": {
+    "welcome": "{name}'s Summary",
+    "allGood": "Everything is up to date",
+    "alertsCount": "{count} items need attention",
+    "alertsTitle": "Alerts & Pending",
+    "moreAlerts": "+{count} more alerts",
+    "quickActions": "Quick Actions",
+    "alerts": {
+      "overdueVaccine": "Overdue vaccine",
+      "activeMedication": "Active medication",
+      "pendingDeworming": "Pending deworming",
+      "upcomingVaccine": "Upcoming vaccine",
+      "viewVaccines": "View",
+      "viewMedications": "View",
+      "viewDewormings": "View"
+    },
+    "actions": {
+      "vaccines": "Vaccines",
+      "medications": "Medications",
+      "weight": "Weight",
+      "reviews": "Reviews"
+    },
+    "stats": {
+      "vaccines": "Vaccines",
+      "weight": "Current weight",
+      "lastReview": "Last review",
+      "alerts": "Alerts",
+      "records": "{count} records",
+      "noReviews": "No reviews",
+      "urgent": "{count} urgent",
+      "today": "Today",
+      "yesterday": "Yesterday",
+      "daysAgo": "{days} days ago",
+      "weeksAgo": "{weeks} weeks ago"
+    },
+    "noAlerts": {
+      "title": "All good",
+      "description": "{name} is up to date with all vaccines and treatments"
     }
   },
   "petList": {
@@ -782,6 +981,7 @@
       "female": "♀️ Female",
       "yes": "Yes",
       "no": "No",
+      "humanYears": "human years",
       "viewButton": "View",
       "editButton": "Edit",
       "deleteButton": "Delete",
@@ -807,7 +1007,7 @@
       "birthDateRequired": "Birth date *",
       "color": "Color",
       "colorPlaceholder": "Coat color",
-      "weight": "Weight (kg)",
+      "weight": "Weight",
       "weightPlaceholder": "0.0",
       "species": "Species",
       "speciesDog": "🐕 Dog",

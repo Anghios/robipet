@@ -1,6 +1,8 @@
 import React from 'react';
 import { Icon } from '@iconify/react';
 import { useTranslation } from '../../hooks/useTranslation';
+import { useSettings } from '../../hooks/useSettings';
+import { formatDateObj } from '../../utils/petUtils';
 
 interface User {
   id: number;
@@ -24,6 +26,7 @@ interface UserCardProps {
 
 export default function UserCard({ user, onEdit, onDeleteConfirm }: UserCardProps) {
   const { t, locale } = useTranslation();
+  const { getDateFormat } = useSettings();
   const injectShakeStyle = () => {
     const existingStyle = document.getElementById('shake-animation');
     if (!existingStyle) {
@@ -97,7 +100,7 @@ export default function UserCard({ user, onEdit, onDeleteConfirm }: UserCardProp
         <div className="flex items-center gap-2 lg:gap-3 text-dark-secondary text-xs lg:text-sm">
           <Icon icon="mdi:calendar" className="w-4 h-4 lg:w-5 lg:h-5 text-dark-accent" />
           <span className="font-medium">{t('config.userCard.created')}</span>
-          <span>{new Date(user.created_at).toLocaleDateString(locale === 'es' ? 'es-ES' : 'en-US')}</span>
+          <span>{formatDateObj(new Date(user.created_at), getDateFormat())}</span>
         </div>
       </div>
       
