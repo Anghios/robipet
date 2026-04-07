@@ -56,7 +56,7 @@ Get RobiPet running in seconds!
 docker run -d \
   --name robipet \
   -p 29724:8081 \
-  -v robipet_sqlite_data:/var/www/html/db \
+  -v robipet_sqlite_data:/db \
   -v robipet_uploads_data:/var/www/html/api/uploads \
   -e APACHE_RUN_USER=www-data \
   -e APACHE_RUN_GROUP=www-data \
@@ -99,7 +99,7 @@ Or via Docker run command:
 docker run -d \
   --name robipet \
   -p 29724:8081 \
-  -v robipet_sqlite_data:/var/www/html/db \
+  -v robipet_sqlite_data:/db \
   -v robipet_uploads_data:/var/www/html/api/uploads \
   -e JWT_SECRET=your_generated_secure_key_here \
   bansheetech/robipet:latest
