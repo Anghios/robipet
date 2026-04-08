@@ -462,7 +462,9 @@
     "supportProject": "Support the project",
     "privacyPolicy": "Privacy Policy",
     "termsOfUse": "Terms of Use",
-    "support": "Support"
+    "support": "Support",
+    "homedockPromo": "Using RobiPet on any platform? Try {homedock}, safe, faster, universally multiplatform with a real-life next-generation interface.",
+    "homedockName": "HomeDock OS"
   },
   "portfolio": {
     "info": {

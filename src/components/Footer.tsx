@@ -56,6 +56,20 @@ export default function Footer() {
             </a>
           </div>
         </div>
+
+        {/* HomeDock OS Promo */}
+        <p className="text-slate-600 text-[10px] text-center mt-3">
+          {t('footer.homedockPromo').split('{homedock}').map((part, i, arr) => (
+            <span key={i}>
+              {part}
+              {i < arr.length - 1 && (
+                <a href="https://homedock.cloud/" target="_blank" rel="noopener noreferrer" className="text-blue-400/70 hover:text-blue-300 transition-colors">
+                  {t('footer.homedockName')}
+                </a>
+              )}
+            </span>
+          ))}
+        </p>
       </div>
     </footer>
   );

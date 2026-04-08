@@ -445,7 +445,9 @@
     "supportProject": "Das Projekt unterstützen",
     "privacyPolicy": "Datenschutzrichtlinie",
     "termsOfUse": "Nutzungsbedingungen",
-    "support": "Support"
+    "support": "Support",
+    "homedockPromo": "Nutzt du RobiPet auf einer beliebigen Plattform? Probiere {homedock}, sicher, schneller, universell multiplattformfähig mit einer neuartigen Benutzeroberfläche.",
+    "homedockName": "HomeDock OS"
   },
   "portfolio": {
     "basicInfo": {
