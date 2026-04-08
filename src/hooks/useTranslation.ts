@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 
-type Locale = 'es' | 'en';
+type Locale = 'es' | 'en' | 'de';
 type TranslationObject = Record<string, any>;
 
 export const useTranslation = () => {
@@ -11,7 +11,7 @@ export const useTranslation = () => {
   useEffect(() => {
     // Cargar idioma: primero localStorage (rápido), luego BD (fuente de verdad)
     const savedLocale = localStorage.getItem('locale') as Locale;
-    if (savedLocale && (savedLocale === 'es' || savedLocale === 'en')) {
+    if (savedLocale && (savedLocale === 'es' || savedLocale === 'en' || savedLocale === 'de')) {
       setLocale(savedLocale);
     }
 
@@ -21,7 +21,7 @@ export const useTranslation = () => {
       fetch('/api/settings', { headers: { 'Authorization': `Bearer ${token}` } })
         .then(res => res.ok ? res.json() : null)
         .then(settings => {
-          if (settings?.language && (settings.language === 'es' || settings.language === 'en')) {
+          if (settings?.language && (settings.language === 'es' || settings.language === 'en' || settings.language === 'de')) {
             localStorage.setItem('locale', settings.language);
             if (settings.language !== savedLocale) {
               setLocale(settings.language as Locale);
@@ -128,6 +128,7 @@ export const useTranslation = () => {
     getCurrentLanguage,
     loading,
     isSpanish: locale === 'es',
-    isEnglish: locale === 'en'
+    isEnglish: locale === 'en',
+    isGerman: locale === 'de'
   };
 };

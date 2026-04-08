@@ -169,7 +169,7 @@ export default function ConfigContent() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <button
             onClick={() => {
               changeLanguage('en');
@@ -208,6 +208,27 @@ export default function ConfigContent() {
               {t('config.language.spanish')}
             </span>
             {locale === 'es' && (
+              <Icon icon="mdi:check-circle" className="w-5 h-5 text-blue-400 ml-auto" />
+            )}
+          </button>
+
+          <button
+            onClick={() => {
+              changeLanguage('de');
+              window.dispatchEvent(new Event('localeChanged'));
+              setTimeout(() => window.location.reload(), 100);
+            }}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
+              locale === 'de'
+                ? 'border-blue-500 bg-blue-500/10'
+                : 'border-slate-700 hover:border-slate-600 bg-slate-800/50'
+            }`}
+          >
+            <Icon icon="flag:de-4x3" className="w-7 h-5 rounded shadow-sm" />
+            <span className={`font-medium ${locale === 'de' ? 'text-blue-400' : 'text-white'}`}>
+              {t('config.language.german')}
+            </span>
+            {locale === 'de' && (
               <Icon icon="mdi:check-circle" className="w-5 h-5 text-blue-400 ml-auto" />
             )}
           </button>

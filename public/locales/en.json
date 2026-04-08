@@ -173,8 +173,10 @@
       "reloadMessage": "The page will reload automatically to apply the new language.",
       "spanish": "Spanish",
       "spanishDescription": "Spanish - España",
-      "english": "English", 
-      "englishDescription": "English - United States"
+      "english": "English",
+      "englishDescription": "English - United States",
+      "german": "German",
+      "germanDescription": "German - Deutschland"
     },
     "currency": {
       "title": "Currency",
