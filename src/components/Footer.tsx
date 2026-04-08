@@ -15,7 +15,7 @@ export default function Footer() {
               <img src="/logo.png" alt="Robipet Logo" className="w-5 h-5 object-contain" />
             </div>
             <span className="text-sm font-semibold text-slate-300">Robipet</span>
-            <span className="text-xs font-medium text-blue-400/80 bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 rounded-full">v2.0.4</span>
+            <span className="text-xs font-medium text-blue-400/80 bg-blue-500/10 border border-blue-500/20 px-2 py-0.5 rounded-full">v2.0.5</span>
           </div>
 
           <div className="flex items-center gap-1">
