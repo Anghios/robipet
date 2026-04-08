@@ -22,6 +22,9 @@ WORKDIR /var/www/html
 # Copiar archivos PHP del backend
 COPY api/ ./api/
 
+# Invalidar caché de Docker desde aquí en cada build
+ARG CACHEBUST=1
+
 # Copiar archivos compilados de Astro (ya existentes en /dist)
 COPY dist/ ./
 

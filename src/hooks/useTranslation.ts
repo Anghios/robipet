@@ -43,7 +43,7 @@ export const useTranslation = () => {
       // Get version to bust cache
       let version = Date.now();
       try {
-        const versionResponse = await fetch('/version.json');
+        const versionResponse = await fetch('/version.json', { cache: 'no-store' });
         const versionData = await versionResponse.json();
         version = versionData.timestamp || Date.now();
       } catch {
