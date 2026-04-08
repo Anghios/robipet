@@ -226,7 +226,7 @@ export default function ConfigContent() {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           <button
             onClick={() => updateSetting('currency', 'eur')}
             className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
@@ -257,6 +257,23 @@ export default function ConfigContent() {
               {t('config.currency.usd')}
             </span>
             {settings.currency === 'usd' && (
+              <Icon icon="mdi:check-circle" className="w-5 h-5 text-green-400 ml-auto" />
+            )}
+          </button>
+
+          <button
+            onClick={() => updateSetting('currency', 'gbp')}
+            className={`flex items-center gap-3 px-4 py-3 rounded-xl border-2 transition-all duration-200 ${
+              settings.currency === 'gbp'
+                ? 'border-green-500 bg-green-500/10'
+                : 'border-slate-700 hover:border-slate-600 bg-slate-800/50'
+            }`}
+          >
+            <Icon icon="mdi:currency-gbp" className="w-6 h-6" />
+            <span className={`font-medium ${settings.currency === 'gbp' ? 'text-green-400' : 'text-white'}`}>
+              {t('config.currency.gbp')}
+            </span>
+            {settings.currency === 'gbp' && (
               <Icon icon="mdi:check-circle" className="w-5 h-5 text-green-400 ml-auto" />
             )}
           </button>

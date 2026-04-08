@@ -109,7 +109,8 @@
       "title": "Moneda",
       "description": "Selecciona la moneda por defecto para costos y precios",
       "eur": "Euro (€)",
-      "usd": "Dólar Estadounidense ($)"
+      "usd": "Dólar Estadounidense ($)",
+      "gbp": "Libra Esterlina (£)"
     },
     "dateFormat": {
       "title": "Formato de Fecha",

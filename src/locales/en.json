@@ -109,7 +109,8 @@
       "title": "Currency",
       "description": "Select default currency for costs and prices",
       "eur": "Euro (€)",
-      "usd": "US Dollar ($)"
+      "usd": "US Dollar ($)",
+      "gbp": "British Pound (£)"
     },
     "dateFormat": {
       "title": "Date Format",

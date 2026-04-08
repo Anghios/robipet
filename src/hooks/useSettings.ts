@@ -55,11 +55,19 @@ export const useSettings = () => {
   };
 
   const getCurrencySymbol = () => {
-    return settings.currency === 'usd' ? '$' : '€';
+    switch (settings.currency) {
+      case 'usd': return '$';
+      case 'gbp': return '£';
+      default: return '€';
+    }
   };
 
   const getCurrencyIcon = () => {
-    return settings.currency === 'usd' ? 'mdi:currency-usd' : 'mdi:currency-eur';
+    switch (settings.currency) {
+      case 'usd': return 'mdi:currency-usd';
+      case 'gbp': return 'mdi:currency-gbp';
+      default: return 'mdi:currency-eur';
+    }
   };
 
   const getDateFormat = () => {
