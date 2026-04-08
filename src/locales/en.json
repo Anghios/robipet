@@ -871,8 +871,101 @@
         "invalidImageFile": "Please select a valid image file",
         "imageTooLarge": "Image cannot exceed 5MB",
         "imageUploadSuccess": "Image uploaded successfully",
-        "imageUploadError": "Error uploading image"
+        "imageUploadError": "Error uploading image",
+        "petCreatedSuccess": "Pet created successfully",
+        "petCreatedError": "Error creating pet",
+        "petUpdatedSuccess": "Pet updated successfully",
+        "petUpdatedError": "Error updating pet",
+        "petDeletedSuccess": "{name} deleted successfully",
+        "petDeletedError": "Error deleting pet"
       }
+    }
+  },
+  "toast": {
+    "vaccine": {
+      "deleteSuccess": "Vaccine deleted successfully",
+      "deleteError": "Error deleting vaccine",
+      "completeSuccess": "Vaccine marked as completed",
+      "completeError": "Error marking vaccine as completed",
+      "saveSuccess": "Vaccine saved successfully",
+      "saveError": "Error saving vaccine",
+      "validationRequired": "Vaccine name and date are required"
+    },
+    "medicalReview": {
+      "deleteSuccess": "Medical review deleted successfully",
+      "deleteError": "Error deleting medical review",
+      "completeSuccess": "Medical review marked as completed",
+      "completeError": "Error marking medical review as completed",
+      "saveSuccess": "Medical review saved successfully",
+      "saveError": "Error saving medical review",
+      "visitDateRequired": "Visit date is required for completed reviews"
+    },
+    "deworming": {
+      "deleteSuccess": "Deworming deleted successfully",
+      "deleteError": "Error deleting deworming",
+      "completeSuccess": "Deworming marked as applied",
+      "completeError": "Error marking deworming as applied",
+      "saveSuccess": "Deworming saved successfully",
+      "saveError": "Error saving deworming",
+      "validationRequired": "Product and treatment date are required"
+    },
+    "weight": {
+      "deleteSuccess": "Weight deleted successfully",
+      "deleteError": "Error deleting weight",
+      "saveSuccess": "Weight saved successfully",
+      "saveError": "Error saving weight",
+      "validationRequired": "Weight and date are required"
+    },
+    "medication": {
+      "deleteSuccess": "Medication deleted successfully",
+      "deleteError": "Error deleting medication",
+      "completeSuccess": "Medication marked as completed",
+      "completeError": "Error marking medication as completed",
+      "saveSuccess": "Medication saved successfully",
+      "saveError": "Error saving medication",
+      "validationRequired": "Medication name, dosage, frequency and start date are required"
+    },
+    "document": {
+      "deleteSuccess": "Document deleted successfully",
+      "deleteError": "Error deleting document",
+      "saveSuccess": "Document updated successfully",
+      "createSuccess": "Document created successfully",
+      "createWithFilesSuccess": "Document with {count} file(s) added successfully",
+      "addError": "Error adding document",
+      "updateError": "Error updating document",
+      "addFilesError": "Error adding files",
+      "uploadDateRequired": "Upload date is required",
+      "nameRequired": "You must specify a document name",
+      "fileNeedsName": "The file must have a name or you must specify a document name",
+      "multipleFilesNeedBaseName": "You must specify a name for the document that will contain the files",
+      "allFilesNeedNames": "All files must have a name",
+      "typeRequired": "You must select a document type",
+      "petIdError": "Could not get the pet ID",
+      "noAttachments": "Document without attachments",
+      "document": "Document",
+      "multipleDocument": "Multiple document"
+    },
+    "user": {
+      "createSuccess": "User created successfully",
+      "createError": "Error creating user",
+      "updateSuccess": "User updated successfully",
+      "updateError": "Error updating user",
+      "deleteSuccess": "User \"{name}\" deleted successfully",
+      "deleteError": "Error deleting user",
+      "nameUsernamePasswordRequired": "Name, username and password are required",
+      "nameUsernameRequired": "Name and username are required",
+      "loadError": "Error loading users",
+      "searchError": "Search error",
+      "unknownError": "Unknown error"
+    },
+    "pet": {
+      "loadError": "Error loading pets",
+      "unknownError": "Unknown error"
+    },
+    "general": {
+      "loading": "Loading...",
+      "logout": "Logout",
+      "ageNotSpecified": "Age not specified"
     }
   }
 }

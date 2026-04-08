@@ -21,7 +21,8 @@ export function useMedicalReviewForm(
   onSuccess: (message: string) => void,
   onError: (message: string) => void,
   onRefresh: () => Promise<void>,
-  getDocuments: () => any[]
+  getDocuments: () => any[],
+  t?: (key: string) => string
 ) {
   const [showMedicalReviewForm, setShowMedicalReviewForm] = useState(false);
   const [editingMedicalReview, setEditingMedicalReview] = useState<any>(null);
@@ -87,7 +88,7 @@ export function useMedicalReviewForm(
   const handleSaveMedicalReview = useCallback(async () => {
     // Only require visit_date if status is 'completed'
     if (medicalReviewForm.status === 'completed' && !medicalReviewForm.visit_date) {
-      onError('Fecha de visita es requerida para revisiones completadas');
+      onError(t ? t('toast.medicalReview.visitDateRequired') : 'Visit date is required for completed reviews');
       return;
     }
 
@@ -134,12 +135,12 @@ export function useMedicalReviewForm(
         setShowMedicalReviewForm(false);
         setEditingMedicalReview(null);
         setLinkedDocumentIds([]);
-        onSuccess('Revisión médica guardada correctamente');
+        onSuccess(t ? t('toast.medicalReview.saveSuccess') : 'Medical review saved successfully');
       } else {
-        onError(result.message || 'Error al guardar revisión médica');
+        onError(result.message || (t ? t('toast.medicalReview.saveError') : 'Error saving medical review'));
       }
     } catch (err) {
-      onError(err instanceof Error ? err.message : 'Error al guardar revisión médica');
+      onError(err instanceof Error ? err.message : (t ? t('toast.medicalReview.saveError') : 'Error saving medical review'));
     } finally {
       setSavingMedicalReview(false);
     }

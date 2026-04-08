@@ -46,11 +46,11 @@ export function usePetListData(showToast: (message: string, type: 'success' | 'e
       const response = await fetch(`${API_BASE_URL}/api/pets`, {
         headers: getAuthHeaders()
       });
-      if (!response.ok) throw new Error('Error al cargar mascotas');
+      if (!response.ok) throw new Error(t ? t('toast.pet.loadError') : 'Error loading pets');
       const data = await response.json();
       setPets(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido');
+      setError(err instanceof Error ? err.message : (t ? t('toast.pet.unknownError') : 'Unknown error'));
     } finally {
       setLoading(false);
     }
@@ -90,12 +90,12 @@ export function usePetListData(showToast: (message: string, type: 'success' | 'e
         setNewPet(INITIAL_PET_STATE);
         await fetchPets();
         setShowNewPetForm(false);
-        showToast('Mascota creada exitosamente', 'success');
+        showToast(t ? t('petList.helpers.validation.petCreatedSuccess') : 'Pet created successfully', 'success');
       } else {
-        showToast(result.message || 'Error al crear mascota', 'error');
+        showToast(result.message || (t ? t('petList.helpers.validation.petCreatedError') : 'Error creating pet'), 'error');
       }
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error al crear mascota', 'error');
+      showToast(err instanceof Error ? err.message : (t ? t('petList.helpers.validation.petCreatedError') : 'Error creating pet'), 'error');
     } finally {
       setCreating(false);
     }
@@ -136,12 +136,12 @@ export function usePetListData(showToast: (message: string, type: 'success' | 'e
       if (result.success) {
         setEditingPet(null);
         await fetchPets();
-        showToast('Mascota actualizada exitosamente', 'success');
+        showToast(t ? t('petList.helpers.validation.petUpdatedSuccess') : 'Pet updated successfully', 'success');
       } else {
-        showToast(result.message || 'Error al actualizar mascota', 'error');
+        showToast(result.message || (t ? t('petList.helpers.validation.petUpdatedError') : 'Error updating pet'), 'error');
       }
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error al actualizar mascota', 'error');
+      showToast(err instanceof Error ? err.message : (t ? t('petList.helpers.validation.petUpdatedError') : 'Error updating pet'), 'error');
     } finally {
       setUpdating(false);
     }
@@ -162,16 +162,17 @@ export function usePetListData(showToast: (message: string, type: 'success' | 'e
       
       if (result.success) {
         await fetchPets();
-        showToast(`${petToDelete.name} eliminado exitosamente`, 'success');
-        
+        const deleteMsg = t ? t('petList.helpers.validation.petDeletedSuccess').replace('{name}', petToDelete.name) : `${petToDelete.name} deleted successfully`;
+        showToast(deleteMsg, 'success');
+
         if (editingPet && editingPet.id === petToDelete.id) {
           setEditingPet(null);
         }
       } else {
-        showToast(result.message || 'Error al eliminar mascota', 'error');
+        showToast(result.message || (t ? t('petList.helpers.validation.petDeletedError') : 'Error deleting pet'), 'error');
       }
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error al eliminar mascota', 'error');
+      showToast(err instanceof Error ? err.message : (t ? t('petList.helpers.validation.petDeletedError') : 'Error deleting pet'), 'error');
     } finally {
       setDeleting(false);
       setShowDeleteModal(false);

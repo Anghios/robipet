@@ -18,7 +18,8 @@ export function useDewormingForm(
   onSuccess: (message: string) => void,
   onError: (message: string) => void,
   onRefresh: () => Promise<void>,
-  getDocuments: () => any[]
+  getDocuments: () => any[],
+  t?: (key: string) => string
 ) {
   const { settings } = useSettings();
   const isLb = settings.weightUnit === 'lb';
@@ -78,7 +79,7 @@ export function useDewormingForm(
 
   const handleSaveDeworming = useCallback(async () => {
     if (!dewormingForm.product_name || !dewormingForm.treatment_date) {
-      onError('Producto y fecha de tratamiento son requeridos');
+      onError(t ? t('toast.deworming.validationRequired') : 'Product and treatment date are required');
       return;
     }
 
@@ -131,12 +132,12 @@ export function useDewormingForm(
         setShowDewormingForm(false);
         setEditingDeworming(null);
         setLinkedDocumentIds([]);
-        onSuccess('Desparasitación guardada correctamente');
+        onSuccess(t ? t('toast.deworming.saveSuccess') : 'Deworming saved successfully');
       } else {
-        onError(result.message || 'Error al guardar desparasitación');
+        onError(result.message || (t ? t('toast.deworming.saveError') : 'Error saving deworming'));
       }
     } catch (err) {
-      onError(err instanceof Error ? err.message : 'Error al guardar desparasitación');
+      onError(err instanceof Error ? err.message : (t ? t('toast.deworming.saveError') : 'Error saving deworming'));
     } finally {
       setSavingDeworming(false);
     }

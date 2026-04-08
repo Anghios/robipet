@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useToast } from './useToast';
+import { useTranslation } from './useTranslation';
 
 interface User {
   id: number;
@@ -71,6 +72,7 @@ export function useUsersData() {
   const [isUpdating, setIsUpdating] = useState(false);
 
   const { toast, showToast, hideToast } = useToast();
+  const { t } = useTranslation();
 
   useEffect(() => {
     fetchUsers();
@@ -85,14 +87,14 @@ export function useUsersData() {
         headers: getAuthHeaders()
       });
       console.log('🔍 UsersList: Response status:', response.status);
-      if (!response.ok) throw new Error('Error al cargar usuarios');
+      if (!response.ok) throw new Error(t('toast.user.loadError'));
       const data = await response.json();
       console.log('🔍 UsersList: Datos recibidos:', data);
       const sortedUsers = data.sort((a: User, b: User) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
       setUsers(sortedUsers);
     } catch (err) {
       console.error('🔍 UsersList: Error en fetchUsers:', err);
-      setError(err instanceof Error ? err.message : 'Error desconocido');
+      setError(err instanceof Error ? err.message : t('toast.user.unknownError'));
     } finally {
       setLoading(false);
     }
@@ -109,11 +111,11 @@ export function useUsersData() {
       const response = await fetch(`/api/users/search?q=${encodeURIComponent(searchQuery)}`, {
         headers: getAuthHeaders()
       });
-      if (!response.ok) throw new Error('Error en la búsqueda');
+      if (!response.ok) throw new Error(t('toast.user.searchError'));
       const data = await response.json();
       setUsers(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error en la búsqueda');
+      setError(err instanceof Error ? err.message : t('toast.user.searchError'));
     } finally {
       setLoading(false);
     }
@@ -123,7 +125,7 @@ export function useUsersData() {
     e.preventDefault();
     
     if (!newUser.name.trim() || !newUser.username.trim() || !newUser.password.trim()) {
-      setError('Nombre, username y contraseña son requeridos');
+      setError(t('toast.user.nameUsernamePasswordRequired'));
       return;
     }
 
@@ -143,7 +145,7 @@ export function useUsersData() {
         setNewUser({ name: '', email: '', username: '', password: '', role: 'user' });
         fetchUsers();
         setError(null);
-        showToast('Usuario creado correctamente', 'success');
+        showToast(t('toast.user.createSuccess'), 'success');
         setTimeout(() => hideToast(), 3000);
       } else {
         setError(result.message);
@@ -151,7 +153,7 @@ export function useUsersData() {
         setTimeout(() => hideToast(), 3000);
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error al crear usuario';
+      const errorMessage = err instanceof Error ? err.message : t('toast.user.createError');
       setError(errorMessage);
       showToast(errorMessage, 'error');
       setTimeout(() => hideToast(), 3000);
@@ -173,7 +175,7 @@ export function useUsersData() {
     e.preventDefault();
     
     if (!editingUser || !editForm.name.trim() || !editForm.username.trim()) {
-      setError('Nombre y username son requeridos');
+      setError(t('toast.user.nameUsernameRequired'));
       return;
     }
 
@@ -229,7 +231,7 @@ export function useUsersData() {
         setEditForm({ name: '', email: '', username: '', password: '', role: 'user' });
         fetchUsers();
         setError(null);
-        showToast('Usuario actualizado correctamente', 'success');
+        showToast(t('toast.user.updateSuccess'), 'success');
         setTimeout(() => hideToast(), 3000);
       } else {
         setError(result.message);
@@ -237,7 +239,7 @@ export function useUsersData() {
         setTimeout(() => hideToast(), 3000);
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error al actualizar usuario';
+      const errorMessage = err instanceof Error ? err.message : t('toast.user.updateError');
       setError(errorMessage);
       showToast(errorMessage, 'error');
       setTimeout(() => hideToast(), 3000);
@@ -271,7 +273,7 @@ export function useUsersData() {
         fetchUsers();
         
         // Mostrar toast de éxito
-        showToast(`Usuario "${deletedUsername}" eliminado correctamente`, 'success');
+        showToast(t('toast.user.deleteSuccess').replace('{name}', deletedUsername), 'success');
         
         // Ocultar toast después de 3 segundos
         setTimeout(() => hideToast(), 3000);
@@ -281,7 +283,7 @@ export function useUsersData() {
         setTimeout(() => hideToast(), 3000);
       }
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Error al eliminar usuario';
+      const errorMessage = err instanceof Error ? err.message : t('toast.user.deleteError');
       setError(errorMessage);
       showToast(errorMessage, 'error');
       setTimeout(() => hideToast(), 3000);

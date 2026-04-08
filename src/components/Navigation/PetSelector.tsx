@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { Icon } from '@iconify/react';
 import { getSpeciesEmoji } from '../../utils/petUtils';
+import { useTranslation } from '../../hooks/useTranslation';
 
 interface PetSelectorProps {
   currentPetId: string;
@@ -21,6 +22,7 @@ export default function PetSelector({
   onClose,
   onSelectPet
 }: PetSelectorProps) {
+  const { t } = useTranslation();
   const selectorRef = useRef<HTMLDivElement>(null);
 
   // Close on click outside
@@ -81,7 +83,7 @@ export default function PetSelector({
                 <div className="flex-1">
                   <div className="font-medium">{pet.name}</div>
                   <div className="text-xs opacity-75">
-                    {pet.breed} • {pet.age || 'Edad no especificada'}
+                    {pet.breed} • {pet.age || t('toast.general.ageNotSpecified')}
                   </div>
                 </div>
                 {pet.id.toString() === currentPetId && (

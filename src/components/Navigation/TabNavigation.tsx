@@ -39,7 +39,7 @@ export default function TabNavigation({
     {
       key: 'medical_reviews' as TabType,
       icon: 'mdi:stethoscope',
-      label: 'Revisiones Médicas',
+      label: t('home.tabs.medicalReviews'),
       badge: 0
     },
     {
@@ -51,13 +51,13 @@ export default function TabNavigation({
     {
       key: 'medication' as TabType,
       icon: 'mdi:pill',
-      label: 'Medicación',
+      label: t('home.tabs.medication'),
       badge: pendingMedications
     },
     {
       key: 'deworming' as TabType,
       icon: 'mdi:bug',
-      label: 'Desparasitaciones',
+      label: t('home.tabs.deworming'),
       badge: pendingDewormings
     },
     {

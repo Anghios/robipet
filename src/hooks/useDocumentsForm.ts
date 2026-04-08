@@ -41,7 +41,8 @@ export function useDocumentsForm(
   getCurrentPetId: () => string,
   onSuccess: (message: string) => void,
   onError: (message: string) => void,
-  onRefresh: () => Promise<void>
+  onRefresh: () => Promise<void>,
+  t?: (key: string, params?: Record<string, string | number>) => string
 ) {
   const [showDocumentsForm, setShowDocumentsForm] = useState(false);
   const [editingDocument, setEditingDocument] = useState<any>(null);
@@ -119,7 +120,7 @@ export function useDocumentsForm(
   const handleSaveDocument = useCallback(async () => {
     // Validaciones básicas
     if (!documentsForm.upload_date) {
-      onError('Fecha de subida es requerida');
+      onError(t ? t('toast.document.uploadDateRequired') : 'Upload date is required');
       return;
     }
 
@@ -133,7 +134,7 @@ export function useDocumentsForm(
     // Si no hay archivos, solo validar que el documento tenga nombre
     if (!hasNewFiles && !hasExistingFiles && !editingDocument) {
       if (!documentsForm.document_name.trim()) {
-        onError('Debe especificar un nombre para el documento');
+        onError(t ? t('toast.document.nameRequired') : 'You must specify a document name');
         return;
       }
     }
@@ -146,20 +147,20 @@ export function useDocumentsForm(
         // Un solo archivo: validar que tenga nombre personalizado O que el document_name esté lleno
         const file = documentsForm.filesWithNames![0];
         if (!file.displayName.trim() && !documentsForm.document_name.trim()) {
-          onError('El archivo debe tener un nombre o debe especificar un nombre de documento');
+          onError(t ? t('toast.document.fileNeedsName') : 'The file must have a name or you must specify a document name');
           return;
         }
       } else if (totalFiles > 1) {
         // Múltiples archivos: validar que el documento tenga nombre base
         if (!documentsForm.document_name.trim()) {
-          onError('Debe especificar un nombre para el documento que contendrá los archivos');
+          onError(t ? t('toast.document.multipleFilesNeedBaseName') : 'You must specify a name for the document');
           return;
         }
         
         // Validar que todos los archivos tengan nombre
         const filesWithoutNames = documentsForm.filesWithNames!.filter(f => !f.displayName.trim());
         if (filesWithoutNames.length > 0) {
-          onError('Todos los archivos deben tener un nombre');
+          onError(t ? t('toast.document.allFilesNeedNames') : 'All files must have a name');
           return;
         }
       }
@@ -167,7 +168,7 @@ export function useDocumentsForm(
 
     // Validar que document_type esté seleccionado
     if (!documentsForm.document_type) {
-      onError('Debe seleccionar un tipo de documento');
+      onError(t ? t('toast.document.typeRequired') : 'You must select a document type');
       return;
     }
 
@@ -175,7 +176,7 @@ export function useDocumentsForm(
     try {
       const petId = getCurrentPetId();
       if (!petId) {
-        throw new Error('No se pudo obtener el ID de la mascota');
+        throw new Error(t ? t('toast.document.petIdError') : 'Could not get the pet ID');
       }
 
       if (editingDocument) {
@@ -192,7 +193,7 @@ export function useDocumentsForm(
 
         const updateResult = await petApi.updateDocument(editingDocument.id, documentData);
         if (!updateResult.success) {
-          throw new Error(updateResult.message || 'Error al actualizar el documento');
+          throw new Error(updateResult.message || (t ? t('toast.document.updateError') : 'Error updating document'));
         }
 
         // Actualizar links many-to-many
@@ -225,12 +226,12 @@ export function useDocumentsForm(
           const addFilesResult = await petApi.addFilesToDocument(petId, editingDocument.id, documentsForm.filesWithNames);
           if (!addFilesResult.success) {
             console.error('Error al añadir archivos:', addFilesResult.message);
-            onError('Error al añadir archivos: ' + addFilesResult.message);
+            onError((t ? t('toast.document.addFilesError') : 'Error adding files') + ': ' + addFilesResult.message);
             return;
           }
         }
 
-        onSuccess('Documento actualizado correctamente');
+        onSuccess(t ? t('toast.document.saveSuccess') : 'Document updated successfully');
       } else {
         // Para creación, crear un documento único (con o sin archivos)
         const totalFiles = documentsForm.filesWithNames?.length || 0;
@@ -239,13 +240,13 @@ export function useDocumentsForm(
         let documentName: string;
         if (totalFiles === 0) {
           // Sin archivos: usar el nombre del documento
-          documentName = documentsForm.document_name || 'Documento sin adjuntos';
+          documentName = documentsForm.document_name || (t ? t('toast.document.noAttachments') : 'Document without attachments');
         } else if (totalFiles === 1) {
           // Un archivo: usar su nombre personalizado si lo tiene, sino el nombre del documento
-          documentName = documentsForm.filesWithNames![0].displayName.trim() || documentsForm.document_name || 'Documento';
+          documentName = documentsForm.filesWithNames![0].displayName.trim() || documentsForm.document_name || (t ? t('toast.document.document') : 'Document');
         } else {
           // Múltiples archivos: usar el nombre del documento base
-          documentName = documentsForm.document_name || 'Documento múltiple';
+          documentName = documentsForm.document_name || (t ? t('toast.document.multipleDocument') : 'Multiple document');
         }
 
         const documentData = {
@@ -264,11 +265,11 @@ export function useDocumentsForm(
           }
 
           const message = totalFiles === 0
-            ? 'Documento creado correctamente'
-            : `Documento con ${totalFiles} archivo${totalFiles > 1 ? 's' : ''} añadido correctamente`;
+            ? (t ? t('toast.document.createSuccess') : 'Document created successfully')
+            : (t ? t('toast.document.createWithFilesSuccess').replace('{count}', totalFiles.toString()) : `Document with ${totalFiles} file(s) added successfully`);
           onSuccess(message);
         } else {
-          throw new Error(result.message || 'Error al añadir el documento');
+          throw new Error(result.message || (t ? t('toast.document.addError') : 'Error adding document'));
         }
       }
 
@@ -277,7 +278,7 @@ export function useDocumentsForm(
       setEditingDocument(null);
     } catch (error) {
       console.error('Error al guardar documento:', error);
-      onError(error instanceof Error ? error.message : (editingDocument ? 'Error al actualizar el documento' : 'Error al añadir el documento'));
+      onError(error instanceof Error ? error.message : (editingDocument ? (t ? t('toast.document.updateError') : 'Error updating document') : (t ? t('toast.document.addError') : 'Error adding document')));
     } finally {
       setSavingDocument(false);
     }

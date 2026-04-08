@@ -17,7 +17,8 @@ export function useMedicationForm(
   onSuccess: (message: string) => void,
   onError: (message: string) => void,
   onRefresh: () => Promise<void>,
-  getDocuments: () => any[]
+  getDocuments: () => any[],
+  t?: (key: string) => string
 ) {
   const [showMedicationForm, setShowMedicationForm] = useState(false);
   const [editingMedication, setEditingMedication] = useState<any>(null);
@@ -71,7 +72,7 @@ export function useMedicationForm(
 
   const handleSaveMedication = useCallback(async () => {
     if (!medicationForm.medication_name || !medicationForm.dosage || !medicationForm.frequency_hours || !medicationForm.start_date) {
-      onError('Nombre del medicamento, dosis, frecuencia y fecha de inicio son requeridos');
+      onError(t ? t('toast.medication.validationRequired') : 'Medication name, dosage, frequency and start date are required');
       return;
     }
 
@@ -115,12 +116,12 @@ export function useMedicationForm(
         setShowMedicationForm(false);
         setEditingMedication(null);
         setLinkedDocumentIds([]);
-        onSuccess('Medicamento guardado correctamente');
+        onSuccess(t ? t('toast.medication.saveSuccess') : 'Medication saved successfully');
       } else {
-        onError(result.message || 'Error al guardar medicamento');
+        onError(result.message || (t ? t('toast.medication.saveError') : 'Error saving medication'));
       }
     } catch (err) {
-      onError(err instanceof Error ? err.message : 'Error al guardar medicamento');
+      onError(err instanceof Error ? err.message : (t ? t('toast.medication.saveError') : 'Error saving medication'));
     } finally {
       setSavingMedication(false);
     }

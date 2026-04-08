@@ -38,7 +38,7 @@ export default function ConfigContent() {
         const contentType = response.headers.get('content-type');
         if (contentType && contentType.includes('application/json')) {
           const errorData = await response.json();
-          throw new Error(errorData.error || 'Error al exportar');
+          throw new Error(errorData.error || t('config.database.exportError'));
         }
         throw new Error(`Error HTTP: ${response.status}`);
       }

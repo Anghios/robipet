@@ -869,8 +869,101 @@
         "invalidImageFile": "Por favor selecciona un archivo de imagen válido",
         "imageTooLarge": "La imagen no puede exceder 5MB",
         "imageUploadSuccess": "Imagen subida exitosamente",
-        "imageUploadError": "Error al subir la imagen"
+        "imageUploadError": "Error al subir la imagen",
+        "petCreatedSuccess": "Mascota creada exitosamente",
+        "petCreatedError": "Error al crear mascota",
+        "petUpdatedSuccess": "Mascota actualizada exitosamente",
+        "petUpdatedError": "Error al actualizar mascota",
+        "petDeletedSuccess": "{name} eliminado exitosamente",
+        "petDeletedError": "Error al eliminar mascota"
       }
+    }
+  },
+  "toast": {
+    "vaccine": {
+      "deleteSuccess": "Vacuna eliminada correctamente",
+      "deleteError": "Error al eliminar vacuna",
+      "completeSuccess": "Vacuna marcada como completada",
+      "completeError": "Error al marcar vacuna como completada",
+      "saveSuccess": "Vacuna guardada correctamente",
+      "saveError": "Error al guardar vacuna",
+      "validationRequired": "Nombre de vacuna y fecha son requeridos"
+    },
+    "medicalReview": {
+      "deleteSuccess": "Revisión médica eliminada correctamente",
+      "deleteError": "Error al eliminar revisión médica",
+      "completeSuccess": "Revisión médica marcada como completada",
+      "completeError": "Error al marcar revisión médica como completada",
+      "saveSuccess": "Revisión médica guardada correctamente",
+      "saveError": "Error al guardar revisión médica",
+      "visitDateRequired": "Fecha de visita es requerida para revisiones completadas"
+    },
+    "deworming": {
+      "deleteSuccess": "Desparasitación eliminada correctamente",
+      "deleteError": "Error al eliminar desparasitación",
+      "completeSuccess": "Desparasitación marcada como aplicada",
+      "completeError": "Error al marcar desparasitación como aplicada",
+      "saveSuccess": "Desparasitación guardada correctamente",
+      "saveError": "Error al guardar desparasitación",
+      "validationRequired": "Producto y fecha de tratamiento son requeridos"
+    },
+    "weight": {
+      "deleteSuccess": "Peso eliminado correctamente",
+      "deleteError": "Error al eliminar peso",
+      "saveSuccess": "Peso guardado correctamente",
+      "saveError": "Error al guardar peso",
+      "validationRequired": "Peso y fecha son requeridos"
+    },
+    "medication": {
+      "deleteSuccess": "Medicamento eliminado correctamente",
+      "deleteError": "Error al eliminar medicamento",
+      "completeSuccess": "Medicamento marcado como completado",
+      "completeError": "Error al marcar medicamento como completado",
+      "saveSuccess": "Medicamento guardado correctamente",
+      "saveError": "Error al guardar medicamento",
+      "validationRequired": "Nombre del medicamento, dosis, frecuencia y fecha de inicio son requeridos"
+    },
+    "document": {
+      "deleteSuccess": "Documento eliminado correctamente",
+      "deleteError": "Error al eliminar documento",
+      "saveSuccess": "Documento actualizado correctamente",
+      "createSuccess": "Documento creado correctamente",
+      "createWithFilesSuccess": "Documento con {count} archivo(s) añadido correctamente",
+      "addError": "Error al añadir el documento",
+      "updateError": "Error al actualizar el documento",
+      "addFilesError": "Error al añadir archivos",
+      "uploadDateRequired": "Fecha de subida es requerida",
+      "nameRequired": "Debe especificar un nombre para el documento",
+      "fileNeedsName": "El archivo debe tener un nombre o debe especificar un nombre de documento",
+      "multipleFilesNeedBaseName": "Debe especificar un nombre para el documento que contendrá los archivos",
+      "allFilesNeedNames": "Todos los archivos deben tener un nombre",
+      "typeRequired": "Debe seleccionar un tipo de documento",
+      "petIdError": "No se pudo obtener el ID de la mascota",
+      "noAttachments": "Documento sin adjuntos",
+      "document": "Documento",
+      "multipleDocument": "Documento múltiple"
+    },
+    "user": {
+      "createSuccess": "Usuario creado correctamente",
+      "createError": "Error al crear usuario",
+      "updateSuccess": "Usuario actualizado correctamente",
+      "updateError": "Error al actualizar usuario",
+      "deleteSuccess": "Usuario \"{name}\" eliminado correctamente",
+      "deleteError": "Error al eliminar usuario",
+      "nameUsernamePasswordRequired": "Nombre, username y contraseña son requeridos",
+      "nameUsernameRequired": "Nombre y username son requeridos",
+      "loadError": "Error al cargar usuarios",
+      "searchError": "Error en la búsqueda",
+      "unknownError": "Error desconocido"
+    },
+    "pet": {
+      "loadError": "Error al cargar mascotas",
+      "unknownError": "Error desconocido"
+    },
+    "general": {
+      "loading": "Cargando...",
+      "logout": "Cerrar sesión",
+      "ageNotSpecified": "Edad no especificada"
     }
   }
 }

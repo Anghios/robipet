@@ -1,6 +1,7 @@
 import { useState, useCallback } from 'react';
 import type { Pet, NewPet } from '../../types/Pet';
 import type { ToastData } from '../../hooks/useToast';
+import { useTranslation } from '../../hooks/useTranslation';
 
 // Helper para obtener headers de autenticación con JWT (fuera del hook)
 const getAuthHeaders = (): HeadersInit => {
@@ -23,6 +24,7 @@ export default function usePets() {
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadingImageEdit, setUploadingImageEdit] = useState(false);
   const [toast, setToast] = useState<ToastData | null>(null);
+  const { t } = useTranslation();
 
   const showToast = useCallback((message: string, type: 'success' | 'error' | 'warning' = 'error') => {
     const id = Date.now();
@@ -35,11 +37,11 @@ export default function usePets() {
       const response = await fetch('/api/pets', {
         headers: getAuthHeaders()
       });
-      if (!response.ok) throw new Error('Error al cargar mascotas');
+      if (!response.ok) throw new Error(t('toast.pet.loadError'));
       const data = await response.json();
       setPets(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error desconocido');
+      setError(err instanceof Error ? err.message : t('toast.pet.unknownError'));
     } finally {
       setLoading(false);
     }
@@ -47,7 +49,7 @@ export default function usePets() {
 
   const createPet = useCallback(async (newPet: NewPet) => {
     if (!newPet.name.trim() || !newPet.birth_date) {
-      showToast('Nombre y fecha de nacimiento son requeridos', 'error');
+      showToast(t('petList.helpers.validation.nameRequired'), 'error');
       return false;
     }
 
@@ -72,14 +74,14 @@ export default function usePets() {
       
       if (result.success) {
         await fetchPets();
-        showToast('Mascota creada exitosamente', 'success');
+        showToast(t('petList.helpers.validation.petCreatedSuccess'), 'success');
         return true;
       } else {
-        showToast(result.message || 'Error al crear mascota', 'error');
+        showToast(result.message || t('petList.helpers.validation.petCreatedError'), 'error');
         return false;
       }
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error al crear mascota', 'error');
+      showToast(err instanceof Error ? err.message : t('petList.helpers.validation.petCreatedError'), 'error');
       return false;
     } finally {
       setCreating(false);
@@ -88,7 +90,7 @@ export default function usePets() {
 
   const updatePet = useCallback(async (pet: Pet) => {
     if (!pet.name.trim() || !pet.birth_date) {
-      showToast('Nombre y fecha de nacimiento son requeridos', 'error');
+      showToast(t('petList.helpers.validation.nameRequired'), 'error');
       return false;
     }
 
@@ -113,14 +115,14 @@ export default function usePets() {
       
       if (result.success) {
         await fetchPets();
-        showToast('Mascota actualizada exitosamente', 'success');
+        showToast(t('petList.helpers.validation.petUpdatedSuccess'), 'success');
         return true;
       } else {
-        showToast(result.message || 'Error al actualizar mascota', 'error');
+        showToast(result.message || t('petList.helpers.validation.petUpdatedError'), 'error');
         return false;
       }
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error al actualizar mascota', 'error');
+      showToast(err instanceof Error ? err.message : t('petList.helpers.validation.petUpdatedError'), 'error');
       return false;
     } finally {
       setUpdating(false);
@@ -138,14 +140,14 @@ export default function usePets() {
       
       if (result.success) {
         await fetchPets();
-        showToast(`${pet.name} eliminado exitosamente`, 'success');
+        showToast(t('petList.helpers.validation.petDeletedSuccess').replace('{name}', pet.name), 'success');
         return true;
       } else {
-        showToast(result.message || 'Error al eliminar mascota', 'error');
+        showToast(result.message || t('petList.helpers.validation.petDeletedError'), 'error');
         return false;
       }
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error al eliminar mascota', 'error');
+      showToast(err instanceof Error ? err.message : t('petList.helpers.validation.petDeletedError'), 'error');
       return false;
     }
   }, [fetchPets, showToast]);
@@ -154,12 +156,12 @@ export default function usePets() {
     if (!file) return null;
     
     if (!file.type.startsWith('image/')) {
-      showToast('Por favor selecciona un archivo de imagen válido', 'error');
+      showToast(t('petList.helpers.validation.invalidImageFile'), 'error');
       return null;
     }
     
     if (file.size > 5 * 1024 * 1024) {
-      showToast('La imagen no puede superar los 5MB', 'error');
+      showToast(t('petList.helpers.validation.imageTooLarge'), 'error');
       return null;
     }
     
@@ -180,20 +182,20 @@ export default function usePets() {
       });
       
       if (!response.ok) {
-        throw new Error('Error al subir la imagen');
+        throw new Error(t('petList.helpers.validation.imageUploadError'));
       }
       
       const result = await response.json();
       
       if (result.success) {
         const imageUrl = result.url || result.imageUrl;
-        showToast('Imagen subida exitosamente', 'success');
+        showToast(t('petList.helpers.validation.imageUploadSuccess'), 'success');
         return imageUrl;
       } else {
-        throw new Error(result.message || 'Error al subir la imagen');
+        throw new Error(result.message || t('petList.helpers.validation.imageUploadError'));
       }
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error al subir la imagen', 'error');
+      showToast(err instanceof Error ? err.message : t('petList.helpers.validation.imageUploadError'), 'error');
       return null;
     } finally {
       if (isEditing) {

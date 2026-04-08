@@ -18,7 +18,8 @@ export function useConfirmationActions(
   fetchDogPortfolio: () => void,
   showToast: (message: string, type: 'success' | 'error') => void,
   closeModal: () => void,
-  activeModal: any
+  activeModal: any,
+  t?: (key: string) => string
 ) {
   const confirmDeleteVaccine = useCallback(async () => {
     if (!activeModal || activeModal.type !== 'deleteVaccine') return;
@@ -35,16 +36,16 @@ export function useConfirmationActions(
       
       if (result.success) {
         fetchDogPortfolio();
-        showToast('Vacuna eliminada correctamente', 'success');
+        showToast(t ? t('toast.vaccine.deleteSuccess') : 'Vaccine deleted successfully', 'success');
       } else {
-        showToast(result.message || 'Error al eliminar vacuna', 'error');
+        showToast(result.message || (t ? t('toast.vaccine.deleteError') : 'Error deleting vaccine'), 'error');
       }
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error al eliminar vacuna', 'error');
+      showToast(err instanceof Error ? err.message : (t ? t('toast.vaccine.deleteError') : 'Error deleting vaccine'), 'error');
     } finally {
       closeModal();
     }
-  }, [activeModal, getCurrentPetId, fetchDogPortfolio, showToast, closeModal]);
+  }, [activeModal, getCurrentPetId, fetchDogPortfolio, showToast, closeModal, t]);
 
   const confirmCompleteVaccine = useCallback(async () => {
     if (!activeModal || activeModal.type !== 'completeVaccine') return;
@@ -73,16 +74,16 @@ export function useConfirmationActions(
       
       if (result.success) {
         fetchDogPortfolio();
-        showToast('Vacuna marcada como completada', 'success');
+        showToast(t ? t('toast.vaccine.completeSuccess') : 'Vaccine marked as completed', 'success');
       } else {
-        showToast(result.message || 'Error al marcar vacuna como completada', 'error');
+        showToast(result.message || (t ? t('toast.vaccine.completeError') : 'Error marking vaccine as completed'), 'error');
       }
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error al marcar vacuna como completada', 'error');
+      showToast(err instanceof Error ? err.message : (t ? t('toast.vaccine.completeError') : 'Error marking vaccine as completed'), 'error');
     } finally {
       closeModal();
     }
-  }, [activeModal, getCurrentPetId, fetchDogPortfolio, showToast, closeModal]);
+  }, [activeModal, getCurrentPetId, fetchDogPortfolio, showToast, closeModal, t]);
 
   const confirmDeleteMedicalReview = useCallback(async () => {
     if (!activeModal || activeModal.type !== 'deleteMedicalReview') return;
@@ -100,16 +101,16 @@ export function useConfirmationActions(
 
       if (result.success) {
         await fetchDogPortfolio();
-        showToast('Revisión médica eliminada correctamente', 'success');
+        showToast(t ? t('toast.medicalReview.deleteSuccess') : 'Medical review deleted successfully', 'success');
       } else {
-        showToast(result.message || 'Error al eliminar revisión médica', 'error');
+        showToast(result.message || (t ? t('toast.medicalReview.deleteError') : 'Error deleting medical review'), 'error');
       }
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error al eliminar revisión médica', 'error');
+      showToast(err instanceof Error ? err.message : (t ? t('toast.medicalReview.deleteError') : 'Error deleting medical review'), 'error');
     } finally {
       closeModal();
     }
-  }, [activeModal, getCurrentPetId, fetchDogPortfolio, showToast, closeModal]);
+  }, [activeModal, getCurrentPetId, fetchDogPortfolio, showToast, closeModal, t]);
 
   const confirmCompleteMedicalReview = useCallback(async () => {
     if (!activeModal || activeModal.type !== 'completeMedicalReview') return;
@@ -134,18 +135,18 @@ export function useConfirmationActions(
       const result = await response.json();
 
       if (result.success) {
-        showToast('Revisión médica marcada como completada', 'success');
+        showToast(t ? t('toast.medicalReview.completeSuccess') : 'Medical review marked as completed', 'success');
         fetchDogPortfolio();
       } else {
-        throw new Error(result.message || 'Error al actualizar revisión médica');
+        throw new Error(result.message || (t ? t('toast.medicalReview.completeError') : 'Error updating medical review'));
       }
 
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error al marcar revisión médica como completada', 'error');
+      showToast(err instanceof Error ? err.message : (t ? t('toast.medicalReview.completeError') : 'Error marking medical review as completed'), 'error');
     } finally {
       closeModal();
     }
-  }, [activeModal, getCurrentPetId, fetchDogPortfolio, showToast, closeModal]);
+  }, [activeModal, getCurrentPetId, fetchDogPortfolio, showToast, closeModal, t]);
 
   const confirmDeleteDeworming = useCallback(async () => {
     if (!activeModal || activeModal.type !== 'deleteDeworming') return;
@@ -163,18 +164,18 @@ export function useConfirmationActions(
       
       if (result.success) {
         await fetchDogPortfolio();
-        showToast('Desparasitación eliminada correctamente', 'success');
+        showToast(t ? t('toast.deworming.deleteSuccess') : 'Deworming deleted successfully', 'success');
         console.log('Desparasitación eliminada:', dewormingToDelete.product_name);
       } else {
-        showToast(result.message || 'Error al eliminar desparasitación', 'error');
+        showToast(result.message || (t ? t('toast.deworming.deleteError') : 'Error deleting deworming'), 'error');
       }
-      
+
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error al eliminar desparasitación', 'error');
+      showToast(err instanceof Error ? err.message : (t ? t('toast.deworming.deleteError') : 'Error deleting deworming'), 'error');
     } finally {
       closeModal();
     }
-  }, [activeModal, getCurrentPetId, fetchDogPortfolio, showToast, closeModal]);
+  }, [activeModal, getCurrentPetId, fetchDogPortfolio, showToast, closeModal, t]);
 
   const confirmCompleteDeworming = useCallback(async () => {
     if (!activeModal || activeModal.type !== 'completeDeworming') return;
@@ -205,18 +206,18 @@ export function useConfirmationActions(
           );
         }
         
-        showToast('Desparasitación marcada como aplicada', 'success');
+        showToast(t ? t('toast.deworming.completeSuccess') : 'Deworming marked as applied', 'success');
         fetchDogPortfolio();
       } else {
-        throw new Error(result.message || 'Error al actualizar desparasitación');
+        throw new Error(result.message || (t ? t('toast.deworming.completeError') : 'Error updating deworming'));
       }
-      
+
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error al marcar desparasitación como aplicada', 'error');
+      showToast(err instanceof Error ? err.message : (t ? t('toast.deworming.completeError') : 'Error marking deworming as applied'), 'error');
     } finally {
       closeModal();
     }
-  }, [activeModal, getCurrentPetId, fetchDogPortfolio, showToast, closeModal]);
+  }, [activeModal, getCurrentPetId, fetchDogPortfolio, showToast, closeModal, t]);
 
   const confirmDeleteWeight = useCallback(async () => {
     if (!activeModal || activeModal.type !== 'deleteWeight') return;
@@ -233,16 +234,16 @@ export function useConfirmationActions(
       
       if (result.success) {
         fetchDogPortfolio();
-        showToast('Peso eliminado correctamente', 'success');
+        showToast(t ? t('toast.weight.deleteSuccess') : 'Weight deleted successfully', 'success');
       } else {
-        showToast(result.message || 'Error al eliminar peso', 'error');
+        showToast(result.message || (t ? t('toast.weight.deleteError') : 'Error deleting weight'), 'error');
       }
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error al eliminar peso', 'error');
+      showToast(err instanceof Error ? err.message : (t ? t('toast.weight.deleteError') : 'Error deleting weight'), 'error');
     } finally {
       closeModal();
     }
-  }, [activeModal, getCurrentPetId, fetchDogPortfolio, showToast, closeModal]);
+  }, [activeModal, getCurrentPetId, fetchDogPortfolio, showToast, closeModal, t]);
 
   const confirmDeleteMedication = useCallback(async () => {
     if (!activeModal || activeModal.type !== 'deleteMedication') return;
@@ -260,18 +261,18 @@ export function useConfirmationActions(
       
       if (result.success) {
         await fetchDogPortfolio();
-        showToast('Medicamento eliminado correctamente', 'success');
+        showToast(t ? t('toast.medication.deleteSuccess') : 'Medication deleted successfully', 'success');
         console.log('Medicamento eliminado:', medicationToDelete.medication_name);
       } else {
-        showToast(result.message || 'Error al eliminar medicamento', 'error');
+        showToast(result.message || (t ? t('toast.medication.deleteError') : 'Error deleting medication'), 'error');
       }
-      
+
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error al eliminar medicamento', 'error');
+      showToast(err instanceof Error ? err.message : (t ? t('toast.medication.deleteError') : 'Error deleting medication'), 'error');
     } finally {
       closeModal();
     }
-  }, [activeModal, getCurrentPetId, fetchDogPortfolio, showToast, closeModal]);
+  }, [activeModal, getCurrentPetId, fetchDogPortfolio, showToast, closeModal, t]);
 
   const confirmCompleteMedication = useCallback(async () => {
     if (!activeModal || activeModal.type !== 'completeMedication') return;
@@ -292,18 +293,18 @@ export function useConfirmationActions(
       const result = await response.json();
       
       if (result.success) {
-        showToast('Medicamento marcado como completado', 'success');
+        showToast(t ? t('toast.medication.completeSuccess') : 'Medication marked as completed', 'success');
         fetchDogPortfolio();
       } else {
-        throw new Error(result.message || 'Error al actualizar medicamento');
+        throw new Error(result.message || (t ? t('toast.medication.completeError') : 'Error updating medication'));
       }
-      
+
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error al marcar medicamento como completado', 'error');
+      showToast(err instanceof Error ? err.message : (t ? t('toast.medication.completeError') : 'Error marking medication as completed'), 'error');
     } finally {
       closeModal();
     }
-  }, [activeModal, getCurrentPetId, fetchDogPortfolio, showToast, closeModal]);
+  }, [activeModal, getCurrentPetId, fetchDogPortfolio, showToast, closeModal, t]);
 
   const confirmDeleteDocument = useCallback(async () => {
     if (!activeModal || activeModal.type !== 'deleteDocument') return;
@@ -320,16 +321,16 @@ export function useConfirmationActions(
       
       if (result.success) {
         fetchDogPortfolio();
-        showToast('Documento eliminado correctamente', 'success');
+        showToast(t ? t('toast.document.deleteSuccess') : 'Document deleted successfully', 'success');
       } else {
-        showToast(result.message || 'Error al eliminar documento', 'error');
+        showToast(result.message || (t ? t('toast.document.deleteError') : 'Error deleting document'), 'error');
       }
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error al eliminar documento', 'error');
+      showToast(err instanceof Error ? err.message : (t ? t('toast.document.deleteError') : 'Error deleting document'), 'error');
     } finally {
       closeModal();
     }
-  }, [activeModal, getCurrentPetId, fetchDogPortfolio, showToast, closeModal]);
+  }, [activeModal, getCurrentPetId, fetchDogPortfolio, showToast, closeModal, t]);
 
   const confirmDeleteDocumentFile = useCallback(async () => {
     if (!activeModal || activeModal.type !== 'deleteDocumentFile') return;

@@ -118,7 +118,8 @@ export default function DogPortfolio() {
     (message: string) => showToast(message, 'success'),
     (message: string) => showToast(message, 'error'),
     fetchDogPortfolio,
-    getDocuments
+    getDocuments,
+    t
   );
 
   const {
@@ -138,7 +139,8 @@ export default function DogPortfolio() {
     (message: string) => showToast(message, 'success'),
     (message: string) => showToast(message, 'error'),
     fetchDogPortfolio,
-    getDocuments
+    getDocuments,
+    t
   );
 
   const {
@@ -158,7 +160,8 @@ export default function DogPortfolio() {
     (message: string) => showToast(message, 'success'),
     (message: string) => showToast(message, 'error'),
     fetchDogPortfolio,
-    getDocuments
+    getDocuments,
+    t
   );
 
   const {
@@ -178,7 +181,8 @@ export default function DogPortfolio() {
     (message: string) => showToast(message, 'success'),
     (message: string) => showToast(message, 'error'),
     fetchDogPortfolio,
-    getDocuments
+    getDocuments,
+    t
   );
 
   const {
@@ -212,7 +216,8 @@ export default function DogPortfolio() {
     getCurrentPetId,
     (message: string) => showToast(message, 'success'),
     (message: string) => showToast(message, 'error'),
-    fetchDogPortfolio
+    fetchDogPortfolio,
+    t
   );
 
   // Confirmation actions
@@ -221,7 +226,8 @@ export default function DogPortfolio() {
     fetchDogPortfolio,
     showToast,
     closeModal,
-    activeModal
+    activeModal,
+    t
   );
 
   // Modal handlers

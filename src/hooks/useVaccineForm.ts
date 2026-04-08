@@ -14,7 +14,8 @@ export function useVaccineForm(
   onSuccess: (message: string) => void,
   onError: (message: string) => void,
   onRefresh: () => Promise<void>,
-  getDocuments: () => any[]
+  getDocuments: () => any[],
+  t?: (key: string) => string
 ) {
   const [showVaccineForm, setShowVaccineForm] = useState(false);
   const [editingVaccine, setEditingVaccine] = useState<any>(null);
@@ -59,7 +60,7 @@ export function useVaccineForm(
 
   const handleSaveVaccine = useCallback(async () => {
     if (!vaccineForm.vaccine_name || !vaccineForm.vaccine_date) {
-      onError('Nombre de vacuna y fecha son requeridos');
+      onError(t ? t('toast.vaccine.validationRequired') : 'Vaccine name and date are required');
       return;
     }
 
@@ -92,12 +93,12 @@ export function useVaccineForm(
         setShowVaccineForm(false);
         setEditingVaccine(null);
         setLinkedDocumentIds([]);
-        onSuccess('Vacuna guardada correctamente');
+        onSuccess(t ? t('toast.vaccine.saveSuccess') : 'Vaccine saved successfully');
       } else {
-        onError(result.message || 'Error al guardar vacuna');
+        onError(result.message || (t ? t('toast.vaccine.saveError') : 'Error saving vaccine'));
       }
     } catch (err) {
-      onError(err instanceof Error ? err.message : 'Error al guardar vacuna');
+      onError(err instanceof Error ? err.message : (t ? t('toast.vaccine.saveError') : 'Error saving vaccine'));
     } finally {
       setSavingVaccine(false);
     }

@@ -12,7 +12,8 @@ export function useWeightForm(
   getCurrentPetId: () => string,
   onSuccess: (message: string) => void,
   onError: (message: string) => void,
-  onRefresh: () => Promise<void>
+  onRefresh: () => Promise<void>,
+  t?: (key: string) => string
 ) {
   const { settings } = useSettings();
   const isLb = settings.weightUnit === 'lb';
@@ -51,7 +52,7 @@ export function useWeightForm(
 
   const handleSaveWeight = useCallback(async () => {
     if (!weightForm.weight_kg || !weightForm.measurement_date) {
-      onError('Peso y fecha son requeridos');
+      onError(t ? t('toast.weight.validationRequired') : 'Weight and date are required');
       return;
     }
 
@@ -80,13 +81,13 @@ export function useWeightForm(
         await onRefresh();
         setShowWeightForm(false);
         setEditingWeight(null);
-        onSuccess('Peso guardado correctamente');
+        onSuccess(t ? t('toast.weight.saveSuccess') : 'Weight saved successfully');
       } else {
-        const errorMessage = serverResult?.message || result.message || 'Error al guardar peso';
+        const errorMessage = serverResult?.message || result.message || (t ? t('toast.weight.saveError') : 'Error saving weight');
         onError(errorMessage);
       }
     } catch (err) {
-      onError(err instanceof Error ? err.message : 'Error al guardar peso');
+      onError(err instanceof Error ? err.message : (t ? t('toast.weight.saveError') : 'Error saving weight'));
     } finally {
       setSavingWeight(false);
     }
