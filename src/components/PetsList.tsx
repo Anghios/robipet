@@ -52,7 +52,7 @@ export default function PetsList() {
     handleDeletePetClick,
     handleViewPet,
     handleCancelDelete
-  } = usePetListData(showToast);
+  } = usePetListData(showToast, t);
 
   useEffect(() => {
     fetchPets();

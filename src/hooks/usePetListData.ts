@@ -18,7 +18,7 @@ const getAuthHeaders = (): HeadersInit => {
   return headers;
 };
 
-export function usePetListData(showToast: (message: string, type: 'success' | 'error' | 'warning') => void) {
+export function usePetListData(showToast: (message: string, type: 'success' | 'error' | 'warning') => void, t?: (key: string) => string) {
   const { getWeightUnitLabel } = useSettings();
   const isLb = getWeightUnitLabel() === 'lb';
 
@@ -60,7 +60,7 @@ export function usePetListData(showToast: (message: string, type: 'success' | 'e
   const handleCreatePet = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     
-    const validation = validatePetData(newPet);
+    const validation = validatePetData(newPet, t);
     if (!validation.isValid) {
       showToast(validation.error!, 'error');
       return;
@@ -107,7 +107,7 @@ export function usePetListData(showToast: (message: string, type: 'success' | 'e
     
     if (!editingPet) return;
     
-    const validation = validatePetData(editingPet);
+    const validation = validatePetData(editingPet, t);
     if (!validation.isValid) {
       showToast(validation.error!, 'error');
       return;
@@ -183,19 +183,21 @@ export function usePetListData(showToast: (message: string, type: 'success' | 'e
   const handleImageUpload = useCallback(async (file: File, isEditing: boolean = false) => {
     if (!file) return;
     
-    const validation = validateImageFile(file);
+    const validation = validateImageFile(file, t);
     if (!validation.isValid) {
       showToast(validation.error!, 'error');
       return;
     }
-    
+
+    const uploadError = t ? t('petList.helpers.validation.imageUploadError') : 'Error uploading image';
+
     try {
       if (isEditing) {
         setUploadingImageEdit(true);
       } else {
         setUploadingImage(true);
       }
-      
+
       const formData = new FormData();
       formData.append('image', file);
 
@@ -204,33 +206,33 @@ export function usePetListData(showToast: (message: string, type: 'success' | 'e
         headers: getAuthHeaders(),
         body: formData,
       });
-      
+
       if (!response.ok) {
-        throw new Error('Error al subir la imagen');
+        throw new Error(uploadError);
       }
-      
+
       const result = await response.json();
-      
+
       if (result.success) {
         let imageUrl = result.url || result.imageUrl;
-        
+
         // Si la URL es relativa, construir la URL completa
         if (imageUrl && imageUrl.startsWith('/')) {
           imageUrl = window.location.origin + imageUrl;
         }
-        
+
         if (isEditing && editingPet) {
           setEditingPet({...editingPet, photo_url: imageUrl});
         } else {
           setNewPet({...newPet, photo_url: imageUrl});
         }
-        
-        showToast('Imagen subida exitosamente', 'success');
+
+        showToast(t ? t('petList.helpers.validation.imageUploadSuccess') : 'Image uploaded successfully', 'success');
       } else {
-        throw new Error(result.message || 'Error al subir la imagen');
+        throw new Error(result.message || uploadError);
       }
     } catch (err) {
-      showToast(err instanceof Error ? err.message : 'Error al subir la imagen', 'error');
+      showToast(err instanceof Error ? err.message : uploadError, 'error');
     } finally {
       if (isEditing) {
         setUploadingImageEdit(false);
@@ -238,7 +240,7 @@ export function usePetListData(showToast: (message: string, type: 'success' | 'e
         setUploadingImage(false);
       }
     }
-  }, [editingPet, newPet, showToast]);
+  }, [editingPet, newPet, showToast, t]);
 
   // UI Handlers
   const handleEditPet = useCallback((pet: Pet) => {

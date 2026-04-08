@@ -867,7 +867,9 @@
         "breedRequired": "La raza es requerida",
         "birthDateRequired": "La fecha de nacimiento es requerida",
         "invalidImageFile": "Por favor selecciona un archivo de imagen válido",
-        "imageTooLarge": "La imagen no puede exceder 5MB"
+        "imageTooLarge": "La imagen no puede exceder 5MB",
+        "imageUploadSuccess": "Imagen subida exitosamente",
+        "imageUploadError": "Error al subir la imagen"
       }
     }
   }

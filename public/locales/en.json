@@ -1056,7 +1056,9 @@
         "breedRequired": "Breed is required",
         "birthDateRequired": "Birth date is required",
         "invalidImageFile": "Please select a valid image file",
-        "imageTooLarge": "Image cannot exceed 5MB"
+        "imageTooLarge": "Image cannot exceed 5MB",
+        "imageUploadSuccess": "Image uploaded successfully",
+        "imageUploadError": "Error uploading image"
       }
     }
   }

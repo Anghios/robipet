@@ -115,26 +115,26 @@ export const calculateHumanYears = (birthDate: string, species: string): number 
   return null;
 };
 
-export const validatePetData = (pet: NewPet | Pet): { isValid: boolean; error?: string } => {
+export const validatePetData = (pet: NewPet | Pet, t?: (key: string) => string): { isValid: boolean; error?: string } => {
   if (!pet.name.trim()) {
-    return { isValid: false, error: 'El nombre es requerido' };
+    return { isValid: false, error: t ? t('petList.helpers.validation.nameRequired') : 'Name is required' };
   }
-  
+
   if (!pet.birth_date) {
-    return { isValid: false, error: 'La fecha de nacimiento es requerida' };
+    return { isValid: false, error: t ? t('petList.helpers.validation.birthDateRequired') : 'Birth date is required' };
   }
-  
+
   return { isValid: true };
 };
 
-export const validateImageFile = (file: File): { isValid: boolean; error?: string } => {
+export const validateImageFile = (file: File, t?: (key: string) => string): { isValid: boolean; error?: string } => {
   if (!file.type.startsWith('image/')) {
-    return { isValid: false, error: 'Por favor selecciona un archivo de imagen válido' };
+    return { isValid: false, error: t ? t('petList.helpers.validation.invalidImageFile') : 'Please select a valid image file' };
   }
-  
+
   if (file.size > 5 * 1024 * 1024) {
-    return { isValid: false, error: 'La imagen no puede superar los 5MB' };
+    return { isValid: false, error: t ? t('petList.helpers.validation.imageTooLarge') : 'Image cannot exceed 5MB' };
   }
-  
+
   return { isValid: true };
 };
